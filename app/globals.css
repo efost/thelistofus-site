@@ -167,8 +167,6 @@ body {
 .btn-primary {
   background: var(--gradient);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-md) var(--spacing-lg);
-  font-size: 14px;
   font-weight: 600; /* Always semibold for buttons */
   color: white;
   border: none;
@@ -178,17 +176,14 @@ body {
 }
 
 .btn-primary:hover {
-  transform: translateY(-1px);
   box-shadow: var(--shadow-lg);
 }
 
 /* Floating Button */
 .btn-floating {
-  padding: var(--padding-button);
   border-radius: var(--radius-lg);
   background: var(--background);
   box-shadow: var(--shadow-lg);
-  height: 56px;
   border: none;
   cursor: pointer;
   font-weight: 600; /* Always semibold for buttons */
@@ -196,7 +191,6 @@ body {
 }
 
 .btn-floating:hover {
-  transform: translateY(-2px);
   box-shadow: 0 6px 12px var(--shadow-color);
 }
 

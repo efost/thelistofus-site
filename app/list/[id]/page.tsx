@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -112,106 +113,129 @@ export default async function ListPage({ params }: ListPageProps) {
       className="min-h-screen"
       style={{ background: "var(--background-secondary)" }}
     >
-      {/* Header */}
-      <header className="section-spacing">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ background: "var(--gradient)" }}
-              >
-                <span className="text-white font-bold text-sm">L</span>
+      {/* Header and List Header with Background */}
+      <div
+        className="relative"
+        style={{
+          backgroundImage: "url(/tlou-banner.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        {/* Dark overlay for better text readability */}
+        <div
+          className="absolute inset-0 bg-black opacity-40"
+          style={{ zIndex: 1 }}
+        ></div>
+
+        {/* Content */}
+        <div className="relative" style={{ zIndex: 2 }}>
+          {/* Header */}
+          <header className="section-spacing">
+            <div className="container mx-auto px-4 py-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+                    <Image
+                      src="/the-list-of-us-icon.png"
+                      alt="The List of Us"
+                      width={32}
+                      height={32}
+                    />
+                  </div>
+                  <h1 className="text-big text-white">The List of Us</h1>
+                </div>
+                <Link
+                  href="/"
+                  className="text-body transition-colors text-white opacity-90 hover:opacity-100"
+                >
+                  ← Back to Home
+                </Link>
               </div>
-              <h1 className="text-big" style={{ color: "var(--foreground)" }}>
-                The List of Us
-              </h1>
             </div>
-            <Link
-              href="/"
-              className="text-body transition-colors"
-              style={{ color: "var(--foreground-secondary)" }}
-            >
-              ← Back to Home
-            </Link>
+          </header>
+
+          {/* List Header */}
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-4xl mx-auto">
+              <div className="card mb-8">
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <h1
+                      className="text-title mb-2"
+                      style={{ color: "var(--foreground)" }}
+                    >
+                      {title}
+                    </h1>
+                    <p
+                      className="text-big mb-4"
+                      style={{ color: "var(--foreground-secondary)" }}
+                    >
+                      {description}
+                    </p>
+                    <div
+                      className="flex items-center space-x-4 text-body"
+                      style={{ color: "var(--foreground-tertiary)" }}
+                    >
+                      <span>Created by {owner}</span>
+                      <span>•</span>
+                      <span>{new Date(createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-large-title text-gradient">
+                      {progress}%
+                    </div>
+                    <div
+                      className="text-body"
+                      style={{ color: "var(--foreground-tertiary)" }}
+                    >
+                      {completedCount} of {itemCount} completed
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div
+                  className="w-full h-3 mb-6"
+                  style={{
+                    background: "var(--foreground-tertiary)",
+                    opacity: 0.2,
+                    borderRadius: "var(--radius-md)",
+                  }}
+                >
+                  <div
+                    className="h-3 transition-all duration-300"
+                    style={{
+                      width: `${progress}%`,
+                      background: "var(--gradient)",
+                      borderRadius: "var(--radius-md)",
+                    }}
+                  />
+                </div>
+
+                {/* CTA */}
+                <div className="text-center">
+                  <button className="btn-primary px-8 py-3 text-big">
+                    Join This List
+                  </button>
+                  <p
+                    className="text-body mt-2"
+                    style={{ color: "var(--foreground-tertiary)" }}
+                  >
+                    Download The List of Us app to collaborate
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* List Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* List Header */}
-          <div className="card mb-8">
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <h1
-                  className="text-title mb-2"
-                  style={{ color: "var(--foreground)" }}
-                >
-                  {title}
-                </h1>
-                <p
-                  className="text-big mb-4"
-                  style={{ color: "var(--foreground-secondary)" }}
-                >
-                  {description}
-                </p>
-                <div
-                  className="flex items-center space-x-4 text-body"
-                  style={{ color: "var(--foreground-tertiary)" }}
-                >
-                  <span>Created by {owner}</span>
-                  <span>•</span>
-                  <span>{new Date(createdAt).toLocaleDateString()}</span>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-large-title text-gradient">
-                  {progress}%
-                </div>
-                <div
-                  className="text-body"
-                  style={{ color: "var(--foreground-tertiary)" }}
-                >
-                  {completedCount} of {itemCount} completed
-                </div>
-              </div>
-            </div>
-
-            {/* Progress Bar */}
-            <div
-              className="w-full h-3 mb-6"
-              style={{
-                background: "var(--foreground-tertiary)",
-                opacity: 0.2,
-                borderRadius: "var(--radius-md)",
-              }}
-            >
-              <div
-                className="h-3 transition-all duration-300"
-                style={{
-                  width: `${progress}%`,
-                  background: "var(--gradient)",
-                  borderRadius: "var(--radius-md)",
-                }}
-              />
-            </div>
-
-            {/* CTA */}
-            <div className="text-center">
-              <button className="btn-primary px-8 py-3 text-big">
-                Join This List
-              </button>
-              <p
-                className="text-body mt-2"
-                style={{ color: "var(--foreground-tertiary)" }}
-              >
-                Download The List of Us app to collaborate
-              </p>
-            </div>
-          </div>
-
           {/* List Items */}
           <div className="card">
             <h2
@@ -274,8 +298,8 @@ export default async function ListPage({ params }: ListPageProps) {
               borderRadius: "var(--radius-xl)",
             }}
           >
-            <h3 className="text-large-title text-white mb-4">
-              Ready to create your own list?
+            <h3 className="text-title text-white mb-4">
+              Ready to Create Your Own List?
             </h3>
             <p className="text-big text-white opacity-90 mb-6">
               Join thousands of dreamers sharing their bucket lists and making
@@ -291,6 +315,59 @@ export default async function ListPage({ params }: ListPageProps) {
               Download The List of Us
             </button>
           </div>
+
+          {/* Footer */}
+          <footer className="mt-8" style={{ background: "var(--background)" }}>
+            <div className="container mx-auto px-4 py-8">
+              <div className="flex flex-col md:flex-row justify-between items-center">
+                <div className="flex items-center space-x-2 mb-4 md:mb-0">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
+                    <Image
+                      src="/the-list-of-us-icon.png"
+                      alt="The List of Us"
+                      width={32}
+                      height={32}
+                    />
+                  </div>
+                  <span
+                    className="text-big"
+                    style={{ color: "var(--foreground)" }}
+                  >
+                    The List of Us
+                  </span>
+                </div>
+                <div className="flex items-center space-x-6">
+                  <a
+                    href="#"
+                    className="text-body transition-colors"
+                    style={{ color: "var(--foreground-tertiary)" }}
+                  >
+                    Privacy Policy
+                  </a>
+                  <a
+                    href="#"
+                    className="text-body transition-colors"
+                    style={{ color: "var(--foreground-tertiary)" }}
+                  >
+                    Terms of Service
+                  </a>
+                  <a
+                    href="#"
+                    className="text-body transition-colors"
+                    style={{ color: "var(--foreground-tertiary)" }}
+                  >
+                    Support
+                  </a>
+                  <span
+                    className="text-body"
+                    style={{ color: "var(--foreground-tertiary)" }}
+                  >
+                    &copy; 2024 The List of Us. All rights reserved.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </footer>
         </div>
       </main>
     </div>
