@@ -1,0 +1,17 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "8V5N4P9SRD.st.efo.The-List"
+        ],
+        "components": [
+          {
+            "/": "/list/*",
+            "comment": "Matches any list sharing URL"
+          }
+        ]
+      }
+    ]
+  }
+}
