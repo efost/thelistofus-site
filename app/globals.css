@@ -1,26 +1,350 @@
 @import "tailwindcss";
 
+/* The List Design System */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary Gradients */
+  --gradient-light: linear-gradient(to bottom, #094aab, #9e09ab);
+  --gradient-dark: linear-gradient(to bottom, #6496ff, #c864ff);
+
+  /* Background Colors - Light Mode */
+  --bg-primary-light: #ffffff;
+  --bg-secondary-light: #f2f2f7;
+  --bg-grouped-light: #f2f2f7;
+
+  /* Background Colors - Dark Mode */
+  --bg-primary-dark: #000000;
+  --bg-secondary-dark: #1c1c1e;
+  --bg-grouped-dark: #000000;
+
+  /* Text Colors - Light Mode */
+  --text-primary-light: #000000;
+  --text-secondary-light: #6d6d70;
+  --text-tertiary-light: #8e8e93;
+
+  /* Text Colors - Dark Mode */
+  --text-primary-dark: #ffffff;
+  --text-secondary-dark: #8e8e93;
+  --text-tertiary-dark: #6d6d70;
+
+  /* Shadow Colors */
+  --shadow-light: rgba(0, 0, 0, 0.09);
+  --shadow-dark: rgba(255, 255, 255, 0.1);
+
+  /* Spacing System */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 32px;
+
+  /* Padding Patterns */
+  --padding-card: 2rem;
+  --padding-button: 16px;
+  --padding-form: 10px;
+  --padding-section: 20px;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 20px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px var(--shadow-light);
+  --shadow-md: 0 2px 8px var(--shadow-light);
+  --shadow-lg: 0 4px 8px var(--shadow-light);
+
+  /* Animation */
+  --spring-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.16s;
+  --transition-normal: 0.3s;
+
+  /* Light Mode Defaults */
+  --background: var(--bg-primary-light);
+  --foreground: var(--text-primary-light);
+  --background-secondary: var(--bg-secondary-light);
+  --foreground-secondary: var(--text-secondary-light);
+  --foreground-tertiary: var(--text-tertiary-light);
+  --gradient: var(--gradient-light);
+  --shadow-color: var(--shadow-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--bg-primary-dark);
+    --foreground: var(--text-primary-dark);
+    --background-secondary: var(--bg-secondary-dark);
+    --foreground-secondary: var(--text-secondary-dark);
+    --foreground-tertiary: var(--text-tertiary-dark);
+    --gradient: var(--gradient-dark);
+    --shadow-color: var(--shadow-dark);
+
+    /* Update shadows for dark mode */
+    --shadow-sm: 0 2px 4px var(--shadow-dark);
+    --shadow-md: 0 2px 8px var(--shadow-dark);
+    --shadow-lg: 0 4px 8px var(--shadow-dark);
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Omnes", var(--font-inter), "SF Pro Display", -apple-system,
+    BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  font-weight: 500; /* Never go below 500 */
+}
+
+/* Reset to prevent light font weights */
+* {
+  font-weight: inherit;
+}
+
+/* Typography System - All weights 500 or 600 */
+.text-item-name {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.text-subtitle {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.text-title {
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.text-body {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.text-big {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.text-large-title {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* Gradient Text */
+.text-gradient {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600; /* Ensure gradient text is always bold */
+}
+
+/* Card Component */
+.card {
+  background: var(--background);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--padding-card);
+}
+
+/* Primary Button */
+.btn-primary {
+  background: var(--gradient);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: 14px;
+  font-weight: 600; /* Always semibold for buttons */
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-normal) var(--spring-ease);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Floating Button */
+.btn-floating {
+  padding: var(--padding-button);
+  border-radius: var(--radius-lg);
+  background: var(--background);
+  box-shadow: var(--shadow-lg);
+  height: 56px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600; /* Always semibold for buttons */
+  transition: all var(--transition-normal) var(--spring-ease);
+}
+
+.btn-floating:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px var(--shadow-color);
+}
+
+/* Form Inputs */
+.form-input {
+  padding: var(--padding-form);
+  border-radius: var(--radius-lg);
+  background: var(--background);
+  border: 1px solid var(--foreground-tertiary);
+  font-size: 14px;
+  font-weight: 500; /* Medium weight for inputs */
+  color: var(--foreground);
+  transition: all var(--transition-normal) var(--spring-ease);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #094aab;
+  box-shadow: 0 0 0 3px rgba(9, 74, 171, 0.1);
+}
+
+/* Notes Section */
+.notes-section {
+  background: rgba(109, 109, 112, 0.08);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-sm);
+  font-weight: 500; /* Medium weight for notes */
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--foreground-tertiary);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground-secondary);
+}
+
+/* Smooth focus outline for accessibility */
+*:focus {
+  outline: 2px solid #094aab;
+  outline-offset: 2px;
+}
+
+/* Better button focus states */
+button:focus {
+  outline: 2px solid #094aab;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for interactive elements */
+a,
+button {
+  transition: all var(--transition-normal) var(--spring-ease);
+  font-weight: 600; /* All interactive elements should be semibold */
+}
+
+/* Ensure links are always readable weight */
+a {
+  font-weight: 600;
+}
+
+/* Override any potential light weights from Tailwind */
+.font-thin,
+.font-extralight,
+.font-light {
+  font-weight: 500 !important;
+}
+
+/* Responsive font scaling */
+@media (max-width: 768px) {
+  .text-title {
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  .text-large-title {
+    font-size: 24px;
+    font-weight: 600;
+  }
+}
+
+/* Utility classes for spacing */
+.spacing-xs {
+  padding: var(--spacing-xs);
+}
+.spacing-sm {
+  padding: var(--spacing-sm);
+}
+.spacing-md {
+  padding: var(--spacing-md);
+}
+.spacing-lg {
+  padding: var(--spacing-lg);
+}
+.spacing-xl {
+  padding: var(--spacing-xl);
+}
+.spacing-2xl {
+  padding: var(--spacing-2xl);
+}
+
+/* Section spacing */
+.section-spacing {
+  padding: var(--padding-section);
+}
+
+/* Card spacing */
+.card-spacing {
+  padding: var(--padding-card);
+}
+
+/* Ensure all headings are properly weighted */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+}
+
+/* Ensure all text elements have proper weights */
+p,
+span,
+div {
+  font-weight: 500;
+}
+
+/* Override any Tailwind classes that might add light weights */
+.text-xs,
+.text-sm,
+.text-base,
+.text-lg,
+.text-xl,
+.text-2xl,
+.text-3xl,
+.text-4xl,
+.text-5xl,
+.text-6xl {
+  font-weight: inherit;
 }
