@@ -1,5 +1,5 @@
+import { calculateProgress, getListById } from "@/lib/lists";
 import { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -7,45 +7,11 @@ interface ListPageProps {
   params: Promise<{ id: string }>;
 }
 
-// This would typically come from your API/database
-// For now, we'll simulate fetching list data
-async function getListData(id: string) {
-  // In a real app, you'd fetch this from your backend
-  // For demo purposes, we'll return mock data
-  if (id === "demo") {
-    return {
-      id: "demo",
-      title: "Adventure Bucket List",
-      description: "Epic adventures we want to experience together",
-      owner: "Sarah & Friends",
-      itemCount: 12,
-      completedCount: 3,
-      items: [
-        { id: 1, text: "Skydiving in New Zealand", completed: true },
-        { id: 2, text: "Northern Lights in Iceland", completed: false },
-        { id: 3, text: "Safari in Kenya", completed: false },
-        { id: 4, text: "Hiking Machu Picchu", completed: true },
-        {
-          id: 5,
-          text: "Scuba diving in the Great Barrier Reef",
-          completed: false,
-        },
-        { id: 6, text: "Road trip across Route 66", completed: true },
-      ],
-      createdAt: "2024-01-15",
-      imageUrl: "/api/og?listId=demo", // Dynamic OG image
-    };
-  }
-
-  // Return null if list not found
-  return null;
-}
-
 export async function generateMetadata({
   params,
 }: ListPageProps): Promise<Metadata> {
   const { id } = await params;
-  const listData = await getListData(id);
+  const listData = await getListById(id);
 
   if (!listData) {
     return {
@@ -54,15 +20,15 @@ export async function generateMetadata({
     };
   }
 
-  const { title, description, owner, itemCount, completedCount } = listData;
-  const progress = Math.round((completedCount / itemCount) * 100);
+  const { name, ownerName } = listData;
+  const progress = calculateProgress(listData);
 
   return {
-    title: `${title} - The List of Us`,
-    description: `${description} | ${completedCount}/${itemCount} completed (${progress}%) | Created by ${owner}`,
+    title: `${name} - The List of Us`,
+    description: `${name} | ${progress.completed}/${progress.total} completed (${progress.percentage}%) | Created by ${ownerName}`,
     openGraph: {
-      title: title,
-      description: `${description} | ${completedCount}/${itemCount} completed (${progress}%)`,
+      title: name,
+      description: `${name} | ${progress.completed}/${progress.total} completed (${progress.percentage}%)`,
       type: "website",
       locale: "en_US",
       url: `https://thelistofus.com/list/${id}`,
@@ -72,14 +38,14 @@ export async function generateMetadata({
           url: `/api/og?listId=${id}`,
           width: 1200,
           height: 630,
-          alt: `${title} - The List of Us`,
+          alt: `${name} - Bucket List`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: title,
-      description: `${description} | ${completedCount}/${itemCount} completed (${progress}%)`,
+      title: name,
+      description: `${name} | ${progress.completed}/${progress.total} completed (${progress.percentage}%)`,
       images: [`/api/og?listId=${id}`],
     },
     robots: {
@@ -91,22 +57,13 @@ export async function generateMetadata({
 
 export default async function ListPage({ params }: ListPageProps) {
   const { id } = await params;
-  const listData = await getListData(id);
+  const listData = await getListById(id);
 
   if (!listData) {
     notFound();
   }
 
-  const {
-    title,
-    description,
-    owner,
-    items,
-    itemCount,
-    completedCount,
-    createdAt,
-  } = listData;
-  const progress = Math.round((completedCount / itemCount) * 100);
+  const progress = calculateProgress(listData);
 
   return (
     <div
@@ -136,13 +93,11 @@ export default async function ListPage({ params }: ListPageProps) {
             <div className="container mx-auto px-4 py-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
-                    <Image
-                      src="/the-list-of-us-icon.png"
-                      alt="The List of Us"
-                      width={32}
-                      height={32}
-                    />
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ background: "var(--gradient)" }}
+                  >
+                    <span className="text-white font-bold text-sm">L</span>
                   </div>
                   <h1 className="text-big text-white">The List of Us</h1>
                 </div>
@@ -166,32 +121,35 @@ export default async function ListPage({ params }: ListPageProps) {
                       className="text-title mb-2"
                       style={{ color: "var(--foreground)" }}
                     >
-                      {title}
+                      {listData.name}
                     </h1>
                     <p
                       className="text-big mb-4"
                       style={{ color: "var(--foreground-secondary)" }}
                     >
-                      {description}
+                      Created by {listData.ownerName}
                     </p>
                     <div
                       className="flex items-center space-x-4 text-body"
                       style={{ color: "var(--foreground-tertiary)" }}
                     >
-                      <span>Created by {owner}</span>
+                      <span>
+                        Last updated{" "}
+                        {listData.lastModifiedAt.toLocaleDateString()}
+                      </span>
                       <span>•</span>
-                      <span>{new Date(createdAt).toLocaleDateString()}</span>
+                      <span>{listData.collaborators.length} collaborators</span>
                     </div>
                   </div>
                   <div className="text-right">
                     <div className="text-large-title text-gradient">
-                      {progress}%
+                      {progress.percentage}%
                     </div>
                     <div
                       className="text-body"
                       style={{ color: "var(--foreground-tertiary)" }}
                     >
-                      {completedCount} of {itemCount} completed
+                      {progress.completed} of {progress.total} completed
                     </div>
                   </div>
                 </div>
@@ -208,7 +166,7 @@ export default async function ListPage({ params }: ListPageProps) {
                   <div
                     className="h-3 transition-all duration-300"
                     style={{
-                      width: `${progress}%`,
+                      width: `${progress.percentage}%`,
                       background: "var(--gradient)",
                       borderRadius: "var(--radius-md)",
                     }}
@@ -239,52 +197,65 @@ export default async function ListPage({ params }: ListPageProps) {
           {/* List Items */}
           <div className="card">
             <h2
-              className="text-large-title mb-6"
+              className="text-title mb-6"
               style={{ color: "var(--foreground)" }}
             >
               Bucket List Items
             </h2>
             <div className="space-y-4">
-              {items.map((item) => (
+              {listData.items.map((item) => (
                 <div
                   key={item.id}
                   className={`flex items-center space-x-4 p-4 border-2 transition-all`}
                   style={{
-                    background: item.completed
+                    background: item.done
                       ? "var(--background-secondary)"
                       : "var(--background)",
-                    borderColor: item.completed
+                    borderColor: item.done
                       ? "var(--foreground-tertiary)"
                       : "var(--foreground-tertiary)",
-                    opacity: item.completed ? 0.7 : 1,
+                    opacity: item.done ? 0.7 : 1,
                     borderRadius: "var(--radius-lg)",
                   }}
                 >
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center`}
                     style={{
-                      background: item.completed
+                      background: item.done
                         ? "var(--gradient)"
                         : "var(--foreground-tertiary)",
-                      opacity: item.completed ? 1 : 0.3,
+                      opacity: item.done ? 1 : 0.3,
                     }}
                   >
-                    {item.completed && (
-                      <span className="text-white text-sm">✓</span>
+                    {item.done && <span className="text-white text-sm">✓</span>}
+                  </div>
+                  <div className="flex-1">
+                    <span
+                      className={`text-item-name ${
+                        item.done ? "line-through" : ""
+                      }`}
+                      style={{
+                        color: item.done
+                          ? "var(--foreground-secondary)"
+                          : "var(--foreground)",
+                      }}
+                    >
+                      {item.name}
+                    </span>
+                    {(item.address || item.city || item.notes) && (
+                      <div
+                        className="text-body mt-1"
+                        style={{ color: "var(--foreground-tertiary)" }}
+                      >
+                        {item.address &&
+                          item.city &&
+                          `${item.address}, ${item.city}`}
+                        {item.notes && (
+                          <span className="block mt-1">{item.notes}</span>
+                        )}
+                      </div>
                     )}
                   </div>
-                  <span
-                    className={`flex-1 text-item-name ${
-                      item.completed ? "line-through" : ""
-                    }`}
-                    style={{
-                      color: item.completed
-                        ? "var(--foreground-secondary)"
-                        : "var(--foreground)",
-                    }}
-                  >
-                    {item.text}
-                  </span>
                 </div>
               ))}
             </div>
@@ -321,13 +292,11 @@ export default async function ListPage({ params }: ListPageProps) {
             <div className="container mx-auto px-4 py-8">
               <div className="flex flex-col md:flex-row justify-between items-center">
                 <div className="flex items-center space-x-2 mb-4 md:mb-0">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden">
-                    <Image
-                      src="/the-list-of-us-icon.png"
-                      alt="The List of Us"
-                      width={32}
-                      height={32}
-                    />
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center"
+                    style={{ background: "var(--gradient)" }}
+                  >
+                    <span className="text-white font-bold text-sm">L</span>
                   </div>
                   <span
                     className="text-big"
