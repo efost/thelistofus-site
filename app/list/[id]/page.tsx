@@ -1,6 +1,7 @@
 import { calculateProgress, getListById } from "@/lib/lists";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import AppLinkButton from "./components/AppLinkButton";
 import ListItems from "./components/ListItems";
 
 interface ListPageProps {
@@ -51,6 +52,10 @@ export async function generateMetadata({
     robots: {
       index: true,
       follow: true,
+    },
+    other: {
+      "apple-itunes-app":
+        "app-id=YOUR_APP_ID, app-argument=thelistofus://list/" + id,
     },
   };
 }
@@ -121,6 +126,19 @@ export default async function ListPage({ params }: ListPageProps) {
       {/* List Content */}
       <main className="container mx-auto px-8 pt-0">
         <div className="max-w-4xl mx-auto">
+          {/* CTA */}
+          <div className="text-center mb-8">
+            <button className="bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 text-white font-semibold px-8 py-3 text-base rounded-lg shadow-sm hover:shadow-lg transition-all duration-300">
+              Join This List
+            </button>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">
+              Download The List of Us app to collaborate
+            </p>
+          </div>
+
+          {/* View in App Button */}
+          <AppLinkButton listId={id} />
+
           {/* App Download CTA */}
           <div className="text-center p-8 bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 rounded-2xl lg:rounded-lg">
             <h3 className="text-6xl md:text-4xl font-semibold text-white mb-4 leading-tight">
