@@ -1,7 +1,6 @@
 import { calculateProgress, getListById } from "@/lib/lists";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import AppLinkButton from "./components/AppLinkButton";
 import ListItems from "./components/ListItems";
 
 interface ListPageProps {
@@ -128,16 +127,19 @@ export default async function ListPage({ params }: ListPageProps) {
         <div className="max-w-4xl mx-auto">
           {/* CTA */}
           <div className="text-center mb-8">
-            <button className="bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 text-white font-semibold px-8 py-3 text-base rounded-lg shadow-sm hover:shadow-lg transition-all duration-300">
+            <a
+              href={`thelist://list/${id}`}
+              className="bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 text-white font-semibold px-8 py-3 text-base rounded-lg shadow-sm hover:shadow-lg transition-all duration-300"
+            >
               Join This List
-            </button>
+            </a>
             <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">
               Download The List of Us app to collaborate
             </p>
           </div>
 
           {/* View in App Button */}
-          <AppLinkButton listId={id} />
+          {/* <AppLinkButton listId={id} /> */}
 
           {/* App Download CTA */}
           <div className="text-center p-8 bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 rounded-2xl lg:rounded-lg">
