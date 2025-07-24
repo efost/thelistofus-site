@@ -1,5 +1,6 @@
 import { calculateProgress, getListById } from "@/lib/lists";
 import { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import ListItems from "./components/ListItems";
 import StickyBanner from "./components/StickyBanner";
@@ -69,7 +70,7 @@ export default async function ListPage({ params }: ListPageProps) {
   return (
     <div className="min-h-screen pb-24 lg:pb-0">
       {/* Header and List Header */}
-      <div className="relative lg:rounded-lg lg:overflow-hidden">
+      <div className="relative lg:rounded-lg">
         {/* Content */}
         <div className="relative z-10">
           {/* List Header */}
@@ -90,7 +91,12 @@ export default async function ListPage({ params }: ListPageProps) {
                         {listData.lastModifiedAt.toLocaleDateString()}
                       </span>
                       <span>•</span>
-                      <span>{listData.collaborators.length} collaborators</span>
+                      <span>
+                        {listData.collaborators.length}{" "}
+                        {listData.collaborators.length === 1
+                          ? "collaborator"
+                          : "collaborators"}
+                      </span>
                     </div>
                   </div>
                   <div className="text-right flex flex-col items-end gap-4">
@@ -131,26 +137,32 @@ export default async function ListPage({ params }: ListPageProps) {
       <main className="container mx-auto px-8 pt-0">
         <div className="max-w-4xl mx-auto">
           {/* App Download CTA */}
-          <div className="text-center p-8 bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 rounded-2xl lg:rounded-lg">
-            <h3 className="text-6xl md:text-4xl font-semibold text-white mb-4 leading-tight">
+          {/* <div className="text-center p-8 bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 rounded-2xl lg:rounded-lg">
+            <h3 className="text-4xl font-semibold text-white mb-4 leading-tight">
               Ready to Create Your Own List?
             </h3>
-            <p className="text-base font-semibold text-white/90 mb-6 leading-relaxed">
+            <p className="text-base text-white/90 mb-6 tracking-wide leading-relaxed">
               Join thousands of dreamers sharing their bucket lists and making
               memories together.
             </p>
             <button className="bg-white dark:bg-black text-black dark:text-white font-semibold text-base px-8 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
               Download The List of Us
             </button>
-          </div>
+          </div> */}
 
           {/* Footer */}
-          <footer className="mt-8 bg-gray-50 dark:bg-gray-900">
-            <div className="container mx-auto py-8">
+          <footer>
+            <div className="container mx-auto pt-4 pb-8">
               <div className="flex flex-col md:flex-row justify-between items-center">
                 <div className="flex items-center space-x-2 mb-4 md:mb-0">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">L</span>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden shadow-md">
+                    <Image
+                      src="/the-list-of-us-icon.png"
+                      alt="The List of Us"
+                      width={32}
+                      height={32}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <span className="text-base font-semibold text-black dark:text-white">
                     The List of Us
@@ -176,7 +188,8 @@ export default async function ListPage({ params }: ListPageProps) {
                     Support
                   </a>
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    &copy; 2024 The List of Us. All rights reserved.
+                    &copy; {new Date().getFullYear()} The List of Us. All rights
+                    reserved.
                   </span>
                 </div>
               </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -58,10 +59,16 @@ export default function Navigation() {
         }`}
       >
         {/* Logo/Header */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-6">
           <Link href="/" className="flex items-center space-x-2 group">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-b from-purple-400 to-blue-400 flex items-center justify-center group-hover:shadow-xl transition-all duration-200">
-              <span className="text-white font-bold text-sm">L</span>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-200">
+              <Image
+                src="/the-list-of-us-icon.png"
+                alt="The List of Us"
+                width={32}
+                height={32}
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="text-lg font-semibold text-black dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
               The List of Us
@@ -73,17 +80,12 @@ export default function Navigation() {
         <div className="p-4">
           <ul className="space-y-1">
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
               return (
                 <li key={item.href}>
                   <Link
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className={`block px-4 py-3 rounded-lg transition-all duration-200 font-medium ${
-                      isActive
-                        ? "bg-gradient-to-r from-purple-400 to-blue-400 text-white shadow-lg"
-                        : "text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400"
-                    }`}
+                    className="block px-3 py-3 rounded-lg transition-all duration-200 font-medium text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400"
                   >
                     {item.label}
                   </Link>
@@ -94,7 +96,7 @@ export default function Navigation() {
         </div>
 
         {/* Bottom CTA */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="p-4">
           <button className="w-full bg-gradient-to-r from-purple-400 to-blue-400 text-white font-semibold px-4 py-3 rounded-lg hover:shadow-2xl hover:from-purple-500 hover:to-blue-500 transition-all duration-300">
             Get the App
           </button>
