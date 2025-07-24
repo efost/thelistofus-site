@@ -2,6 +2,7 @@ import { calculateProgress, getListById } from "@/lib/lists";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ListItems from "./components/ListItems";
+import StickyBanner from "./components/StickyBanner";
 
 interface ListPageProps {
   params: Promise<{ id: string }>;
@@ -52,10 +53,6 @@ export async function generateMetadata({
       index: true,
       follow: true,
     },
-    other: {
-      "apple-itunes-app":
-        "app-id=YOUR_APP_ID, app-argument=thelistofus://list/" + id,
-    },
   };
 }
 
@@ -70,7 +67,7 @@ export default async function ListPage({ params }: ListPageProps) {
   const progress = calculateProgress(listData);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-24 lg:pb-0">
       {/* Header and List Header */}
       <div className="relative lg:rounded-lg lg:overflow-hidden">
         {/* Content */}
@@ -96,13 +93,21 @@ export default async function ListPage({ params }: ListPageProps) {
                       <span>{listData.collaborators.length} collaborators</span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-semibold bg-gradient-to-b from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-                      {progress.percentage}%
+                  <div className="text-right flex flex-col items-end gap-4">
+                    <div className="flex-shrink-0">
+                      <div className="text-2xl font-semibold bg-gradient-to-b from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                        {progress.percentage}%
+                      </div>
+                      <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                        {progress.completed} of {progress.total} completed
+                      </div>
                     </div>
-                    <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      {progress.completed} of {progress.total} completed
-                    </div>
+                    <a
+                      href={`thelist://list/${id}`}
+                      className="hidden lg:inline-block bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 text-white font-semibold px-8 py-3 text-base rounded-lg shadow-sm hover:shadow-lg transition-all duration-300"
+                    >
+                      Join This List
+                    </a>
                   </div>
                 </div>
 
@@ -125,22 +130,6 @@ export default async function ListPage({ params }: ListPageProps) {
       {/* List Content */}
       <main className="container mx-auto px-8 pt-0">
         <div className="max-w-4xl mx-auto">
-          {/* CTA */}
-          <div className="text-center mb-8">
-            <a
-              href={`thelist://list/${id}`}
-              className="bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 text-white font-semibold px-8 py-3 text-base rounded-lg shadow-sm hover:shadow-lg transition-all duration-300"
-            >
-              Join This List
-            </a>
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-2">
-              Download The List of Us app to collaborate
-            </p>
-          </div>
-
-          {/* View in App Button */}
-          {/* <AppLinkButton listId={id} /> */}
-
           {/* App Download CTA */}
           <div className="text-center p-8 bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 rounded-2xl lg:rounded-lg">
             <h3 className="text-6xl md:text-4xl font-semibold text-white mb-4 leading-tight">
@@ -195,6 +184,7 @@ export default async function ListPage({ params }: ListPageProps) {
           </footer>
         </div>
       </main>
+      <StickyBanner listId={id} />
     </div>
   );
 }
