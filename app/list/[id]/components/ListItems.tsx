@@ -31,7 +31,7 @@ const ListItemCard = ({ item }: { item: ListItem }) => {
               <div className="mt-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-md">
                 <div className="flex items-start space-x-2">
                   <NotepadText className="size-4 mt-0.5 text-gray-400 dark:text-gray-500" />
-                  <span className="text-xs text-gray-800 dark:text-gray-200 leading-relaxed">
+                  <span className="text-xs text-gray-800 dark:text-gray-200 leading-relaxed tracking-wide">
                     {item.notes}
                   </span>
                 </div>
