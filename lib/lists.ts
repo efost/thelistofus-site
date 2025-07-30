@@ -48,10 +48,9 @@ export async function getListById(listId: string): Promise<List | null> {
 
     const listData = listSnapshot.data();
 
-    // Then, get all items for this list
-    const itemsRef = collection(db, "items");
-    const itemsQuery = query(itemsRef, where("listId", "==", listId));
-    const itemsSnapshot = await getDocs(itemsQuery);
+    // Get items from the list's subcollection
+    const itemsRef = collection(db, "lists", listId, "items");
+    const itemsSnapshot = await getDocs(itemsRef);
 
     const items: ListItem[] = [];
     itemsSnapshot.forEach((doc) => {
@@ -106,10 +105,9 @@ export async function getPublicLists(): Promise<List[]> {
       const listData = listDoc.data();
       const listId = listDoc.id;
 
-      // Get items for this list
-      const itemsRef = collection(db, "items");
-      const itemsQuery = query(itemsRef, where("listId", "==", listId));
-      const itemsSnapshot = await getDocs(itemsQuery);
+      // Get items from the list's subcollection
+      const itemsRef = collection(db, "lists", listId, "items");
+      const itemsSnapshot = await getDocs(itemsRef);
 
       const items: ListItem[] = [];
       itemsSnapshot.forEach((doc) => {
