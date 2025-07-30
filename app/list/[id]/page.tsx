@@ -2,6 +2,7 @@ import { calculateProgress, getListById } from "@/lib/lists";
 import { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import AppDeepLink from "./components/AppDeepLink";
 import ListItems from "./components/ListItems";
 import StickyBanner from "./components/StickyBanner";
 
@@ -69,6 +70,9 @@ export default async function ListPage({ params }: ListPageProps) {
 
   return (
     <div className="min-h-screen pb-24 lg:pb-0">
+      {/* Attempt to open app immediately */}
+      <AppDeepLink listId={id} />
+
       {/* Header and List Header */}
       <div className="relative lg:rounded-lg">
         {/* Content */}
