@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appID": "8V5N4P9SRD.st.efo.The-List",
+        "paths": [
+          "/list/*"
+        ]
+      }
+    ]
+  }
+}
