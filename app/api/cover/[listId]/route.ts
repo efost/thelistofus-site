@@ -11,7 +11,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ list
   if (!photo) {
     return new Response(null, {
       status: 404,
-      headers: { "Cache-Control": "public, max-age=3600" },
+      headers: { "Cache-Control": "public, max-age=300" },
     });
   }
   return new Response(photo.bytes, {
