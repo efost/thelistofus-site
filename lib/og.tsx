@@ -125,17 +125,17 @@ function Collage({ photos }: { photos: string[] }) {
   const { width: W, height: H } = OG_SIZE;
   if (photos.length === 1)
     return (
-      <div style={{ display: "flex", position: "absolute", inset: 0 }}>{img(photos[0], W, H)}</div>
+      <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>{img(photos[0], W, H)}</div>
     );
   if (photos.length === 2)
     return (
-      <div style={{ display: "flex", position: "absolute", inset: 0, gap: 4 }}>
+      <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", gap: 4 }}>
         {img(photos[0], W / 2 - 2, H)}
         {img(photos[1], W / 2 - 2, H)}
       </div>
     );
   return (
-    <div style={{ display: "flex", position: "absolute", inset: 0, gap: 4 }}>
+    <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", gap: 4 }}>
       {img(photos[0], 700, H)}
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         {img(photos[1], W - 704, H / 2 - 2)}
@@ -145,7 +145,11 @@ function Collage({ photos }: { photos: string[] }) {
   );
 }
 
-const SHADE = "linear-gradient(0deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0) 75%)";
+// The same fade as the app's list cover (ListScreen.header): clear at the top quarter,
+// 45% black by 60% down, 80% at the bottom, so white text reads over any photo. A light
+// shade at the very top keeps the logo readable too.
+const SHADE =
+  "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 25%, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.8) 100%)";
 const WASH =
   "radial-gradient(70% 90% at 90% 0%, rgba(158,9,171,0.75), rgba(158,9,171,0) 70%), radial-gradient(70% 100% at 0% 100%, rgba(9,74,171,0.85), rgba(9,74,171,0) 70%)";
 
@@ -171,7 +175,7 @@ export async function listImage(list: SharedList) {
           {e(list.emoji || "📍")}
         </div>
       )}
-      <div style={{ display: "flex", position: "absolute", inset: 0, background: SHADE }} />
+      <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: SHADE }} />
       <div style={{ display: "flex", position: "absolute", left: 64, top: 52 }}>
         <Brand icon={icon} dark />
       </div>
@@ -246,7 +250,7 @@ export async function itemImage(list: SharedList, item: Item) {
           {e(fallbackEmoji(item.category))}
         </div>
       )}
-      <div style={{ display: "flex", position: "absolute", inset: 0, background: SHADE }} />
+      <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: SHADE }} />
       <div style={{ display: "flex", position: "absolute", left: 64, top: 52 }}>
         <Brand icon={icon} dark />
       </div>
