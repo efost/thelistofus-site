@@ -7,7 +7,7 @@ import type { Item } from "@/lib/lists";
 import { itemPath } from "@/lib/site";
 
 // The list's places on a map, with the app's gradient pins (grey once done).
-// Tiles are CARTO's OpenStreetMap basemaps, light or dark to match the page.
+// Tiles are OpenStreetMap's, darkened in dark mode.
 
 type Leaflet = typeof import("leaflet");
 
@@ -44,23 +44,21 @@ export default function MapPanel({
       const leaflet = await import("leaflet");
       if (disposed || !container.current) return;
       L.current = leaflet;
-      const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       const m = leaflet.map(container.current, {
         zoomControl: interactive,
         scrollWheelZoom: false,
         dragging: interactive,
         attributionControl: true,
       });
+      // OpenStreetMap's own tiles (light use, with attribution, is within their policy).
+      // Dark mode darkens them with a CSS filter (.list-map-tiles in globals.css).
       leaflet
-        .tileLayer(
-          `https://{s}.basemaps.cartocdn.com/${dark ? "dark_all" : "rastertiles/voyager"}/{z}/{x}/{y}{r}.png`,
-          {
-            maxZoom: 19,
-            subdomains: "abcd",
-            attribution:
-              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-          },
-        )
+        .tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          className: "list-map-tiles",
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        })
         .addTo(m);
       map.current = m;
       // Redraw pins now that the map exists.

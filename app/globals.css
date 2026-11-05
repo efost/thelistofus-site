@@ -276,6 +276,11 @@
   font-family: var(--font-body);
   background: var(--surface-secondary);
 }
+@media (prefers-color-scheme: dark) {
+  .list-map-tiles {
+    filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.6);
+  }
+}
 .leaflet-control-attribution {
   font-size: 10px;
 }
