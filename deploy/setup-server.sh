@@ -16,6 +16,7 @@
 #
 # Safe to re-run. Pass --new-key to replace the deploy key.
 set -euo pipefail
+trap 'echo "✗ Stopped at line $LINENO of setup-server.sh" >&2' ERR
 
 REPO_URL=https://github.com/efost/thelistofus-site.git
 PORT=3000
@@ -70,23 +71,41 @@ app_home="$(getent passwd "$app_user" | cut -d: -f6)"
 
 # ── 2. Settings ───────────────────────────────────────────────────────────────────
 say "Site settings: /etc/thelistofus.env"
-if [[ ! -f /etc/thelistofus.env ]]; then
-  {
-    echo "# thelistofus.com settings, read by the build and the service."
-    echo "NODE_ENV=production"
-    echo "PORT=$PORT"
-    echo "HOSTNAME=127.0.0.1"
-    for f in .env .env.production .env.local .env.production.local; do
-      [[ -n "$legacy_dir" && -f "$legacy_dir/$f" ]] && grep -E '^[A-Z0-9_]+=' "$legacy_dir/$f" || true
-    done | grep -vE '^(NODE_ENV|PORT|HOSTNAME)=' | awk -F= '!seen[$1]++'
-  } >/etc/thelistofus.env
-  chmod 600 /etc/thelistofus.env
-  echo "Copied from $legacy_dir/.env*"
+touch /etc/thelistofus.env
+chmod 600 /etc/thelistofus.env
+add_setting() { # KEY=value, only if KEY isn't set yet
+  grep -q "^${1%%=*}=" /etc/thelistofus.env || printf '%s\n' "$1" >>/etc/thelistofus.env
+}
+add_setting "NODE_ENV=production"
+add_setting "PORT=$PORT"
+add_setting "HOSTNAME=127.0.0.1"
+# The old site's settings (Firebase config), from its .env files.
+for f in .env .env.production .env.local .env.production.local; do
+  [[ -n "$legacy_dir" && -f "$legacy_dir/$f" ]] || continue
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    line="${line#export }"
+    if [[ "$line" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; then add_setting "$line"; fi
+  done <"$legacy_dir/$f"
+  echo "Copied settings from $legacy_dir/$f"
+done
+# ...and any set on its systemd unit.
+if [[ -n "$legacy_unit" ]]; then
+  for word in $(systemctl show "$legacy_unit" -p Environment --value); do
+    if [[ "$word" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; then add_setting "$word"; fi
+  done
+  for f in $(systemctl show "$legacy_unit" -p EnvironmentFiles --value | grep -oE '/[^ ]+'); do
+    [[ -f "$f" && "$f" != /etc/thelistofus.env ]] || continue
+    while IFS= read -r line || [[ -n "$line" ]]; do
+      line="${line#export }"
+      if [[ "$line" =~ ^[A-Za-z_][A-Za-z0-9_]*= ]]; then add_setting "$line"; fi
+    done <"$f"
+    echo "Copied settings from $f"
+  done
 fi
 if ! grep -q '^GOOGLE_PLACES_API_KEY=.' /etc/thelistofus.env; then
   read -rsp "Google Places API key for place photos (Enter to skip): " key </dev/tty || key=""
   echo
-  [[ -n "$key" ]] && echo "GOOGLE_PLACES_API_KEY=$key" >>/etc/thelistofus.env
+  if [[ -n "$key" ]]; then echo "GOOGLE_PLACES_API_KEY=$key" >>/etc/thelistofus.env; fi
 fi
 grep -q '^NEXT_PUBLIC_FIREBASE_PROJECT_ID=.' /etc/thelistofus.env ||
   echo "⚠ No Firebase settings found. Add the NEXT_PUBLIC_FIREBASE_* lines to /etc/thelistofus.env."
@@ -170,7 +189,7 @@ else
 fi
 printf '\nDEPLOY_KNOWN_HOSTS\n'
 for f in /etc/ssh/ssh_host_ed25519_key.pub /etc/ssh/ssh_host_ecdsa_key.pub; do
-  [[ -f "$f" ]] && echo "$host_ip $(cut -d' ' -f1,2 "$f")"
+  if [[ -f "$f" ]]; then echo "$host_ip $(cut -d' ' -f1,2 "$f")"; fi
 done
 echo
 echo "Then merge website-redesign into main (or re-run the Deploy workflow) to go live."

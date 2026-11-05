@@ -23,7 +23,7 @@ sha="${1:-}"
 exec 9>/run/lock/thelistofus-deploy.lock
 flock -n 9 || die "Another deploy is running."
 
-as_app() { runuser -u "$APP_USER" -- env HOME="$APP_HOME" PATH="$NODE_DIR:/usr/local/bin:/usr/bin:/bin" "$@"; }
+as_app() { runuser -u "$APP_USER" -- env HOME="$BASE" PATH="$NODE_DIR:/usr/local/bin:/usr/bin:/bin" "$@"; }
 
 # 1. Fetch, and only deploy commits that are on main.
 log "Fetching $REPO"
@@ -45,7 +45,7 @@ if [[ ! -f "$rel/.built" ]]; then
     # shellcheck source=/dev/null
     source "$ENV_FILE" # NEXT_PUBLIC_* are baked in at build time
     set +a
-    runuser -p -u "$APP_USER" -- env HOME="$APP_HOME" PATH="$NODE_DIR:/usr/local/bin:/usr/bin:/bin" \
+    runuser -p -u "$APP_USER" -- env HOME="$BASE" PATH="$NODE_DIR:/usr/local/bin:/usr/bin:/bin" \
       NEXT_TELEMETRY_DISABLED=1 bash -c "
         set -e
         cd '$rel'
