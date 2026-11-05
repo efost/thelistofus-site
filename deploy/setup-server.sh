@@ -175,7 +175,15 @@ chmod 600 "$ssh_dir/authorized_keys"
 
 if allow="$(sshd -T 2>/dev/null | awk '$1=="allowusers"{ $1=""; print }')" && [[ -n "$allow" ]] &&
   [[ " $allow " != *" $DEPLOY_USER "* ]]; then
-  echo "⚠ sshd only allows: $allow — add $DEPLOY_USER to AllowUsers and reload sshd."
+  # AllowUsers adds up across lines, so this lets the deploy user in alongside the others.
+  echo "AllowUsers $DEPLOY_USER" >/etc/ssh/sshd_config.d/60-thelistofus-deploy.conf
+  if sshd -t; then
+    systemctl reload ssh
+    echo "Added $DEPLOY_USER to sshd's AllowUsers."
+  else
+    rm -f /etc/ssh/sshd_config.d/60-thelistofus-deploy.conf
+    echo "⚠ sshd only allows:$allow. Add $DEPLOY_USER to AllowUsers and reload sshd."
+  fi
 fi
 
 # ── 6. What to paste into GitHub ──────────────────────────────────────────────────
