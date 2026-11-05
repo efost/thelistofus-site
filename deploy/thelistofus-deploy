@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+# Builds and switches thelistofus.com to one commit on main. Runs as root, started by
+# the deploy key's forced command (deploy-gate) through a single sudoers rule.
+# Installed to /usr/local/sbin/thelistofus-deploy by setup-server.sh.
+#
+#   thelistofus-deploy <40-char sha>
+#
+# Each release is built in its own folder, the `current` link is switched to it, the
+# service restarts, and if the site doesn't answer the previous release comes back.
+set -euo pipefail
+
+CONF=/etc/thelistofus-deploy.conf
+ENV_FILE=/etc/thelistofus.env
+# shellcheck source=/dev/null
+source "$CONF" # APP_USER APP_HOME NODE_DIR BASE REPO SERVICE PORT AASA_DIR LEGACY_UNIT LEGACY_PM2
+
+log() { printf '▸ %s\n' "$*"; }
+die() { printf '✗ %s\n' "$*" >&2; exit 1; }
+
+sha="${1:-}"
+[[ "$sha" =~ ^[0-9a-f]{40}$ ]] || die "usage: thelistofus-deploy <40-char sha>"
+
+exec 9>/run/lock/thelistofus-deploy.lock
+flock -n 9 || die "Another deploy is running."
+
+as_app() { runuser -u "$APP_USER" -- env HOME="$APP_HOME" PATH="$NODE_DIR:/usr/local/bin:/usr/bin:/bin" "$@"; }
+
+# 1. Fetch, and only deploy commits that are on main.
+log "Fetching $REPO"
+as_app git --git-dir="$BASE/repo.git" fetch --quiet --prune origin "+refs/heads/main:refs/heads/main"
+as_app git --git-dir="$BASE/repo.git" merge-base --is-ancestor "$sha" main ||
+  die "$sha isn't on main."
+
+rel="$BASE/releases/$sha"
+app="$rel/.next/standalone"
+
+# 2. Build (skipped when this commit was already built, e.g. a re-run).
+if [[ ! -f "$rel/.built" ]]; then
+  log "Building $sha"
+  rm -rf "$rel"
+  install -d -o "$APP_USER" -g "$APP_USER" "$rel"
+  as_app bash -c "git --git-dir='$BASE/repo.git' archive '$sha' | tar -x -C '$rel'"
+  (
+    set -a
+    # shellcheck source=/dev/null
+    source "$ENV_FILE" # NEXT_PUBLIC_* are baked in at build time
+    set +a
+    runuser -p -u "$APP_USER" -- env HOME="$APP_HOME" PATH="$NODE_DIR:/usr/local/bin:/usr/bin:/bin" \
+      NEXT_TELEMETRY_DISABLED=1 bash -c "
+        set -e
+        cd '$rel'
+        npm ci --no-audit --no-fund --loglevel=error
+        npm run build
+        cp -r public .next/standalone/
+        cp -r .next/static .next/standalone/.next/
+        rm -rf node_modules .next/cache
+        touch .built"
+  )
+fi
+[[ -f "$app/server.js" ]] || die "Build didn't produce .next/standalone/server.js"
+
+# 3. Switch.
+previous="$(readlink -f "$BASE/current" 2>/dev/null || true)"
+ln -sfn "$app" "$BASE/current.next"
+mv -Tf "$BASE/current.next" "$BASE/current"
+
+# The first deploy takes over from the old setup, which still holds the port.
+took_over=""
+if [[ -n "${LEGACY_UNIT:-}" ]] && systemctl is-active --quiet "$LEGACY_UNIT"; then
+  log "Stopping the old $LEGACY_UNIT"
+  systemctl disable --now "$LEGACY_UNIT"
+  took_over=unit
+elif [[ -n "${LEGACY_PM2:-}" ]] && as_app pm2 describe "$LEGACY_PM2" >/dev/null 2>&1; then
+  log "Stopping the old pm2 process $LEGACY_PM2"
+  as_app pm2 stop "$LEGACY_PM2" >/dev/null
+  took_over=pm2
+fi
+
+log "Restarting $SERVICE"
+systemctl enable --quiet "$SERVICE"
+systemctl restart "$SERVICE"
+
+# 4. Check it answers; put things back if it doesn't.
+healthy=""
+for _ in $(seq 1 40); do
+  if curl -fsS -o /dev/null "http://127.0.0.1:$PORT/api/version"; then healthy=yes; break; fi
+  sleep 1
+done
+
+if [[ -z "$healthy" ]]; then
+  echo "✗ The new build didn't answer on port $PORT. Rolling back." >&2
+  journalctl -u "$SERVICE" -n 30 --no-pager >&2 || true
+  if [[ -n "$previous" && -d "$previous" ]]; then
+    ln -sfn "$previous" "$BASE/current.next" && mv -Tf "$BASE/current.next" "$BASE/current"
+    systemctl restart "$SERVICE"
+  else
+    systemctl stop "$SERVICE"
+    systemctl disable --quiet "$SERVICE" || true
+    rm -f "$BASE/current"
+    case "$took_over" in
+      unit) systemctl enable --now "$LEGACY_UNIT" ;;
+      pm2) as_app pm2 start "$LEGACY_PM2" >/dev/null ;;
+    esac
+  fi
+  exit 1
+fi
+
+# The old setup is retired for good once the new one is up.
+case "$took_over" in
+  unit) sed -i 's/^LEGACY_UNIT=.*/LEGACY_UNIT=/' "$CONF" ;;
+  pm2)
+    as_app pm2 delete "$LEGACY_PM2" >/dev/null && as_app pm2 save >/dev/null || true
+    sed -i 's/^LEGACY_PM2=.*/LEGACY_PM2=/' "$CONF"
+    ;;
+esac
+
+# nginx serves the app-link file itself from $AASA_DIR; keep it in step with the app.
+install -d "$AASA_DIR/.well-known"
+curl -fsS "http://127.0.0.1:$PORT/.well-known/apple-app-site-association" \
+  -o "$AASA_DIR/.well-known/apple-app-site-association.new" &&
+  mv -f "$AASA_DIR/.well-known/apple-app-site-association.new" \
+    "$AASA_DIR/.well-known/apple-app-site-association"
+
+# 5. Keep the three newest releases plus whatever is live.
+live="$(readlink -f "$BASE/current")"
+ls -1dt "$BASE"/releases/*/ 2>/dev/null | tail -n +4 | while read -r old; do
+  [[ "$live" == "${old%/}"* ]] || rm -rf "$old"
+done
+
+log "Live: $sha"

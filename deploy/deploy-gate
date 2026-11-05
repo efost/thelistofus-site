@@ -1,0 +1,15 @@
+#!/bin/sh
+# Forced command for the thelistofus-deploy SSH key (see authorized_keys). The key can
+# do exactly one thing: ask for a commit on main to be deployed.
+set -euf
+# shellcheck disable=SC2086  # split "deploy <sha>" into words on purpose
+set -- ${SSH_ORIGINAL_COMMAND:-}
+if [ "$#" -ne 2 ] || [ "$1" != deploy ]; then
+  echo "This key can only run: deploy <commit sha>" >&2
+  exit 1
+fi
+case "$2" in
+  *[!0-9a-f]* | "") echo "Not a commit sha: $2" >&2; exit 1 ;;
+esac
+[ "${#2}" -eq 40 ] || { echo "Use the full 40-character sha" >&2; exit 1; }
+exec sudo -n /usr/local/sbin/thelistofus-deploy "$2"

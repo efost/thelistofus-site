@@ -1,0 +1,68 @@
+name: Deploy thelistofus.com
+
+# Every push to main is built and switched to on the Droplet. The deploy key can only
+# run `deploy <sha>` there (see deploy/deploy-gate), which builds that commit, restarts
+# the site and rolls back if it doesn't come up. One-time server setup:
+# deploy/setup-server.sh.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-thelistofus
+  cancel-in-progress: false
+
+env:
+  HOST: 143.198.147.77
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check the deploy secrets are set
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          if [ -z "$DEPLOY_SSH_KEY" ] || [ -z "$DEPLOY_KNOWN_HOSTS" ]; then
+            echo "::error::Add DEPLOY_SSH_KEY and DEPLOY_KNOWN_HOSTS (printed by deploy/setup-server.sh) as repository secrets."
+            exit 1
+          fi
+
+      - name: Set up SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Build and switch on the Droplet
+        run: |
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o ServerAliveInterval=30 "thelistofus-deploy@${HOST}" "deploy ${GITHUB_SHA}"
+
+      - name: Check thelistofus.com is serving this commit
+        run: |
+          for i in $(seq 1 12); do
+            live=$(curl -fsS https://thelistofus.com/api/version | python3 -c 'import json,sys;print(json.load(sys.stdin)["commit"])' || true)
+            [ "$live" = "$GITHUB_SHA" ] && { echo "thelistofus.com is serving $GITHUB_SHA."; exit 0; }
+            sleep 5
+          done
+          echo "::error::thelistofus.com is serving ${live:-nothing}, not $GITHUB_SHA"
+          exit 1
+
+      - name: Check the app-link file
+        run: curl -fsS https://thelistofus.com/.well-known/apple-app-site-association | python3 -m json.tool
+
+      - name: Remove the key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

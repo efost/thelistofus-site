@@ -81,6 +81,28 @@ one lookup a month. `/api/cover/:listId` serves a list's chosen cover photo.
 
 List and item pages are cached and re-read from Firestore at most once a minute.
 
+## Deploy
+
+Pushing to `main` deploys (`.github/workflows/deploy.yml`). The workflow SSHes to the
+Droplet as `thelistofus-deploy`, whose key can only run `deploy <sha>`. On the server,
+`/usr/local/sbin/thelistofus-deploy` builds that commit in
+`/srv/apps/thelistofus-web/releases/<sha>`, points `current` at it, restarts the
+`thelistofus-web` service (port 3000, behind nginx) and rolls back if it doesn't answer.
+The workflow then checks `https://thelistofus.com/api/version` reports the new commit.
+
+Settings live on the server in `/etc/thelistofus.env` (Firebase config, Places key,
+`PORT`), not in GitHub. To re-deploy without a new commit, run the workflow from the
+Actions tab.
+
+One-time setup (already done once; re-run any time, it's idempotent):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/efost/thelistofus-site/main/deploy/setup-server.sh | sudo bash
+```
+
+It prints the two repository secrets the workflow needs, `DEPLOY_SSH_KEY` and
+`DEPLOY_KNOWN_HOSTS`.
+
 ## Develop
 
 ```bash
