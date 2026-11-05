@@ -1,0 +1,28 @@
+import Link from "next/link";
+import { SITE_NAME } from "@/lib/site";
+import AppIcon from "./AppIcon";
+import GetAppButton from "./GetAppButton";
+
+export default function SiteHeader({ showExample = false }: { showExample?: boolean }) {
+  return (
+    <header className="sticky top-0 z-40 border-b border-hairline bg-surface/85 backdrop-blur-xl backdrop-saturate-150">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
+        <Link href="/" className="flex items-center gap-2.5" aria-label={`${SITE_NAME} home`}>
+          <AppIcon size={30} />
+          <span className="font-heading text-[19px] tracking-[-0.01em]">{SITE_NAME}</span>
+        </Link>
+        <nav className="flex items-center gap-5">
+          {showExample && (
+            <Link
+              href="/list/example"
+              className="hidden font-heading text-[15px] text-muted transition-colors hover:text-ink sm:inline"
+            >
+              See an example
+            </Link>
+          )}
+          <GetAppButton size="sm" />
+        </nav>
+      </div>
+    </header>
+  );
+}

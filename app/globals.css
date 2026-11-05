@@ -1,110 +1,315 @@
 @import "tailwindcss";
 
-@layer theme {
+/* The List design system tokens (see the "The List" design system), light and dark.
+   Values match Theme.swift so the site and the app read as one product. */
+:root {
+  --brand-blue: #094aab;
+  --brand-purple: #9e09ab;
+  --on-brand: #ffffff;
+  --check-blue: #027aff;
+  --link: #0a6be0;
+  --ink: #000000;
+  --ink-secondary: rgba(60, 60, 67, 0.6);
+  --muted: #636366;
+  --surface: #ffffff;
+  --surface-secondary: #f2f2f7;
+  --surface-tint: rgba(9, 74, 171, 0.08);
+  --hairline: rgba(60, 60, 67, 0.18);
+  --done-gray: #aeaeb2;
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.09);
+  --shadow-float: 0 18px 50px -12px rgba(16, 24, 64, 0.22), 0 4px 14px rgba(0, 0, 0, 0.06);
+  --fill-gradient: linear-gradient(180deg, #094aab, #9e09ab);
+  --progress-gradient: linear-gradient(90deg, #094aab, #9e09ab);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
   :root {
-    /* Spacing scale - v4 uses a single --spacing variable */
-    --spacing: 0.25rem;
-
-    /* Color palette */
-    --color-background: #ffffff;
-    --color-background-secondary: #f2f2f7;
-    --color-foreground: #000000;
-    --color-foreground-secondary: #6d6d70;
-    --color-foreground-tertiary: #8e8e93;
-
-    /* Brand colors */
-    --color-brand-blue: #094aab;
-    --color-brand-purple: #9e09ab;
-    --color-brand-blue-light: #6496ff;
-    --color-brand-purple-light: #c864ff;
-
-    /* Shadows */
-    --shadow-light: 0 2px 8px oklch(0 0 0 / 0.09);
-    --shadow-dark: 0 2px 8px oklch(100% 0 0 / 0.1);
-
-    /* Ultra-soft feathered shadows */
-    --shadow-feathered: 0 8px 32px -8px rgba(0, 0, 0, 0.08),
-      0 2px 16px -4px rgba(0, 0, 0, 0.04);
-    --shadow-feathered-lg: 0 16px 48px -12px rgba(0, 0, 0, 0.12),
-      0 8px 24px -8px rgba(0, 0, 0, 0.06);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --color-background: #000000;
-      --color-background-secondary: #1c1c1e;
-      --color-foreground: #ffffff;
-      --color-foreground-secondary: #8e8e93;
-      --color-foreground-tertiary: #6d6d70;
-
-      /* Dark mode shadows */
-      --shadow-feathered: 0 8px 32px -8px rgba(0, 0, 0, 0.25),
-        0 2px 16px -4px rgba(0, 0, 0, 0.15);
-      --shadow-feathered-lg: 0 16px 48px -12px rgba(0, 0, 0, 0.35),
-        0 8px 24px -8px rgba(0, 0, 0, 0.2);
-    }
+    --brand-blue: #6496ff;
+    --brand-purple: #c864ff;
+    --link: #4c9dff;
+    --ink: #ffffff;
+    --ink-secondary: rgba(235, 235, 245, 0.6);
+    --muted: #98989d;
+    --surface: #000000;
+    --surface-secondary: #1c1c1e;
+    --surface-tint: rgba(100, 150, 255, 0.14);
+    --hairline: rgba(235, 235, 245, 0.18);
+    --done-gray: #636366;
+    --shadow-card: 0 2px 8px rgba(255, 255, 255, 0.08);
+    --shadow-float: 0 18px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    color-scheme: dark;
   }
 }
 
-@layer utilities {
-  .shadow-feathered {
-    box-shadow: var(--shadow-feathered);
-  }
+@theme inline {
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-purple: var(--brand-purple);
+  --color-check: var(--check-blue);
+  --color-link: var(--link);
+  --color-ink: var(--ink);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-surface-secondary: var(--surface-secondary);
+  --color-surface-tint: var(--surface-tint);
+  --color-hairline: var(--hairline);
+  --color-done: var(--done-gray);
 
-  .shadow-feathered-lg {
-    box-shadow: var(--shadow-feathered-lg);
-  }
+  --font-heading: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+
+  --shadow-card: var(--shadow-card);
+  --shadow-float: var(--shadow-float);
 }
 
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
   body {
-    font-family: "Omnes", "Inter", "SF Pro Display", -apple-system,
-      BlinkMacSystemFont, sans-serif;
-    font-weight: 500; /* Never go below 500 */
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
-
-  /* Reset to prevent light font weights */
-  * {
-    font-weight: inherit;
-  }
-
-  /* Override any potential light weights from Tailwind */
-  .font-thin,
-  .font-extralight,
-  .font-light {
-    font-weight: 500 !important;
-  }
-
-  /* Ensure all headings are properly weighted */
+  /* Bricolage Bold for every heading and name. */
   h1,
   h2,
   h3,
-  h4,
-  h5,
-  h6 {
-    font-weight: 600;
+  h4 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--brand-blue) 22%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--check-blue);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Primary action: the brand gradient with a white label (light stops in both modes,
+     since white on the dark-mode stops is only 2.9:1). */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 22px;
+    border-radius: var(--radius-xl);
+    background: var(--fill-gradient);
+    color: #fff;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 17px;
+    transition:
+      transform 120ms ease,
+      box-shadow 160ms ease,
+      filter 160ms ease;
+    box-shadow: 0 6px 18px -6px rgba(94, 20, 160, 0.55);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 10px 26px -8px rgba(94, 20, 160, 0.6);
+  }
+  .btn-primary:active {
+    transform: scale(0.98);
   }
 
-  /* Ensure all text elements have proper weights */
-  p,
-  span,
-  div {
-    font-weight: 500;
+  /* Grey pill (sheet buttons, quiet actions). */
+  .btn-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    background: var(--surface-secondary);
+    color: var(--ink);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 15px;
+    transition: opacity 120ms ease;
+  }
+  .btn-pill:hover {
+    opacity: 0.8;
   }
 
-  /* Override any Tailwind classes that might add light weights */
-  .text-xs,
-  .text-sm,
-  .text-base,
-  .text-lg,
-  .text-xl,
-  .text-2xl,
-  .text-3xl,
-  .text-4xl,
-  .text-5xl,
-  .text-6xl {
-    font-weight: inherit;
+  /* Secondary actions ("Open in Maps"): outlined capsule in the tint colour. */
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 38px;
+    padding: 0 15px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--link) 40%, transparent);
+    color: var(--link);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 15px;
+    transition: background-color 120ms ease;
+  }
+  .btn-outline:hover {
+    background: color-mix(in srgb, var(--link) 8%, transparent);
+  }
+
+  /* Filter chips: selected is solid ink, unselected is outlined. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 8px 0 16px;
+    border-radius: 999px;
+    border: 1px solid var(--hairline);
+    font-size: 16px;
+    color: var(--ink);
+    white-space: nowrap;
+    transition:
+      background-color 120ms ease,
+      color 120ms ease;
+  }
+  .chip[aria-pressed="true"],
+  .chip[aria-selected="true"] {
+    background: var(--ink);
+    color: var(--surface);
+    border-color: var(--ink);
+  }
+  .chip-count {
+    min-width: 30px;
+    height: 26px;
+    padding: 0 8px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 13px;
+    background: var(--surface-secondary);
+    color: var(--ink);
+  }
+  .chip[aria-pressed="true"] .chip-count,
+  .chip[aria-selected="true"] .chip-count {
+    background: color-mix(in srgb, var(--surface) 18%, transparent);
+    color: var(--surface);
+  }
+
+  .icon-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: var(--surface-secondary);
+    color: var(--ink);
+    transition: opacity 120ms ease;
+  }
+  .icon-circle:hover {
+    opacity: 0.8;
+  }
+
+  .section-label {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--muted);
+  }
+
+  .progress-track {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--surface-secondary);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--progress-gradient);
+  }
+
+  .prose-page h2 {
+    font-size: 22px;
+    margin: 36px 0 10px;
+  }
+  .prose-page p,
+  .prose-page li {
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+  .prose-page ul {
+    list-style: disc;
+    padding-left: 22px;
+  }
+  .prose-page a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+/* Leaflet map: our own pins and quieter controls. */
+.leaflet-container {
+  font-family: var(--font-body);
+  background: var(--surface-secondary);
+}
+.leaflet-control-attribution {
+  font-size: 10px;
+}
+.list-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 4px;
+  transform: rotate(-45deg);
+  background: var(--fill-gradient);
+  border: 2px solid #fff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.list-pin span {
+  transform: rotate(45deg);
+  font-size: 14px;
+  line-height: 1;
+}
+.list-pin.is-done {
+  background: #8e8e93;
+}
+.list-pin.is-active {
+  outline: 3px solid var(--check-blue);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

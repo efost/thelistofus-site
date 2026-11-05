@@ -1,207 +1,138 @@
-import { calculateProgress, getListById } from "@/lib/lists";
-import { Metadata } from "next";
-import Image from "next/image";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import AppDeepLink from "./components/AppDeepLink";
-import ListItems from "./components/ListItems";
-import StickyBanner from "./components/StickyBanner";
+import { AvatarStack } from "@/components/Avatar";
+import CoverCollage from "@/components/CoverCollage";
+import { photoURL } from "@/components/ItemRow";
+import { JoinBar, JoinCard } from "@/components/JoinPrompt";
+import SiteFooter from "@/components/SiteFooter";
+import SiteHeader from "@/components/SiteHeader";
+import { getSharedList, peopleSentence, progressPercent } from "@/lib/lists";
+import { SAMPLE_LIST_ID } from "@/lib/sample";
+import { APP_STORE_ID, SITE_URL, listPath } from "@/lib/site";
+import ListView from "./ListView";
 
-interface ListPageProps {
-  params: Promise<{ id: string }>;
+// Lists change as people add and check things off; re-read at most once a minute.
+export const revalidate = 60;
+
+// Pages are built the first time someone opens them, then cached (see revalidate).
+export function generateStaticParams() {
+  return [{ id: SAMPLE_LIST_ID }];
 }
 
-export async function generateMetadata({
-  params,
-}: ListPageProps): Promise<Metadata> {
+type Props = { params: Promise<{ id: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const listData = await getListById(id);
+  const list = await getSharedList(id);
+  if (!list) return { title: "List not found", robots: { index: false } };
 
-  if (!listData) {
-    return {
-      title: "List Not Found",
-      description: "The requested list could not be found.",
-    };
-  }
-
-  const { name, ownerName } = listData;
-  const progress = calculateProgress(listData);
-
+  const people = peopleSentence(list);
+  const description =
+    list.description ||
+    `${list.done} of ${list.total} done${people ? ` · ${people}` : ""} · A shared list on The List`;
+  const url = `${SITE_URL}${listPath(id)}`;
   return {
-    title: `${name} - The List of Us`,
-    description: `${name} | ${progress.completed}/${progress.total} completed (${progress.percentage}%) | Created by ${ownerName}`,
-    openGraph: {
-      title: name,
-      description: `${name} | ${progress.completed}/${progress.total} completed (${progress.percentage}%)`,
-      type: "website",
-      locale: "en_US",
-      url: `https://thelistofus.com/list/${id}`,
-      siteName: "The List of Us",
-      images: [
-        {
-          url: `/api/og?listId=${id}`,
-          width: 1200,
-          height: 630,
-          alt: `${name} - Bucket List`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: name,
-      description: `${name} | ${progress.completed}/${progress.total} completed (${progress.percentage}%)`,
-      images: [`/api/og?listId=${id}`],
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
+    title: list.name,
+    description,
+    alternates: { canonical: url },
+    openGraph: { title: list.name, description, url, type: "website" },
+    twitter: { card: "summary_large_image", title: list.name, description },
+    // Lists are shared by link, not published: keep them out of search results.
+    robots: id === SAMPLE_LIST_ID ? undefined : { index: false, follow: false },
+    ...(APP_STORE_ID ? { itunes: { appId: APP_STORE_ID, appArgument: url } } : {}),
   };
 }
 
-export default async function ListPage({ params }: ListPageProps) {
+export default async function ListPage({ params }: Props) {
   const { id } = await params;
-  const listData = await getListById(id);
+  const list = await getSharedList(id);
+  if (!list) notFound();
 
-  if (!listData) {
-    notFound();
-  }
+  const percent = progressPercent(list);
+  const people = peopleSentence(list);
+  // Photos for the collage: the first places on the list, tried in order.
+  const candidates = list.items
+    .filter((i) => i.isPlace)
+    .slice(0, 9)
+    .map((i) => ({ src: photoURL(i, "full")! }));
 
-  const progress = calculateProgress(listData);
-
-  return (
-    <div className="min-h-screen pb-24 lg:pb-0">
-      {/* Attempt to open app immediately */}
-      <AppDeepLink listId={id} />
-
-      {/* Header and List Header */}
-      <div className="relative lg:rounded-lg">
-        {/* Content */}
-        <div className="relative z-10">
-          {/* List Header */}
-          <div className="container mx-auto px-8 pb-8">
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white dark:bg-black rounded-lg shadow-feathered-lg p-8">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <h1 className="text-6xl md:text-4xl font-semibold mb-2 text-black dark:text-white leading-tight">
-                      {listData.name}
-                    </h1>
-                    <p className="text-base font-semibold mb-4 text-gray-700 dark:text-gray-300">
-                      Created by {listData.ownerName}
-                    </p>
-                    <div className="flex items-center space-x-4 text-sm font-medium text-gray-600 dark:text-gray-400">
-                      <span>
-                        Last updated{" "}
-                        {listData.lastModifiedAt.toLocaleDateString()}
-                      </span>
-                      <span>•</span>
-                      <span>
-                        {listData.collaborators.length}{" "}
-                        {listData.collaborators.length === 1
-                          ? "collaborator"
-                          : "collaborators"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="text-right flex flex-col items-end gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="text-2xl font-semibold bg-gradient-to-b from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-                        {progress.percentage}%
-                      </div>
-                      <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        {progress.completed} of {progress.total} completed
-                      </div>
-                    </div>
-                    <a
-                      href={`thelist://list/${id}`}
-                      className="hidden lg:inline-block bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 text-white font-semibold px-8 py-3 text-base rounded-lg shadow-sm hover:shadow-lg transition-all duration-300"
-                    >
-                      Join This List
-                    </a>
-                  </div>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="w-full h-3 mb-6 bg-gray-300 dark:bg-gray-700 bg-opacity-20 rounded-md">
-                  <div
-                    className="h-3 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 rounded-md transition-all duration-300"
-                    style={{ width: `${progress.percentage}%` }}
-                  />
-                </div>
-
-                {/* List Items */}
-                <ListItems items={listData.items} />
-              </div>
-            </div>
-          </div>
+  const cover = (
+    <CoverCollage
+      cover={list.hasCoverPhoto ? `/api/cover/${encodeURIComponent(id)}` : null}
+      candidates={candidates}
+      emoji={list.emoji || "📍"}
+      className="-mx-5 h-[340px] sm:mx-0 sm:h-[380px] sm:rounded-2xl"
+    >
+      <div className="absolute inset-x-5 bottom-5 text-white sm:inset-x-7 sm:bottom-6">
+        {id === SAMPLE_LIST_ID && (
+          <span className="mb-3 inline-block rounded-full bg-white/20 px-2.5 py-1 font-heading text-[13px] backdrop-blur">
+            Example list
+          </span>
+        )}
+        <h1 className="text-[34px] leading-[1.02] tracking-[-0.02em] [text-shadow:0_1px_12px_rgba(0,0,0,0.35)] sm:text-[44px]">
+          {list.name}
+        </h1>
+        {list.description && (
+          <p className="mt-2 max-w-lg text-[17px] text-white/85">{list.description}</p>
+        )}
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+          <span className="flex items-center gap-3">
+            {list.people.length > 0 && (
+              <AvatarStack
+                people={list.people}
+                extra={list.memberCount - list.people.length}
+                size={34}
+                ring="rgba(255,255,255,0.9)"
+              />
+            )}
+            {people && <span className="font-heading text-[16px]">{people}</span>}
+          </span>
+          <span
+            className="flex items-center gap-2.5 font-heading text-[16px]"
+            aria-label={`${list.done} of ${list.total} done`}
+          >
+            <span className="h-[6px] w-24 overflow-hidden rounded-full bg-white/35">
+              <span
+                className="block h-full rounded-full bg-white"
+                style={{ width: `${percent}%` }}
+              />
+            </span>
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden>
+              <circle cx="10" cy="10" r="10" fill="#fff" />
+              <path
+                d="M5.8 10.4 8.6 13l5.6-6"
+                stroke="#000"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            {list.done}/{list.total}
+          </span>
         </div>
       </div>
+    </CoverCollage>
+  );
 
-      {/* List Content */}
-      <main className="container mx-auto px-8 pt-0">
-        <div className="max-w-4xl mx-auto">
-          {/* App Download CTA */}
-          {/* <div className="text-center p-8 bg-gradient-to-b from-blue-700 to-purple-700 dark:from-blue-400 dark:to-purple-400 rounded-2xl lg:rounded-lg">
-            <h3 className="text-4xl font-semibold text-white mb-4 leading-tight">
-              Ready to Create Your Own List?
-            </h3>
-            <p className="text-base text-white/90 mb-6 tracking-wide leading-relaxed">
-              Join thousands of dreamers sharing their bucket lists and making
-              memories together.
-            </p>
-            <button className="bg-white dark:bg-black text-black dark:text-white font-semibold text-base px-8 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-              Download The List of Us
-            </button>
-          </div> */}
-
-          {/* Footer */}
-          <footer>
-            <div className="container mx-auto pt-4 pb-8">
-              <div className="flex flex-col md:flex-row justify-between items-center">
-                <div className="flex items-center space-x-2 mb-4 md:mb-0">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden shadow-md">
-                    <Image
-                      src="/the-list-of-us-icon.png"
-                      alt="The List of Us"
-                      width={32}
-                      height={32}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <span className="text-base font-semibold text-black dark:text-white">
-                    The List of Us
-                  </span>
-                </div>
-                <div className="flex items-center space-x-6">
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
-                  >
-                    Privacy Policy
-                  </a>
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
-                  >
-                    Terms of Service
-                  </a>
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
-                  >
-                    Support
-                  </a>
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    &copy; {new Date().getFullYear()} The List of Us. All rights
-                    reserved.
-                  </span>
-                </div>
-              </div>
-            </div>
-          </footer>
-        </div>
+  return (
+    <>
+      <SiteHeader />
+      <main className="mx-auto max-w-6xl px-5 pb-16 sm:pt-6">
+        <ListView
+          list={list}
+          cover={cover}
+          sidebar={
+            <JoinCard
+              listId={id}
+              title={`Join ${list.name}`}
+              body="Add your own places, check things off and say how they went. Everyone on the list sees it."
+            />
+          }
+        />
       </main>
-      <StickyBanner listId={id} />
-    </div>
+      <SiteFooter photoCredit />
+      <JoinBar listId={id} label="Get the app to join" />
+    </>
   );
 }

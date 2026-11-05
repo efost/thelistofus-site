@@ -1,32 +1,52 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import { APP_STORE_ID, SITE_NAME, SITE_URL, TAGLINE } from "@/lib/site";
 import "./globals.css";
 
+// The app's two faces (same files as the iOS app's Fonts folder).
+const bricolage = localFont({
+  src: "../fonts/TLBricolage-Bold.ttf",
+  weight: "700",
+  variable: "--font-bricolage",
+  display: "swap",
+});
+
+const dmSans = localFont({
+  src: "../fonts/TLDMSans-Regular.ttf",
+  weight: "400",
+  variable: "--font-dm-sans",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "The List of Us",
-  description:
-    "Share your dreams together - Create collaborative bucket lists with friends and family",
-  icons: {
-    icon: "/the-list-of-us-icon.png",
-    shortcut: "/the-list-of-us-icon.png",
-    apple: "/the-list-of-us-icon.png",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME}: shared lists of places to go`,
+    template: `%s · ${SITE_NAME}`,
   },
+  description: TAGLINE,
+  applicationName: SITE_NAME,
+  openGraph: {
+    siteName: SITE_NAME,
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: { card: "summary_large_image" },
+  // Safari's Smart App Banner, once the app has an App Store id.
+  ...(APP_STORE_ID ? { itunes: { appId: APP_STORE_ID } } : {}),
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="bg-gray-50 dark:bg-gray-900 text-black dark:text-white min-h-screen">
-        <div className="lg:flex lg:gap-8 lg:p-8 lg:max-w-7xl lg:mx-auto">
-          {/* <div className="lg:w-64 lg:flex-shrink-0">
-            <Navigation />
-          </div> */}
-          <main className="lg:flex-1 min-h-screen">{children}</main>
-        </div>
-      </body>
+    <html lang="en" className={`${bricolage.variable} ${dmSans.variable}`}>
+      <body className="min-h-dvh bg-surface text-ink">{children}</body>
     </html>
   );
 }

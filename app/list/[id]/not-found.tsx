@@ -1,47 +1,29 @@
 import Link from "next/link";
+import GetAppButton from "@/components/GetAppButton";
+import SiteFooter from "@/components/SiteFooter";
+import SiteHeader from "@/components/SiteHeader";
 
-export default function NotFound() {
+export default function ListNotFound() {
   return (
-    <div
-      className="min-h-screen flex items-center justify-center"
-      style={{ background: "var(--background-secondary)" }}
-    >
-      <div className="text-center max-w-md mx-auto px-4">
-        <div
-          className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8"
-          style={{ background: "var(--gradient)" }}
-        >
-          <span className="text-white text-3xl">?</span>
-        </div>
-
-        <h1
-          className="text-title mb-4 whitespace-nowrap"
-          style={{ color: "var(--foreground)" }}
-        >
-          List Not Found
-        </h1>
-
-        <p
-          className="text-big mb-8"
-          style={{ color: "var(--foreground-secondary)" }}
-        >
-          This bucket list doesn&apos;t exist or has been made private. Ask the
-          owner to share the correct link with you.
+    <>
+      <SiteHeader />
+      <main className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-5 py-20 text-center">
+        <span className="text-[56px]" aria-hidden>
+          📍
+        </span>
+        <h1 className="mt-4 text-[32px] leading-tight">This list isn&apos;t shared</h1>
+        <p className="mt-3 text-[17px] text-muted">
+          It may have been made private, or the link is incomplete. Ask whoever sent it to share it
+          again from the app.
         </p>
-
-        <div className="space-y-4">
-          <Link href="/" className="btn-primary block px-8 py-3 text-big">
-            Go to Homepage
+        <div className="mt-8 flex flex-col items-center gap-4">
+          <GetAppButton label="Make your own list" />
+          <Link href="/" className="font-heading text-[15px] text-link">
+            What is The List?
           </Link>
-
-          <p
-            className="text-body"
-            style={{ color: "var(--foreground-tertiary)" }}
-          >
-            or download The List of Us app to create your own
-          </p>
         </div>
-      </div>
-    </div>
+      </main>
+      <SiteFooter />
+    </>
   );
 }
