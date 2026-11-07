@@ -320,49 +320,44 @@
   outline-offset: 2px;
 }
 
-/* Hero headline word swaps (components/HeroHeadline.tsx). A roller: the old word
-   leaves fast, the new one arrives with a settle; the emoji pops as it lands. The slot
-   is clipped top and bottom only, so a leaving word is never cut off at the side. */
+/* Hero headline word swaps (components/HeroHeadline.tsx). The old word slides up and
+   fades as the new one slides up in; the emoji stays put and pops as the word lands.
+   The slot is clipped top and bottom only, so a leaving word is never cut off at the
+   side while the slot narrows. */
 .hero-slot {
   clip-path: inset(-0.06em -2em -0.14em -0.1em);
-  transition: width 420ms cubic-bezier(0.2, 0.9, 0.3, 1.05) 60ms;
+  transition: width 480ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 /* The emoji keeps a word space before the word. */
 .hero-pair > span:first-child:not(:only-child) {
   margin-right: 0.22em;
 }
 .hero-word-out {
-  animation: hero-word-out 260ms cubic-bezier(0.5, 0, 0.8, 0.4) both;
+  animation: hero-word-out 480ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .hero-word-in {
-  animation: hero-word-in 420ms cubic-bezier(0.2, 0.9, 0.3, 1.05) 60ms both;
+  animation: hero-word-in 480ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .hero-emoji-out {
   animation: hero-emoji-out 140ms ease-in both;
 }
 .hero-emoji-in {
-  animation: hero-emoji-in 260ms cubic-bezier(0.2, 0.9, 0.3, 1.15) 220ms both;
+  animation: hero-emoji-in 260ms cubic-bezier(0.2, 0.9, 0.3, 1.15) 200ms both;
 }
 @keyframes hero-word-out {
   from {
     transform: translateY(0);
     opacity: 1;
   }
-  70% {
-    opacity: 1;
-  }
   to {
-    transform: translateY(-0.7em);
+    transform: translateY(-1em);
     opacity: 0;
   }
 }
 @keyframes hero-word-in {
   from {
-    transform: translateY(0.7em);
+    transform: translateY(1em);
     opacity: 0;
-  }
-  30% {
-    opacity: 1;
   }
   to {
     transform: translateY(0);

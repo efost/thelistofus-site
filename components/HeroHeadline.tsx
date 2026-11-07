@@ -5,11 +5,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 // The headline cycles through what goes on a list: "All the 🥾 hikes you keep meaning to
 // take", "All the 🍺 bars you keep meaning to check out"…
 //
-// Each swap is a roller: the old word slides up and out, the new one slides up and in
-// behind it, the same distance, so they never overlap. The emoji stays put and pops
-// (a quick scale) as the new word lands; the verb rolls a beat after the noun. The slot
-// widens or narrows on the same curve as the arriving word, clipped vertically only so
-// the leaving word is never cut off at the side. Only the noun is coloured.
+// Each swap slides the old word up and out as the new one slides up in. The emoji stays
+// put and pops (a quick scale) as the new word lands; the verb changes a beat after the
+// noun. The slot widens or narrows on the same curve, clipped vertically only so the
+// leaving word is never cut off at the side. Only the noun is coloured.
 //
 // Screen readers get the plain sentence once; the moving parts are decorative. Nothing
 // moves under prefers-reduced-motion, off-screen, or in a hidden tab.
@@ -36,7 +35,7 @@ const FIRST = 4000;
 /** The verb changes this long after the noun. */
 const STAGGER = 160;
 /** Longest of the exit/entrance animations (globals.css), for cleaning up the old word. */
-const SWAP = 520;
+const SWAP = 480;
 
 type Word = { emoji?: string; text: string; color?: string };
 
