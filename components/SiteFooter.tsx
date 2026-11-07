@@ -14,7 +14,7 @@ export default function SiteFooter({
     <footer
       className={`site-footer relative ${joinBar ? "pb-24 lg:pb-0" : ""}`}
     >
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-10">
         <div className="max-w-sm">
           <Link href="/" className="flex items-center gap-2.5">
             <AppIcon size={28} />
@@ -22,7 +22,7 @@ export default function SiteFooter({
           </Link>
         </div>
         <nav
-          className="flex flex-wrap gap-x-7 gap-y-3 font-heading text-[15px]"
+          className="flex flex-wrap justify-end gap-x-5 gap-y-2 font-heading text-[15px] sm:gap-x-7"
           aria-label="Footer"
         >
           <Link href="/support" className="text-muted hover:text-ink">

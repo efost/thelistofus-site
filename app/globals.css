@@ -24,11 +24,11 @@
      eased fade rather than a straight one, so it has no visible bottom edge. */
   --footer-surface: var(--surface);
   --shadow-footer: linear-gradient(
-    rgba(16, 24, 64, 0.075),
-    rgba(16, 24, 64, 0.05) 10px,
-    rgba(16, 24, 64, 0.026) 26px,
-    rgba(16, 24, 64, 0.01) 46px,
-    rgba(16, 24, 64, 0) 70px
+    rgba(16, 24, 64, 0.045),
+    rgba(16, 24, 64, 0.028) 6px,
+    rgba(16, 24, 64, 0.012) 15px,
+    rgba(16, 24, 64, 0.004) 26px,
+    rgba(16, 24, 64, 0) 36px
   );
   --fill-gradient: linear-gradient(180deg, #094aab, #9e09ab);
   --progress-gradient: linear-gradient(90deg, #094aab, #9e09ab);
@@ -54,11 +54,11 @@
     /* On black a shadow has nothing to fall on, so the footer is lifted a touch. */
     --footer-surface: #111113;
     --shadow-footer: linear-gradient(
-      rgba(0, 0, 0, 0.95),
-      rgba(0, 0, 0, 0.6) 10px,
-      rgba(0, 0, 0, 0.3) 26px,
-      rgba(0, 0, 0, 0.1) 46px,
-      rgba(0, 0, 0, 0) 70px
+      rgba(0, 0, 0, 0.7),
+      rgba(0, 0, 0, 0.42) 6px,
+      rgba(0, 0, 0, 0.18) 15px,
+      rgba(0, 0, 0, 0.06) 26px,
+      rgba(0, 0, 0, 0) 36px
     );
     color-scheme: dark;
   }
