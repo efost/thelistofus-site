@@ -1,4 +1,4 @@
-import { APP_STORE_URL } from "@/lib/site";
+import { APP_STORE_URL, IS_ON_APP_STORE } from "@/lib/site";
 
 function AppleGlyph({ size = 18 }: { size?: number }) {
   return (
@@ -8,17 +8,22 @@ function AppleGlyph({ size = 18 }: { size?: number }) {
   );
 }
 
-/** The primary "get the app" action: the App Store, or the home page's download section until there is one. */
+/**
+ * The primary "get the app" action: the App Store, or until the app is there, the home
+ * page's waitlist (labelled "Join the waitlist" unless `preLaunchLabel` says otherwise).
+ */
 export default function GetAppButton({
   label,
+  preLaunchLabel,
   size = "md",
   className = "",
 }: {
   label?: string;
+  preLaunchLabel?: string;
   size?: "sm" | "md" | "lg";
   className?: string;
 }) {
-  const text = label ?? "Get the app";
+  const text = IS_ON_APP_STORE ? (label ?? "Get the app") : (preLaunchLabel ?? "Join the waitlist");
   const sizing =
     size === "sm"
       ? "!min-h-10 !px-4 !text-[15px] !rounded-full"

@@ -120,8 +120,7 @@ ask_setting() { # KEY "question" [visible]: asks only if KEY isn't set
   fi
 }
 ask_setting GOOGLE_PLACES_API_KEY "Google Places API key for place photos"
-ask_setting TURNSTILE_SECRET_KEY "Cloudflare Turnstile secret key (for the TestFlight link)"
-ask_setting TESTFLIGHT_URL "TestFlight public link (https://testflight.apple.com/join/...)" visible
+ask_setting TURNSTILE_SECRET_KEY "Cloudflare Turnstile secret key (for the waitlist form)"
 ask_setting MAPKIT_KEY_ID "MapKit JS key ID (10 characters, from the Apple Developer key)" visible
 if grep -q '^MAPKIT_KEY_ID=.' /etc/thelistofus.env; then
   add_setting "MAPKIT_TEAM_ID=8V5N4P9SRD"

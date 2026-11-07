@@ -1,5 +1,4 @@
 import Link from "next/link";
-import BetaInvite from "@/components/BetaInvite";
 import GetAppButton from "@/components/GetAppButton";
 import {
   AddPlaceCard,
@@ -11,6 +10,7 @@ import Phone from "@/components/mockups/Phone";
 import { ItemScreenMock, ListScreenMock } from "@/components/mockups/Screens";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import Waitlist from "@/components/Waitlist";
 import { CATEGORIES } from "@/lib/categories";
 import { SAMPLE_LIST_ID, sampleList } from "@/lib/sample";
 import { IS_ON_APP_STORE, TURNSTILE_SITE_KEY } from "@/lib/site";
@@ -47,7 +47,11 @@ export default function Home() {
                 with.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-                <GetAppButton size="lg" />
+                {IS_ON_APP_STORE || !TURNSTILE_SITE_KEY ? (
+                  <GetAppButton size="lg" />
+                ) : (
+                  <Waitlist siteKey={TURNSTILE_SITE_KEY} where="hero" align="start" />
+                )}
                 <Link
                   href={`/list/${SAMPLE_LIST_ID}`}
                   data-umami-event="example-list"
@@ -57,12 +61,8 @@ export default function Home() {
                   <span className="transition-transform group-hover:translate-x-0.5">→</span>
                 </Link>
               </div>
-              {!IS_ON_APP_STORE && (
-                <p className="mt-4 text-[15px] text-muted">
-                  {TURNSTILE_SITE_KEY
-                    ? "In beta on TestFlight. Coming soon to the App Store."
-                    : "Coming soon to the App Store."}
-                </p>
+              {!IS_ON_APP_STORE && !TURNSTILE_SITE_KEY && (
+                <p className="mt-4 text-[15px] text-muted">Coming soon to the App Store.</p>
               )}
             </div>
 
@@ -162,7 +162,7 @@ export default function Home() {
                   <span className="text-[15px] text-muted">For iPhone.</span>
                 </div>
               ) : TURNSTILE_SITE_KEY ? (
-                <BetaInvite siteKey={TURNSTILE_SITE_KEY} />
+                <Waitlist siteKey={TURNSTILE_SITE_KEY} where="footer" />
               ) : (
                 <span className="text-[15px] text-muted">
                   Coming soon to the App Store, for iPhone.

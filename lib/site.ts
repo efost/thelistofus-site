@@ -12,16 +12,12 @@ export const TAGLINE =
 /** Numeric App Store id, e.g. "6450000000". Empty until the app is live. */
 export const APP_STORE_ID = process.env.NEXT_PUBLIC_APP_STORE_ID ?? "";
 
-/**
- * Where "Get the app" goes: the App Store when there's an id, else the home page's
- * download section, which hands out the TestFlight link after a Turnstile check. The
- * TestFlight link itself is server-only (TESTFLIGHT_URL) and never in a page.
- */
+/** Where "Get the app" goes: the App Store when there's an id, else the home page's waitlist. */
 export const APP_STORE_URL = APP_STORE_ID
   ? `https://apps.apple.com/app/id${APP_STORE_ID}`
   : "/#get-the-app";
 
-/** Cloudflare Turnstile site key (public). Without it the beta section says "coming soon". */
+/** Cloudflare Turnstile site key (public), for the waitlist form. Without it, "coming soon". */
 export const TURNSTILE_SITE_KEY =
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAAF3JDoHZ9VH1JDdq";
 

@@ -59,10 +59,11 @@ NEXT_PUBLIC_FIREBASE_APP_ID=…
 # Place photos. Restricted to the Places API. Without it, items show their category emoji.
 GOOGLE_PLACES_API_KEY=…
 
-# The TestFlight beta link, handed out only after a Cloudflare Turnstile check
-# (POST /api/testflight, a few tries an hour per address). Never put it in a page.
+# The waitlist form's Cloudflare Turnstile check (POST /api/waitlist, a few tries an
+# hour per address). Addresses go to /srv/apps/thelistofus-web/data/waitlist.csv
+# (WAITLIST_FILE overrides it); read it with
+#   sudo cat /srv/apps/thelistofus-web/data/waitlist.csv
 TURNSTILE_SECRET_KEY=…
-TESTFLIGHT_URL=https://testflight.apple.com/join/…
 
 # Apple Maps (MapKit JS). A key with MapKit JS enabled; the private key is the .p8's
 # contents, with or without its BEGIN/END lines and line breaks.
@@ -75,7 +76,7 @@ Public ids are baked into the pages at build time. Set them as GitHub repository
 variables (Settings → Secrets and variables → Actions → Variables), or as defaults in
 `lib/site.ts`:
 
-- `NEXT_PUBLIC_TURNSTILE_SITE_KEY`: shows the "Join the beta" button.
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY`: shows the waitlist form.
 - `NEXT_PUBLIC_UMAMI_WEBSITE_ID`: Umami Cloud analytics (page views, plus clicks tagged
   `data-umami-event`).
 - `NEXT_PUBLIC_APP_STORE_ID`: once the app is live, switches "Get the app" to the App Store

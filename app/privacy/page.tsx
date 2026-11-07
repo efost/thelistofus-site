@@ -71,8 +71,11 @@ export default function PrivacyPage() {
       <p>
         thelistofus.com doesn&apos;t use cookies or ask you to sign in. It counts visits with Umami,
         which keeps no personal data and honors Do Not Track. Maps on the site are Apple Maps.
-        Before handing out the TestFlight beta link, it runs a Cloudflare Turnstile check to make
-        sure you&apos;re a person.
+      </p>
+      <p>
+        If you join the waitlist, we keep your email address only to tell you when the app is ready,
+        and never share it. Email us to be taken off. The form runs a Cloudflare Turnstile check
+        first to make sure you&apos;re a person.
       </p>
 
       <h2>Deleting your data</h2>

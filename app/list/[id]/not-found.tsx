@@ -17,7 +17,7 @@ export default function ListNotFound() {
           again from the app.
         </p>
         <div className="mt-8 flex flex-col items-center gap-4">
-          <GetAppButton label="Make your own list" />
+          <GetAppButton label="Make your own list" preLaunchLabel="Make your own list" />
           <Link href="/" className="font-heading text-[15px] text-link">
             What is The List?
           </Link>
