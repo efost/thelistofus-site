@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 // The headline cycles through what goes on a list. It opens on a plain "All the things
 // you keep meaning to check out." Then the noun slides aside to make room for an emoji,
@@ -12,6 +13,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 // The emoji and the noun each have a slot that widens or narrows to fit (clipped
 // vertically only, so a leaving word is never cut off at the side); the old word slides
 // up and out as the new one slides up in.
+//
+// Each category also has a faint scene behind the hero (public/hero/<slug>.webp): a photo
+// turned into a mask, filled with a tint of the noun's colour, so the wash shows through.
+// The scenes are drawn into #hero-backdrop (app/page.tsx) and cross-fade with each swap.
+// The opener has none.
 //
 // Screen readers get the plain sentence once; the moving parts are decorative. Nothing
 // moves under prefers-reduced-motion, off-screen, or in a hidden tab.
@@ -42,6 +48,58 @@ const FIRST = 5000;
 const OPEN = 520;
 /** Longest of the exit/entrance animations (globals.css), for cleaning up the old word. */
 const SWAP = 960;
+/** How long a scene takes to fade out (globals.css). */
+const SCENE_FADE = 1400;
+
+const sceneSrc = (thing: string) => `/hero/${thing.toLowerCase().replace(/ /g, "-")}.webp`;
+
+/** The current category's scene, cross-fading from the last one, behind the hero. */
+function Backdrop({ index }: { index: number }) {
+  const [target, setTarget] = useState<HTMLElement | null>(null);
+  const [previous, setPrevious] = useState<number | null>(null);
+  const shown = useRef(index);
+
+  useEffect(() => setTarget(document.getElementById("hero-backdrop")), []);
+
+  useEffect(() => {
+    if (shown.current === index) return;
+    setPrevious(shown.current);
+    shown.current = index;
+    const t = setTimeout(() => setPrevious(null), SCENE_FADE);
+    return () => clearTimeout(t);
+  }, [index]);
+
+  // Fetch the next scene during this one's hold, so it's ready to fade in. CSS masks are
+  // fetched in CORS mode, so the preload has to be too, or it's cached separately.
+  useEffect(() => {
+    const next = PHRASES[(index % (PHRASES.length - 1)) + 1];
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = sceneSrc(next.thing);
+  }, [index]);
+
+  if (!target) return null;
+  const scene = (i: number, phase: "in" | "out") =>
+    PHRASES[i].color ? (
+      <div
+        key={`${phase}-${i}`}
+        className={`hero-scene hero-scene-${phase}`}
+        style={
+          {
+            "--scene": `url(${sceneSrc(PHRASES[i].thing)})`,
+            "--scene-color": PHRASES[i].color,
+          } as React.CSSProperties
+        }
+      />
+    ) : null;
+  return createPortal(
+    <>
+      {previous !== null && scene(previous, "out")}
+      {scene(index, "in")}
+    </>,
+    target,
+  );
+}
 
 type Word = { text: string; color?: string; gap?: boolean };
 
@@ -186,6 +244,7 @@ export default function HeroHeadline({ className = "" }: { className?: string })
 
   return (
     <h1 ref={root} className={className}>
+      {animate && <Backdrop index={index} />}
       <span className="sr-only">All the things you keep meaning to check out.</span>
       {/* Fixed line breaks, so only the words move and the block never re-wraps. */}
       <span aria-hidden className="block">

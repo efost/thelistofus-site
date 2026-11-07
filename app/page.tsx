@@ -34,7 +34,9 @@ export default function Home() {
               "radial-gradient(40% 70% at 88% 18%, color-mix(in srgb, var(--brand-purple) 20%, transparent), transparent 70%), radial-gradient(38% 70% at 68% 96%, color-mix(in srgb, var(--brand-blue) 20%, transparent), transparent 70%), var(--surface-secondary)",
           }}
         >
-          <div className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-5 pb-0 pt-8 sm:pt-12 lg:grid-cols-[1fr_1fr] lg:gap-4 lg:py-12 xl:grid-cols-[1.1fr_1fr]">
+          {/* The headline's category scenes are drawn in here (HeroHeadline). */}
+          <div id="hero-backdrop" aria-hidden className="hero-backdrop" />
+          <div className="relative mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-5 pb-0 pt-8 sm:pt-12 lg:grid-cols-[1fr_1fr] lg:gap-4 lg:py-12 xl:grid-cols-[1.1fr_1fr]">
             <div className="max-w-xl">
               <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] sm:text-[52px] lg:text-[46px] xl:text-[55px]" />
               <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">

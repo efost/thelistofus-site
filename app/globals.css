@@ -23,6 +23,8 @@
   /* The footer sits behind the page, with the page's shadow falling across its top: an
      eased fade rather than a straight one, so it has no visible bottom edge. */
   --footer-surface: var(--surface);
+  /* How strongly the hero's category scenes show (HeroHeadline). */
+  --scene-opacity: 0.16;
   --shadow-footer: linear-gradient(
     rgba(16, 24, 64, 0.045),
     rgba(16, 24, 64, 0.028) 6px,
@@ -53,6 +55,7 @@
     --shadow-header: 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 40px -8px rgba(0, 0, 0, 0.9);
     /* On black a shadow has nothing to fall on, so the footer is lifted a touch. */
     --footer-surface: #111113;
+    --scene-opacity: 0.12;
     --shadow-footer: linear-gradient(
       rgba(0, 0, 0, 0.7),
       rgba(0, 0, 0, 0.42) 6px,
@@ -408,6 +411,57 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+/* The category scenes behind the hero (HeroHeadline): a mask cut from a photo, filled
+   with a tint of the noun's colour. The detail sits on the left of each, behind the
+   headline, and fades out before the phones. */
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--scene-opacity);
+}
+.hero-scene {
+  position: absolute;
+  inset: 0;
+  background-color: color-mix(in srgb, var(--scene-color) 45%, var(--ink));
+  -webkit-mask: var(--scene) left center / cover no-repeat;
+  mask: var(--scene) left center / cover no-repeat;
+  transform-origin: left center;
+}
+/* Stacked layout: keep the scene to the top, behind the headline and subhead. */
+@media (width < 64rem) {
+  .hero-scene {
+    -webkit-mask-size: auto 600px;
+    mask-size: auto 600px;
+    -webkit-mask-position: left top;
+    mask-position: left top;
+  }
+}
+/* A slow cross-fade, and the new scene settles as it arrives. */
+.hero-scene-in {
+  animation:
+    hero-scene-fade-in 1400ms ease both,
+    hero-scene-settle 6000ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.hero-scene-out {
+  animation: hero-scene-fade-out 1400ms ease both;
+}
+@keyframes hero-scene-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes hero-scene-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes hero-scene-settle {
+  from {
+    transform: scale(1.04);
   }
 }
 
