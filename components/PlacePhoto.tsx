@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PhotoCredit, { loadPhoto, type Credit } from "./PhotoCredit";
 
 // A place photo over the app's no-photo look (category emoji on a brand tint), so the
@@ -35,6 +35,16 @@ export default function PlacePhoto({
     url: string;
     credit: Credit | null;
   } | null>(null);
+
+  const img = useRef<HTMLImageElement>(null);
+
+  // A cached photo can finish loading before React attaches onLoad (the page is
+  // server-rendered), so check once mounted.
+  useEffect(() => {
+    if (credit || !src) return;
+    const el = img.current;
+    if (el?.complete) setState(el.naturalWidth > 0 ? "loaded" : "failed");
+  }, [credit, src]);
 
   useEffect(() => {
     if (!credit || !src) return;
@@ -71,6 +81,7 @@ export default function PlacePhoto({
       {imgSrc && state !== "failed" && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
+          ref={img}
           src={imgSrc}
           alt={alt}
           loading={eager || credit ? "eager" : "lazy"}
