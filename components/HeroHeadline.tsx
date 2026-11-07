@@ -6,8 +6,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 // take", "All the 🍺 bars you keep meaning to check out"…
 //
 // Each swap slides the old word up and out as the new one slides up in. The emoji stays
-// put and pops (a quick scale) as the new word lands; the verb changes a beat after the
-// noun. The slot widens or narrows on the same curve, clipped vertically only so the
+// put and pops (a quick scale) as the new word lands; the noun and verb change
+// together. The slot widens or narrows on the same curve, clipped vertically only so the
 // leaving word is never cut off at the side. Only the noun is coloured.
 //
 // Screen readers get the plain sentence once; the moving parts are decorative. Nothing
@@ -32,8 +32,6 @@ const PHRASES: { emoji: string; thing: string; verb: string; color: string }[] =
 const HOLD = 4000;
 /** Before the first swap, so the real headline registers. */
 const FIRST = 5000;
-/** The verb changes this long after the noun. */
-const STAGGER = 320;
 /** Longest of the exit/entrance animations (globals.css), for cleaning up the old word. */
 const SWAP = 960;
 
@@ -110,7 +108,6 @@ function Slot({ words, index }: { words: Word[]; index: number }) {
 
 export default function HeroHeadline({ className = "" }: { className?: string }) {
   const [index, setIndex] = useState(0);
-  const [verbIndex, setVerbIndex] = useState(0);
   const [animate, setAnimate] = useState(false);
   const root = useRef<HTMLHeadingElement>(null);
 
@@ -121,13 +118,10 @@ export default function HeroHeadline({ className = "" }: { className?: string })
     let first = true;
     let paused = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
-    let later: ReturnType<typeof setTimeout> | undefined;
     const tick = () => {
       if (paused) return;
       i = (i + 1) % PHRASES.length;
       setIndex(i);
-      const next = i;
-      later = setTimeout(() => setVerbIndex(next), STAGGER);
       timer = setTimeout(tick, HOLD);
     };
     const schedule = () => {
@@ -154,7 +148,6 @@ export default function HeroHeadline({ className = "" }: { className?: string })
     schedule();
     return () => {
       clearTimeout(timer);
-      clearTimeout(later);
       observer.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
     };
@@ -181,7 +174,7 @@ export default function HeroHeadline({ className = "" }: { className?: string })
         you keep meaning
       </span>
       <span aria-hidden className="block">
-        to {animate ? <Slot words={verbs} index={verbIndex} /> : verbs[0].text}.
+        to {animate ? <Slot words={verbs} index={index} /> : verbs[0].text}.
       </span>
     </h1>
   );
