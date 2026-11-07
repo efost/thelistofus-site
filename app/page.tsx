@@ -22,84 +22,81 @@ export default function Home() {
 
   return (
     <>
-      <SiteHeader showExample />
+      <SiteHeader showExample overlay />
       <main>
-        {/* Hero: a tinted panel that fills the first screen. The phones hang out of its
-            bottom edge, and the edge does the cropping, like a photo in a frame. */}
-        <section className="px-3 pt-3 sm:px-5 sm:pt-5">
-          <div
-            className="relative mx-auto flex max-w-6xl flex-col overflow-hidden rounded-[28px] sm:rounded-[36px] lg:min-h-[min(calc(100svh-7rem),680px)]"
-            style={{
-              background:
-                "radial-gradient(48% 60% at 86% 28%, color-mix(in srgb, var(--brand-purple) 20%, transparent), transparent 70%), radial-gradient(44% 60% at 72% 92%, color-mix(in srgb, var(--brand-blue) 20%, transparent), transparent 70%), var(--surface-secondary)",
-            }}
-          >
-            <div className="grid flex-1 items-center gap-10 px-6 pb-0 pt-10 sm:px-10 sm:pt-14 lg:grid-cols-[1fr_1fr] lg:gap-4 lg:px-12 lg:py-16 xl:grid-cols-[1.1fr_1fr] xl:px-14">
-              <div className="max-w-xl">
-                <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] sm:text-[52px] lg:text-[50px] xl:text-[58px]" />
-                <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
-                  Restaurants, bars, hikes and everything you&apos;ve been meaning to try, shared
-                  with the people you&apos;ll go with.
-                </p>
-                <div className="mt-8">
-                  {IS_ON_APP_STORE || !TURNSTILE_SITE_KEY ? (
-                    <GetAppButton size="lg" />
-                  ) : (
-                    <Waitlist
-                      siteKey={TURNSTILE_SITE_KEY}
-                      where="hero"
-                      align="start"
-                      aside={
-                        <Link
-                          href={`/list/${SAMPLE_LIST_ID}`}
-                          data-umami-event="example-list"
-                          className="group inline-flex items-center gap-1 font-heading text-[14px] text-link"
-                        >
-                          See a list in action
-                          <span className="transition-transform group-hover:translate-x-0.5">
-                            →
-                          </span>
-                        </Link>
-                      }
-                    />
-                  )}
-                </div>
-                {(IS_ON_APP_STORE || !TURNSTILE_SITE_KEY) && (
-                  <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[15px] text-muted">
-                    {!IS_ON_APP_STORE && <span>For iPhone. Coming soon to the App Store.</span>}
-                    <Link
-                      href={`/list/${SAMPLE_LIST_ID}`}
-                      data-umami-event="example-list"
-                      className="group inline-flex items-center gap-1 font-heading text-link"
-                    >
-                      See a list in action
-                      <span className="transition-transform group-hover:translate-x-0.5">→</span>
-                    </Link>
-                  </p>
+        {/* Hero: the wash runs edge to edge and up under the header; the phones hang out of
+            its bottom edge, which does the cropping. Content lines up with the sections
+            below (max-w-6xl, px-5). */}
+        <section
+          className="relative -mt-16 overflow-hidden pt-16 lg:min-h-[min(100svh,760px)] lg:flex lg:flex-col"
+          style={{
+            background:
+              "radial-gradient(40% 70% at 88% 18%, color-mix(in srgb, var(--brand-purple) 20%, transparent), transparent 70%), radial-gradient(38% 70% at 68% 96%, color-mix(in srgb, var(--brand-blue) 20%, transparent), transparent 70%), var(--surface-secondary)",
+          }}
+        >
+          <div className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-5 pb-0 pt-8 sm:pt-12 lg:grid-cols-[1fr_1fr] lg:gap-4 lg:py-12 xl:grid-cols-[1.1fr_1fr]">
+            <div className="max-w-xl">
+              <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] sm:text-[52px] lg:text-[50px] xl:text-[58px]" />
+              <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
+                Restaurants, bars, hikes and everything you&apos;ve been meaning to try, shared with
+                the people you&apos;ll go with.
+              </p>
+              <div className="mt-8">
+                {IS_ON_APP_STORE || !TURNSTILE_SITE_KEY ? (
+                  <GetAppButton size="lg" />
+                ) : (
+                  <Waitlist
+                    siteKey={TURNSTILE_SITE_KEY}
+                    where="hero"
+                    align="start"
+                    aside={
+                      <Link
+                        href={`/list/${SAMPLE_LIST_ID}`}
+                        data-umami-event="example-list"
+                        className="group inline-flex items-center gap-1 font-heading text-[14px] text-link"
+                      >
+                        See a list in action
+                        <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                      </Link>
+                    }
+                  />
                 )}
               </div>
+              {(IS_ON_APP_STORE || !TURNSTILE_SITE_KEY) && (
+                <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[15px] text-muted">
+                  {!IS_ON_APP_STORE && <span>For iPhone. Coming soon to the App Store.</span>}
+                  <Link
+                    href={`/list/${SAMPLE_LIST_ID}`}
+                    data-umami-event="example-list"
+                    className="group inline-flex items-center gap-1 font-heading text-link"
+                  >
+                    See a list in action
+                    <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                  </Link>
+                </p>
+              )}
+            </div>
 
-              {/* The phone cluster. On desktop it's pinned to the panel's bottom-right and
-                  runs past the edge; on phones it sits under the text, also cropped. */}
-              <div className="relative h-[400px] w-full sm:h-[460px] lg:h-auto lg:self-stretch">
-                <div className="absolute left-1/2 top-0 h-[665px] w-[520px] origin-top -translate-x-1/2 scale-[0.78] sm:scale-[0.86] lg:bottom-[-50px] lg:left-auto lg:right-[-40px] lg:top-auto lg:origin-bottom lg:translate-x-0 lg:scale-[0.84] xl:bottom-[-90px] xl:right-[-20px] xl:scale-100">
-                  <Phone
-                    width={290}
-                    className="absolute left-[235px] top-14 hidden rotate-[6deg] sm:block"
-                    label="An item in The List: Little Ember Café, loved, with a review"
-                    shadow="soft"
-                  >
-                    <ItemScreenMock item={ember} listName={list.name} />
-                  </Phone>
-                  <Phone
-                    width={290}
-                    className="absolute left-[115px] top-0 sm:left-[10px] sm:-rotate-[3deg]"
-                    label="A shared list in The List, with photos and progress"
-                    shadow="float"
-                  >
-                    <ListScreenMock list={list} />
-                  </Phone>
-                </div>
+            {/* The phone cluster: pinned to the bottom-right on desktop and running past the
+                section's bottom edge; under the text on phones, cropped the same way. */}
+            <div className="relative h-[400px] w-full sm:h-[460px] lg:h-auto lg:self-stretch">
+              <div className="absolute left-1/2 top-0 h-[665px] w-[520px] origin-top -translate-x-1/2 scale-[0.78] sm:scale-[0.86] lg:bottom-[-50px] lg:left-auto lg:right-[-40px] lg:top-auto lg:origin-bottom lg:translate-x-0 lg:scale-[0.84] xl:bottom-[-90px] xl:right-[-20px] xl:scale-100">
+                <Phone
+                  width={290}
+                  className="absolute left-[235px] top-14 hidden rotate-[6deg] sm:block"
+                  label="An item in The List: Little Ember Café, loved, with a review"
+                  shadow="soft"
+                >
+                  <ItemScreenMock item={ember} listName={list.name} />
+                </Phone>
+                <Phone
+                  width={290}
+                  className="absolute left-[115px] top-0 sm:left-[10px] sm:-rotate-[3deg]"
+                  label="A shared list in The List, with photos and progress"
+                  shadow="float"
+                >
+                  <ListScreenMock list={list} />
+                </Phone>
               </div>
             </div>
           </div>
