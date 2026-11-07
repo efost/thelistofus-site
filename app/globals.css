@@ -326,23 +326,23 @@
    side while the slot narrows. */
 .hero-slot {
   clip-path: inset(-0.06em -2em -0.14em -0.1em);
-  transition: width 480ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: width 960ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 /* The emoji keeps a word space before the word. */
 .hero-pair > span:first-child:not(:only-child) {
   margin-right: 0.22em;
 }
 .hero-word-out {
-  animation: hero-word-out 480ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: hero-word-out 960ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .hero-word-in {
-  animation: hero-word-in 480ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: hero-word-in 960ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .hero-emoji-out {
-  animation: hero-emoji-out 140ms ease-in both;
+  animation: hero-emoji-out 280ms ease-in both;
 }
 .hero-emoji-in {
-  animation: hero-emoji-in 260ms cubic-bezier(0.2, 0.9, 0.3, 1.15) 200ms both;
+  animation: hero-emoji-in 520ms cubic-bezier(0.2, 0.9, 0.3, 1.15) 400ms both;
 }
 @keyframes hero-word-out {
   from {

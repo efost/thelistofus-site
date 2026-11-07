@@ -33,9 +33,9 @@ const HOLD = 2600;
 /** Before the first swap, so the real headline registers. */
 const FIRST = 4000;
 /** The verb changes this long after the noun. */
-const STAGGER = 160;
+const STAGGER = 320;
 /** Longest of the exit/entrance animations (globals.css), for cleaning up the old word. */
-const SWAP = 480;
+const SWAP = 960;
 
 type Word = { emoji?: string; text: string; color?: string };
 
