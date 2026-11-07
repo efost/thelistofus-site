@@ -1,5 +1,6 @@
 // Universal links: tapping a thelistofus.com list or item link on an iPhone with the
-// app installed opens the app instead of Safari. Served from both locations Apple checks.
+// app installed opens the app instead of Safari. Without the app, the same links can
+// open the App Clip. Served from both locations Apple checks.
 export const APPLE_APP_SITE_ASSOCIATION = {
   applinks: {
     details: [
@@ -8,6 +9,9 @@ export const APPLE_APP_SITE_ASSOCIATION = {
         components: [{ "/": "/list/*", comment: "Shared lists and their items" }],
       },
     ],
+  },
+  appclips: {
+    apps: ["8V5N4P9SRD.st.efo.The-List.Clip"],
   },
 };
 

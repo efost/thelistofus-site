@@ -33,8 +33,15 @@ export const metadata: Metadata = {
     locale: "en_US",
   },
   twitter: { card: "summary_large_image" },
-  // Safari's Smart App Banner, once the app has an App Store id.
-  ...(APP_STORE_ID ? { itunes: { appId: APP_STORE_ID } } : {}),
+  // Safari's Smart App Banner, once the app has an App Store id; it offers the App Clip
+  // (st.efo.The-List.Clip) to people who don't have the app.
+  ...(APP_STORE_ID
+    ? {
+        other: {
+          "apple-itunes-app": `app-id=${APP_STORE_ID}, app-clip-bundle-id=st.efo.The-List.Clip, app-clip-display=card`,
+        },
+      }
+    : {}),
 };
 
 export const viewport: Viewport = {
