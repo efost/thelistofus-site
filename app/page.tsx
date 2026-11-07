@@ -125,7 +125,7 @@ export default function Home() {
 
         {/* Shared links */}
         <section className="px-5 py-10 md:py-16">
-          <div className="mx-auto grid max-w-6xl items-center gap-12 rounded-[32px] bg-surface-secondary px-6 py-12 md:grid-cols-2 md:px-14 md:py-16">
+          <div className="mx-auto grid max-w-6xl items-center gap-12 rounded-[32px] bg-surface-secondary px-6 py-12 md:grid-cols-2 md:px-14 md:py-16 md:[&>*:first-child]:order-2">
             <div>
               <h2 className="text-[34px] leading-[1.08] tracking-[-0.02em] md:text-[44px]">
                 Links that look good in the group chat
@@ -143,7 +143,7 @@ export default function Home() {
                 Open the example →
               </Link>
             </div>
-            <div className="flex justify-center md:justify-end">
+            <div className="flex justify-center md:justify-start">
               <MessagesCard list={list} previewSrc={`/list/${SAMPLE_LIST_ID}/opengraph-image`} />
             </div>
           </div>
