@@ -23,7 +23,7 @@ const FAQ: { q: string; a: React.ReactNode }[] = [
     a: (
       <>
         With the app installed, tapping the link opens the list in the app, where you can join it.
-        Without the app you&apos;ll see the list on this website. Install the app, then tap the link
+        Without the app you’ll see the list on this website. Install the app, then tap the link
         again.
       </>
     ),
@@ -42,7 +42,7 @@ const FAQ: { q: string; a: React.ReactNode }[] = [
     a: (
       <>
         Places you add are matched with Apple Maps and Google Maps, and the first photo of the place
-        is used. Movies, shows and other things without a place get their category&apos;s icon
+        is used. Movies, shows and other things without a place get their category’s icon
         instead.
       </>
     ),

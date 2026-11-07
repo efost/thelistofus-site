@@ -22,7 +22,7 @@ function reply(status: number, body: Record<string, unknown>) {
 
 export async function POST(request: Request) {
   const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return reply(503, { error: "The waitlist isn't open yet." });
+  if (!secret) return reply(503, { error: "The waitlist isn’t open yet." });
 
   const origin = request.headers.get("origin");
   const allowed = [SITE_URL, process.env.NODE_ENV !== "production" ? "http://localhost:3000" : ""];
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     // fall through
   }
   const email = cleanEmail(body.email);
-  if (!email) return reply(400, { error: "That doesn't look like an email address." });
+  if (!email) return reply(400, { error: "That doesn’t look like an email address." });
   const token = typeof body.token === "string" && body.token.length <= 2048 ? body.token : "";
   if (!token) return reply(400, { error: "Missing check." });
 
@@ -58,14 +58,14 @@ export async function POST(request: Request) {
     verified = await response.json();
   } catch (error) {
     console.error("Turnstile verify failed:", error);
-    return reply(502, { error: "Couldn't check that. Try again." });
+    return reply(502, { error: "Couldn’t check that. Try again." });
   }
   if (
     !verified.success ||
     (process.env.NODE_ENV === "production" && verified.hostname !== new URL(SITE_URL).hostname) ||
     verified.action !== "waitlist"
   ) {
-    return reply(403, { error: "That check didn't pass. Try again." });
+    return reply(403, { error: "That check didn’t pass. Try again." });
   }
 
   if (!allow("waitlist:all", ALL_PER_DAY, 24 * 3600_000)) {
@@ -77,6 +77,6 @@ export async function POST(request: Request) {
     return reply(200, { ok: true, already: !added });
   } catch (error) {
     console.error("Couldn't save to the waitlist:", error);
-    return reply(500, { error: "Couldn't save that. Try again." });
+    return reply(500, { error: "Couldn’t save that. Try again." });
   }
 }

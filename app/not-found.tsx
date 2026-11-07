@@ -12,7 +12,7 @@ export default function NotFound() {
         </span>
         <h1 className="mt-4 text-[32px] leading-tight">Nothing here</h1>
         <p className="mt-3 text-[17px] text-muted">
-          That page doesn&apos;t exist. If a friend sent you a list, it may have gone private. Ask
+          That page doesn’t exist. If a friend sent you a list, it may have gone private. Ask
           them for a new link.
         </p>
         <Link href="/" className="btn-pill mt-8">

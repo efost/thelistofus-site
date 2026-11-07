@@ -41,7 +41,7 @@ const ITEMS: Raw[] = [
   },
   {
     id: "pells-bakery",
-    name: "Pell's Bakery",
+    name: "Pell’s Bakery",
     category: "Restaurants",
     address: "Guerrero St, Mission",
     city: "San Francisco",
@@ -99,7 +99,7 @@ const ITEMS: Raw[] = [
     completedById: ALEX.addedById,
     completedByName: "Alex",
     reaction: "loved",
-    review: "Salted caramel. That's the review.",
+    review: "Salted caramel. That’s the review.",
   },
   {
     id: "tinkerworks",
@@ -234,7 +234,7 @@ export function sampleList(): SharedList {
     {
       name: "SF weekends",
       emoji: "🌉",
-      description: "Everywhere we keep saying we'll go.",
+      description: "Everywhere we keep saying we’ll go.",
       ownerId: SAM.addedById,
       ownerName: "Sam",
       collaborators: [SAM.addedById, JENNA.addedById, ALEX.addedById],

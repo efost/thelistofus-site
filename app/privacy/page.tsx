@@ -13,7 +13,7 @@ export default function PrivacyPage() {
   return (
     <PageShell
       title="Privacy"
-      intro="The List keeps your lists so you can share them with the people you choose. It doesn't sell your data or show you ads."
+      intro="The List keeps your lists so you can share them with the people you choose. It doesn’t sell your data or show you ads."
     >
       <p className="text-[15px] text-muted">Last updated {UPDATED}</p>
 
@@ -41,7 +41,7 @@ export default function PrivacyPage() {
       <h2>Your location</h2>
       <p>
         If you allow it, the app uses your location on your iPhone to show how far away places are
-        and what&apos;s nearby. Your location isn&apos;t saved to your account or shared with anyone
+        and what’s nearby. Your location isn’t saved to your account or shared with anyone
         on your lists.
       </p>
 
@@ -63,19 +63,19 @@ export default function PrivacyPage() {
       <p>
         When you check something off, you can choose to share your review with anyone looking at
         that place. If you do, your first name, rating and review can appear on thelistofus.com
-        pages for the same place, including on other people&apos;s lists. It&apos;s off unless you
+        pages for the same place, including on other people’s lists. It’s off unless you
         turn it on, and turning it off again takes the review down.
       </p>
 
       <h2>This website</h2>
       <p>
-        thelistofus.com doesn&apos;t use cookies or ask you to sign in. It counts visits with Umami,
+        thelistofus.com doesn’t use cookies or ask you to sign in. It counts visits with Umami,
         which keeps no personal data and honors Do Not Track. Maps on the site are Apple Maps.
       </p>
       <p>
         If you join the waitlist, we keep your email address only to tell you when the app is ready,
         and never share it. Email us to be taken off. The form runs a Cloudflare Turnstile check
-        first to make sure you&apos;re a person.
+        first to make sure you’re a person.
       </p>
 
       <h2>Deleting your data</h2>
@@ -84,10 +84,10 @@ export default function PrivacyPage() {
         open your profile in the app and tap Delete account. That removes your name, email and
         sign-in, deletes the lists you made (for everyone on them), and takes you off lists other
         people made, and takes down any reviews you shared publicly. Things you added to someone
-        else&apos;s list stay on it, as part of their list.
+        else’s list stay on it, as part of their list.
       </p>
       <p>
-        If you can&apos;t get into the app, email{" "}
+        If you can’t get into the app, email{" "}
         <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> from the address you signed up with
         and your account will be deleted for you.
       </p>

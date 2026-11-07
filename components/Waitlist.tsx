@@ -55,7 +55,7 @@ export default function Waitlist({
       setState({ step: "done", already: Boolean(body.already) });
       track("waitlist-join", { where });
     } catch {
-      setState({ step: "error", message: "The check didn't finish. Try again." });
+      setState({ step: "error", message: "The check didn’t finish. Try again." });
     }
   }
 
@@ -65,10 +65,10 @@ export default function Waitlist({
     return (
       <div className={`flex flex-col gap-2 ${items}`} aria-live="polite">
         <div className="font-heading text-[20px]">
-          {state.already ? "You're already on the list. We'll be in touch." : "You're on the list."}
+          {state.already ? "You’re already on the list. We’ll be in touch." : "You’re on the list."}
         </div>
         <p className="max-w-sm text-[16px] text-muted">
-          We&apos;ll email you the moment it&apos;s ready.
+          We’ll email you the moment it’s ready.
         </p>
       </div>
     );
@@ -110,7 +110,7 @@ export default function Waitlist({
         <span>
           {state.step === "error"
             ? state.message
-            : "Coming to iPhone. We'll email you when it's out, and that's it."}
+            : "Coming to iPhone. We’ll email you when it’s out, and that’s it."}
         </span>
         {aside}
       </span>

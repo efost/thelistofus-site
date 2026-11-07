@@ -38,8 +38,8 @@ export default function Home() {
             <div className="max-w-xl">
               <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] sm:text-[52px] lg:text-[50px] xl:text-[58px]" />
               <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
-                Restaurants, bars, hikes and everything you&apos;ve been meaning to try, shared with
-                the people you&apos;ll go with.
+                Restaurants, bars, hikes and everything you’ve been meaning to try, shared with
+                the people you’ll go with.
               </p>
               <div className="mt-8">
                 {IS_ON_APP_STORE || !TURNSTILE_SITE_KEY ? (
@@ -114,12 +114,12 @@ export default function Home() {
         <Feature
           flip
           title="Share it with your people"
-          body="Send a link and your friends are in. They add their finds, you add yours, and everyone sees the whole list, with a bell for what's new since you last looked. You decide who can edit and who's just browsing."
+          body="Send a link and your friends are in. They add their finds, you add yours, and everyone sees the whole list, with a bell for what’s new since you last looked. You decide who can edit and who’s just browsing."
           visual={<ShareCard list={list} />}
         />
         <Feature
           title="Check it off. Leave a review."
-          body="Just got back? Check it off, pick 👎 😐 👍 or ❤️, and leave a review for whoever's next. Everyone sees it, so the best spots rise to the top."
+          body="Just got back? Check it off, pick 👎 😐 👍 or ❤️, and leave a review for whoever’s next. Everyone sees it, so the best spots rise to the top."
           visual={<ReactionCard item={ember} />}
         />
 
@@ -134,7 +134,7 @@ export default function Home() {
                 <p className="mt-5 max-w-md text-[18px] leading-relaxed text-muted">
                   Every list, and every place on it, has its own page. Drop one in Messages and it
                   shows up as a proper card, photos and all. Friends without the app can browse it
-                  right away and join when they&apos;re ready.
+                  right away and join when they’re ready.
                 </p>
                 <Link
                   href={`/list/${SAMPLE_LIST_ID}`}
