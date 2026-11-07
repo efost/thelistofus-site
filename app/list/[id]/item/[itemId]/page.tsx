@@ -414,7 +414,7 @@ export default async function ItemPage({ params }: Props) {
           )}
         </div>
       </main>
-      <SiteFooter photoCredit={id !== SAMPLE_LIST_ID} />
+      <SiteFooter photoCredit={id !== SAMPLE_LIST_ID} joinBar />
       <JoinBar listId={id} itemId={item.id} label="Get the app" />
     </>
   );

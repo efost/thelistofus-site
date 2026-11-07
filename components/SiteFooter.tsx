@@ -4,11 +4,22 @@ import AppIcon from "./AppIcon";
 
 export default function SiteFooter({
   photoCredit = false,
+  joinBar = false,
 }: {
   photoCredit?: boolean;
+  /** The page has a JoinBar pinned below on phones; leave room for it inside the wash. */
+  joinBar?: boolean;
 }) {
   return (
-    <footer className="border-t border-hairline">
+    // The same wash as the hero, so the page opens and closes on it. Sized in pixels rather
+    // than percentages, so the glows keep their shape on a short footer.
+    <footer
+      className={joinBar ? "pb-24 lg:pb-0" : undefined}
+      style={{
+        background:
+          "radial-gradient(min(560px, 70vw) 420px at 88% 10%, color-mix(in srgb, var(--brand-purple) 20%, transparent), transparent 70%), radial-gradient(min(520px, 65vw) 400px at 64% 110%, color-mix(in srgb, var(--brand-blue) 20%, transparent), transparent 70%), var(--surface-secondary)",
+      }}
+    >
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 sm:flex-row sm:items-center sm:justify-between">
         <div className="max-w-sm">
           <Link href="/" className="flex items-center gap-2.5">

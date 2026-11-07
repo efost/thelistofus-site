@@ -38,7 +38,10 @@ export function JoinCard({
   );
 }
 
-/** Phones and small screens: a bar pinned to the bottom with the same two actions. */
+/**
+ * Phones and small screens: a bar pinned to the bottom with the same two actions. Pair it
+ * with <SiteFooter joinBar />, which leaves room for it.
+ */
 export function JoinBar({
   label,
   listId,
@@ -50,7 +53,6 @@ export function JoinBar({
 }) {
   return (
     <>
-      <div className="h-24 lg:hidden" aria-hidden />
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-surface/90 px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 backdrop-blur-xl backdrop-saturate-150 lg:hidden">
         <div className="mx-auto flex max-w-xl items-center gap-2">
           {IS_ON_APP_STORE && (
