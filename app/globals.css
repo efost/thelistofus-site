@@ -18,10 +18,18 @@
   --done-gray: #aeaeb2;
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.09);
   --shadow-float: 0 18px 50px -12px rgba(16, 24, 64, 0.22), 0 4px 14px rgba(0, 0, 0, 0.06);
-  /* Under the header once the page scrolls, and the same thing flipped over the footer:
-     a big, faint blur in place of a hairline. */
+  /* Under the header once the page scrolls: a big, faint blur in place of a hairline. */
   --shadow-header: 0 1px 3px rgba(16, 24, 64, 0.04), 0 12px 40px -8px rgba(16, 24, 64, 0.12);
-  --shadow-footer: 0 -1px 3px rgba(16, 24, 64, 0.04), 0 -12px 40px -8px rgba(16, 24, 64, 0.12);
+  /* The footer sits behind the page, with the page's shadow falling across its top: an
+     eased fade rather than a straight one, so it has no visible bottom edge. */
+  --footer-surface: var(--surface);
+  --shadow-footer: linear-gradient(
+    rgba(16, 24, 64, 0.075),
+    rgba(16, 24, 64, 0.05) 10px,
+    rgba(16, 24, 64, 0.026) 26px,
+    rgba(16, 24, 64, 0.01) 46px,
+    rgba(16, 24, 64, 0) 70px
+  );
   --fill-gradient: linear-gradient(180deg, #094aab, #9e09ab);
   --progress-gradient: linear-gradient(90deg, #094aab, #9e09ab);
   color-scheme: light;
@@ -43,7 +51,15 @@
     --shadow-card: 0 2px 8px rgba(255, 255, 255, 0.08);
     --shadow-float: 0 18px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
     --shadow-header: 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 40px -8px rgba(0, 0, 0, 0.9);
-    --shadow-footer: 0 -1px 0 rgba(255, 255, 255, 0.06), 0 -12px 40px -8px rgba(0, 0, 0, 0.9);
+    /* On black a shadow has nothing to fall on, so the footer is lifted a touch. */
+    --footer-surface: #111113;
+    --shadow-footer: linear-gradient(
+      rgba(0, 0, 0, 0.95),
+      rgba(0, 0, 0, 0.6) 10px,
+      rgba(0, 0, 0, 0.3) 26px,
+      rgba(0, 0, 0, 0.1) 46px,
+      rgba(0, 0, 0, 0) 70px
+    );
     color-scheme: dark;
   }
 }
@@ -342,7 +358,8 @@
   box-shadow: var(--shadow-header);
 }
 .site-footer {
-  box-shadow: var(--shadow-footer);
+  background-color: var(--footer-surface);
+  background-image: var(--shadow-footer);
 }
 
 /* Hero headline word swaps (components/HeroHeadline.tsx). The old word slides up and
