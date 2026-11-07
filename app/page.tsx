@@ -40,8 +40,8 @@ export default function Home() {
             <div className="max-w-xl">
               <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] sm:text-[52px] lg:text-[46px] xl:text-[55px]" />
               <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
-                Restaurants, hikes, movies and trips — kept with the people you’ll go with, not
-                lost in the chat.
+                From restaurants and bars to shops and hikes and anything else that you’re
+                excited to do — saved and shareable, not lost in the group chat.
               </p>
               <div className="mt-8" data-hero-cta>
                 {IS_ON_APP_STORE || !TURNSTILE_SITE_KEY ? (
