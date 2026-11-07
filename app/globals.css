@@ -357,6 +357,20 @@
 .site-header[data-scrolled] {
   box-shadow: var(--shadow-header);
 }
+/* Phones: while the hero's signup is on screen, the header's button would compete with
+   it, so it waits (HeaderShade). It keeps its space so the header doesn't shift. */
+.header-cta {
+  display: inline-flex;
+  transition:
+    opacity 200ms ease,
+    visibility 200ms;
+}
+@media (width < 40rem) {
+  .site-header[data-hero-cta-visible] .header-cta {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
 .site-footer {
   background-color: var(--footer-surface);
   background-image: var(--shadow-footer);

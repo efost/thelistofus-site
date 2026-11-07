@@ -22,7 +22,9 @@ export default function SiteHeader({
   return (
     <header
       className="site-header sticky top-0 z-40 bg-surface/85 backdrop-blur-xl backdrop-saturate-150"
-      {...(overlay ? { "data-overlay": "" } : {})}
+      // On the home page the hero's signup starts on screen, so the header's button
+      // starts hidden on phones (HeaderShade shows it once the hero's scrolls away).
+      {...(overlay ? { "data-overlay": "", "data-hero-cta-visible": "" } : {})}
     >
       <HeaderShade />
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
@@ -39,7 +41,11 @@ export default function SiteHeader({
               See it in action
             </Link>
           )}
-          {cta && <GetAppButton size="sm" />}
+          {cta && (
+            <span className="header-cta">
+              <GetAppButton size="sm" />
+            </span>
+          )}
         </nav>
       </div>
     </header>

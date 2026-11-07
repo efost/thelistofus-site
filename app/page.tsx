@@ -41,7 +41,7 @@ export default function Home() {
                 Restaurants, bars, hikes and everything you’ve been meaning to try, shared with
                 the people you’ll go with.
               </p>
-              <div className="mt-8">
+              <div className="mt-8" data-hero-cta>
                 {IS_ON_APP_STORE || !TURNSTILE_SITE_KEY ? (
                   <GetAppButton size="lg" />
                 ) : (
