@@ -2,22 +2,25 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-// The headline cycles through what goes on a list: "All the 🥾 hikes you keep meaning to
-// check out", "All the 🍺 bars you keep meaning to check out"… Only the noun changes, so
-// every entry has to read with "check out", and fit on the first line at the sizes set
-// in app/page.tsx (the longest is "experiences").
+// The headline cycles through what goes on a list. It opens on a plain "All the things
+// you keep meaning to check out." Then the noun slides aside to make room for an emoji,
+// and from there each swap rolls the emoji and the noun together: "All the 🥾 hikes…",
+// "All the 🍺 bars…". "Things" doesn't come back. Only the noun changes, so every entry
+// has to read with "check out", and fit on the first line at the sizes set in
+// app/page.tsx (the longest is "experiences").
 //
-// Each swap slides the old word up and out as the new one slides up in. The emoji stays
-// put and pops (a quick scale) as the new word lands. The slot widens or narrows on the
-// same curve, clipped vertically only so the leaving word is never cut off at the side.
+// The emoji and the noun each have a slot that widens or narrows to fit (clipped
+// vertically only, so a leaving word is never cut off at the side); the old word slides
+// up and out as the new one slides up in.
 //
 // Screen readers get the plain sentence once; the moving parts are decorative. Nothing
 // moves under prefers-reduced-motion, off-screen, or in a hidden tab.
 
-const PHRASES: { emoji: string; thing: string; color: string }[] = [
+const PHRASES: { emoji: string; thing: string; color?: string }[] = [
   // light-dark(): the light-mode colour, then one that reads on black. After the opener,
   // these follow the category filter in the app (lib/categories.ts), with its icons.
-  { emoji: "✨", thing: "things", color: "light-dark(#9e09ab, #d38cff)" },
+  // The opener: no emoji, in ink. Shown once.
+  { emoji: "", thing: "things" },
   { emoji: "🍺", thing: "bars", color: "light-dark(#b7791f, #fbbf24)" },
   { emoji: "🍔", thing: "restaurants", color: "light-dark(#c2410c, #fb923c)" },
   { emoji: "🥾", thing: "hikes", color: "light-dark(#3f7d20, #86d65a)" },
@@ -35,22 +38,36 @@ const PHRASES: { emoji: string; thing: string; color: string }[] = [
 const HOLD = 4000;
 /** Before the first swap, so the real headline registers. */
 const FIRST = 5000;
+/** How long the noun takes to slide aside for the first emoji before anything rolls. */
+const OPEN = 520;
 /** Longest of the exit/entrance animations (globals.css), for cleaning up the old word. */
 const SWAP = 960;
 
-type Word = { emoji?: string; text: string; color?: string };
+type Word = { text: string; color?: string; gap?: boolean };
 
-/** A word slot: the current word rolling in, the previous one rolling out. */
-function Slot({ words, index }: { words: Word[]; index: number }) {
+/**
+ * A word slot: the current word rolling in, the previous one rolling out. The slot is
+ * sized to `sizeIndex` (normally the current word), so it can open up before its word
+ * arrives. `gap` adds a word space after the text, for the emoji.
+ */
+function Slot({
+  words,
+  index,
+  sizeIndex = index,
+}: {
+  words: Word[];
+  index: number;
+  sizeIndex?: number;
+}) {
   const measure = useRef<HTMLSpanElement>(null);
   const [width, setWidth] = useState<number | null>(null);
   const [previous, setPrevious] = useState<number | null>(null);
   const shown = useRef(index);
 
-  // Size the slot to the incoming word; the width transition does the rest.
+  // Size the slot to the word it's making room for; the width transition does the rest.
   useLayoutEffect(() => {
     if (measure.current) setWidth(measure.current.getBoundingClientRect().width);
-  }, [index]);
+  }, [sizeIndex]);
   useEffect(() => {
     const onResize = () => {
       if (measure.current) setWidth(measure.current.getBoundingClientRect().width);
@@ -68,40 +85,32 @@ function Slot({ words, index }: { words: Word[]; index: number }) {
     return () => clearTimeout(t);
   }, [index]);
 
-  const render = (i: number, phase?: "in" | "out") => {
-    const w = words[i];
-    return (
-      <>
-        {w.emoji && (
-          <span className={`inline-block ${phase ? `hero-emoji hero-emoji-${phase}` : ""}`}>
-            {w.emoji}
-          </span>
-        )}
-        <span className={`inline-block ${phase ? `hero-word hero-word-${phase}` : ""}`}>
-          {w.text}
-        </span>
-      </>
-    );
-  };
-  const moving = (i: number, phase: "in" | "out") => (
-    <span
-      key={`${phase}-${i}`}
-      className="hero-pair absolute left-0 top-0 whitespace-nowrap"
-      style={{ color: words[i].color }}
-      aria-hidden
-    >
-      {render(i, phase)}
-    </span>
+  const text = (w: Word) => (
+    <>
+      {w.text}
+      {w.gap && w.text && <span className="inline-block w-[0.22em]" />}
+    </>
   );
+  const moving = (i: number, phase: "in" | "out") =>
+    words[i].text ? (
+      <span
+        key={`${phase}-${i}`}
+        className={`hero-word hero-word-${phase} absolute left-0 top-0 whitespace-nowrap`}
+        style={{ color: words[i].color }}
+        aria-hidden
+      >
+        {text(words[i])}
+      </span>
+    ) : null;
 
   return (
     <span
       className="hero-slot relative inline-block align-bottom"
       style={{ width: width ?? undefined }}
     >
-      {/* Invisible copy of the current word, with the same markup, for measuring. */}
-      <span ref={measure} className="hero-pair invisible inline-block whitespace-nowrap">
-        {render(index)}
+      {/* Invisible copy of the word the slot is sized for, for measuring. */}
+      <span ref={measure} className="invisible inline-block whitespace-nowrap">
+        {text(words[sizeIndex])}
       </span>
       {moving(index, "in")}
       {previous !== null && moving(previous, "out")}
@@ -111,6 +120,8 @@ function Slot({ words, index }: { words: Word[]; index: number }) {
 
 export default function HeroHeadline({ className = "" }: { className?: string }) {
   const [index, setIndex] = useState(0);
+  /** Set while the noun slides aside for the first emoji. */
+  const [opening, setOpening] = useState(false);
   const [animate, setAnimate] = useState(false);
   const root = useRef<HTMLHeadingElement>(null);
 
@@ -121,9 +132,22 @@ export default function HeroHeadline({ className = "" }: { className?: string })
     let first = true;
     let paused = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    let open: ReturnType<typeof setTimeout> | undefined;
     const tick = () => {
       if (paused) return;
-      i = (i + 1) % PHRASES.length;
+      if (i === 0) {
+        // First swap: make room for the emoji, then roll in the first category.
+        setOpening(true);
+        open = setTimeout(() => {
+          i = 1;
+          setIndex(1);
+          setOpening(false);
+        }, OPEN);
+        timer = setTimeout(tick, OPEN + HOLD);
+        return;
+      }
+      // After that, cycle the categories; "things" (index 0) doesn't come back.
+      i = (i % (PHRASES.length - 1)) + 1;
       setIndex(i);
       timer = setTimeout(tick, HOLD);
     };
@@ -151,12 +175,14 @@ export default function HeroHeadline({ className = "" }: { className?: string })
     schedule();
     return () => {
       clearTimeout(timer);
+      clearTimeout(open);
       observer.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
-  const things: Word[] = PHRASES.map((p) => ({ emoji: p.emoji, text: p.thing, color: p.color }));
+  const emojis: Word[] = PHRASES.map((p) => ({ text: p.emoji, gap: true }));
+  const nouns: Word[] = PHRASES.map((p) => ({ text: p.thing, color: p.color }));
 
   return (
     <h1 ref={root} className={className}>
@@ -165,11 +191,12 @@ export default function HeroHeadline({ className = "" }: { className?: string })
       <span aria-hidden className="block">
         All the{" "}
         {animate ? (
-          <Slot words={things} index={index} />
+          <>
+            <Slot words={emojis} index={index} sizeIndex={opening ? 1 : index} />
+            <Slot words={nouns} index={index} />
+          </>
         ) : (
-          <span style={{ color: things[0].color }}>
-            {things[0].emoji} {things[0].text}
-          </span>
+          nouns[0].text
         )}
       </span>
       <span aria-hidden className="block">
