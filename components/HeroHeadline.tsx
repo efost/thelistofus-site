@@ -29,9 +29,9 @@ const PHRASES: { emoji: string; thing: string; verb: string; color: string }[] =
 ];
 
 /** How long each phrase stays. */
-const HOLD = 2600;
+const HOLD = 4000;
 /** Before the first swap, so the real headline registers. */
-const FIRST = 4000;
+const FIRST = 5000;
 /** The verb changes this long after the noun. */
 const STAGGER = 320;
 /** Longest of the exit/entrance animations (globals.css), for cleaning up the old word. */
