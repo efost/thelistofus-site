@@ -36,7 +36,7 @@ export default function Home() {
         >
           <div className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-5 pb-0 pt-8 sm:pt-12 lg:grid-cols-[1fr_1fr] lg:gap-4 lg:py-12 xl:grid-cols-[1.1fr_1fr]">
             <div className="max-w-xl">
-              <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] sm:text-[52px] lg:text-[50px] xl:text-[58px]" />
+              <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] sm:text-[52px] lg:text-[46px] xl:text-[55px]" />
               <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
                 Restaurants, bars, hikes and everything you’ve been meaning to try, shared with
                 the people you’ll go with.

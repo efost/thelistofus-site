@@ -4,7 +4,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 // The headline cycles through what goes on a list: "All the 🥾 hikes you keep meaning to
 // check out", "All the 🍺 bars you keep meaning to check out"… Only the noun changes, so
-// every entry has to read with "check out".
+// every entry has to read with "check out", and fit on the first line at the sizes set
+// in app/page.tsx (the longest is "experiences").
 //
 // Each swap slides the old word up and out as the new one slides up in. The emoji stays
 // put and pops (a quick scale) as the new word lands. The slot widens or narrows on the
@@ -14,18 +15,20 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 // moves under prefers-reduced-motion, off-screen, or in a hidden tab.
 
 const PHRASES: { emoji: string; thing: string; color: string }[] = [
-  // light-dark(): the light-mode colour, then one that reads on black.
-  { emoji: "📍", thing: "places", color: "light-dark(#d1225b, #ff6b9a)" },
+  // light-dark(): the light-mode colour, then one that reads on black. After the opener,
+  // these follow the category filter in the app (lib/categories.ts), with its icons.
+  { emoji: "✨", thing: "things", color: "light-dark(#9e09ab, #d38cff)" },
+  { emoji: "🍺", thing: "bars", color: "light-dark(#b7791f, #fbbf24)" },
   { emoji: "🍔", thing: "restaurants", color: "light-dark(#c2410c, #fb923c)" },
   { emoji: "🥾", thing: "hikes", color: "light-dark(#3f7d20, #86d65a)" },
-  { emoji: "🍺", thing: "bars", color: "light-dark(#b7791f, #fbbf24)" },
   { emoji: "🎬", thing: "movies", color: "light-dark(#6b21a8, #d8b4fe)" },
-  { emoji: "🏖️", thing: "beaches", color: "light-dark(#0d9488, #2dd4bf)" },
-  { emoji: "🎨", thing: "museums", color: "light-dark(#0369a1, #7dd3fc)" },
+  { emoji: "📺", thing: "TV shows", color: "light-dark(#1d4ed8, #93c5fd)" },
+  { emoji: "🎟\uFE0F", thing: "experiences", color: "light-dark(#b91c1c, #fca5a5)" },
   { emoji: "🍷", thing: "wineries", color: "light-dark(#7f1d4d, #f472b6)" },
-  { emoji: "📺", thing: "shows", color: "light-dark(#1d4ed8, #93c5fd)" },
-  { emoji: "🎟️", thing: "events", color: "light-dark(#b91c1c, #fca5a5)" },
+  { emoji: "👜", thing: "shops", color: "light-dark(#be185d, #f9a8d4)" },
   { emoji: "🎮", thing: "games", color: "light-dark(#4f46e5, #a5b4fc)" },
+  { emoji: "🎭", thing: "museums", color: "light-dark(#0369a1, #7dd3fc)" },
+  { emoji: "🏖\uFE0F", thing: "getaways", color: "light-dark(#0d9488, #2dd4bf)" },
 ];
 
 /** How long each phrase stays. */
@@ -157,7 +160,7 @@ export default function HeroHeadline({ className = "" }: { className?: string })
 
   return (
     <h1 ref={root} className={className}>
-      <span className="sr-only">All the places you keep meaning to check out.</span>
+      <span className="sr-only">All the things you keep meaning to check out.</span>
       {/* Fixed line breaks, so only the words move and the block never re-wraps. */}
       <span aria-hidden className="block">
         All the{" "}

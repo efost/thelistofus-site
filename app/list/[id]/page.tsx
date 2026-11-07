@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { AvatarStack } from "@/components/Avatar";
 import CoverCollage from "@/components/CoverCollage";
 import { photoURL } from "@/components/ItemRow";
@@ -9,6 +7,8 @@ import SiteHeader from "@/components/SiteHeader";
 import { getSharedList, peopleSentence, progressPercent } from "@/lib/lists";
 import { SAMPLE_LIST_ID } from "@/lib/sample";
 import { APP_STORE_ID, SITE_URL, listPath } from "@/lib/site";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import ListView from "./ListView";
 
 // Lists change as people add and check things off; re-read at most once a minute.
@@ -39,7 +39,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     twitter: { card: "summary_large_image", title: list.name, description },
     // Lists are shared by link, not published: keep them out of search results.
     robots: id === SAMPLE_LIST_ID ? undefined : { index: false, follow: false },
-    ...(APP_STORE_ID ? { itunes: { appId: APP_STORE_ID, appArgument: url } } : {}),
+    ...(APP_STORE_ID
+      ? { itunes: { appId: APP_STORE_ID, appArgument: url } }
+      : {}),
   };
 }
 
@@ -72,7 +74,9 @@ export default async function ListPage({ params }: Props) {
           {list.name}
         </h1>
         {list.description && (
-          <p className="mt-2 max-w-lg text-[17px] text-white/85">{list.description}</p>
+          <p className="mt-2 max-w-lg text-[17px] text-white/85">
+            {list.description}
+          </p>
         )}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
           <span className="flex items-center gap-3">
@@ -125,7 +129,7 @@ export default async function ListPage({ params }: Props) {
               listId={id}
               title={
                 <>
-                  Get in on <span className="text-link">{list.name}</span>
+                  <span>{list.name}</span>
                 </>
               }
               body="Add your own finds, check places off and leave reviews. Everyone on the list sees it."

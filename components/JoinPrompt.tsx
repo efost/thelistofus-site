@@ -1,4 +1,4 @@
-import { appURL, APP_NAME, IS_ON_APP_STORE } from "@/lib/site";
+import { APP_NAME, appURL, IS_ON_APP_STORE } from "@/lib/site";
 import AppIcon from "./AppIcon";
 import GetAppButton from "./GetAppButton";
 
@@ -20,7 +20,7 @@ export function JoinCard({
         <AppIcon size={44} />
         <div>
           <div className="font-heading text-[17px] leading-tight">{title}</div>
-          <div className="text-[14px] text-muted">{APP_NAME} for iPhone</div>
+          <div className="text-[14px] text-muted">{APP_NAME}</div>
         </div>
       </div>
       <p className="mt-3 text-[15px] leading-relaxed text-muted">{body}</p>

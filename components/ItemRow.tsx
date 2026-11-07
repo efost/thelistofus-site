@@ -1,24 +1,39 @@
-import Link from "next/link";
 import { fallbackEmoji, REACTIONS } from "@/lib/categories";
 import type { Item } from "@/lib/lists";
 import { itemPath } from "@/lib/site";
+import Link from "next/link";
 import { Avatar } from "./Avatar";
 import PlacePhoto from "./PlacePhoto";
 import When from "./When";
 
-export function photoURL(item: Pick<Item, "listId" | "id" | "isPlace">, size: "thumb" | "full") {
+export function photoURL(
+  item: Pick<Item, "listId" | "id" | "isPlace">,
+  size: "thumb" | "full",
+) {
   return item.isPlace
     ? `/api/photo/${encodeURIComponent(item.listId)}/${encodeURIComponent(item.id)}?size=${size}`
     : null;
 }
 
-export function CheckCircle({ done, size = 24 }: { done: boolean; size?: number }) {
+export function CheckCircle({
+  done,
+  size = 24,
+}: {
+  done: boolean;
+  size?: number;
+}) {
   return done ? (
     <span
       className="inline-flex shrink-0 items-center justify-center rounded-full bg-check text-white"
       style={{ width: size, height: size }}
     >
-      <svg width={size * 0.5} height={size * 0.5} viewBox="0 0 12 12" fill="none" aria-hidden>
+      <svg
+        width={size * 0.5}
+        height={size * 0.5}
+        viewBox="0 0 12 12"
+        fill="none"
+        aria-hidden
+      >
         <path
           d="M2.5 6.3 5 8.7l4.6-5.2"
           stroke="currentColor"
@@ -40,7 +55,7 @@ export function CheckCircle({ done, size = 24 }: { done: boolean; size?: number 
 export default function ItemRow({
   item,
   showAdder = true,
-  divider = true,
+  divider = false,
   linked = true,
 }: {
   item: Item;
@@ -66,7 +81,10 @@ export default function ItemRow({
       )}
     </>
   ) : (
-    [item.city, item.city ? null : item.category !== "None" ? item.category : null]
+    [
+      item.city,
+      item.city ? null : item.category !== "None" ? item.category : null,
+    ]
       .filter(Boolean)
       .join(" · ")
   );
@@ -93,8 +111,14 @@ export default function ItemRow({
         }`}
       >
         <span className={`min-w-0 flex-1 ${item.done ? "opacity-60" : ""}`}>
-          <span className="block truncate font-heading text-[18px] leading-tight">{item.name}</span>
-          {meta && <span className="mt-0.5 block truncate text-[16px] text-muted">{meta}</span>}
+          <span className="block truncate font-heading text-[18px] leading-tight">
+            {item.name}
+          </span>
+          {meta && (
+            <span className="mt-0.5 block truncate text-[16px] text-muted">
+              {meta}
+            </span>
+          )}
         </span>
         {showAdder && item.addedBy && (
           <span className="pr-1" title={`Added by ${item.addedBy.name}`}>
@@ -105,7 +129,8 @@ export default function ItemRow({
     </>
   );
 
-  const rowClass = "group flex items-center gap-3 rounded-xl px-1 transition-colors";
+  const rowClass =
+    "group flex items-center gap-3 rounded-xl px-1 transition-colors";
   return linked ? (
     <Link
       href={itemPath(item.listId, item.id)}

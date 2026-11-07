@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 import { turnstileToken } from "@/lib/turnstile";
+import { useRef, useState } from "react";
 
 // "Get early access": an email field, then a Cloudflare Turnstile check (usually
 // invisible) when it's sent, then POST /api/waitlist.
@@ -48,24 +48,33 @@ export default function Waitlist({
         error?: string;
       };
       if (!response.ok || !body.ok) {
-        setState({ step: "error", message: body.error ?? "Something went wrong. Try again." });
+        setState({
+          step: "error",
+          message: body.error ?? "Something went wrong. Try again.",
+        });
         track("waitlist-failed", { status: response.status });
         return;
       }
       setState({ step: "done", already: Boolean(body.already) });
       track("waitlist-join", { where });
     } catch {
-      setState({ step: "error", message: "The check didn’t finish. Try again." });
+      setState({
+        step: "error",
+        message: "The check didn’t finish. Try again.",
+      });
     }
   }
 
-  const items = align === "center" ? "items-center text-center" : "items-start text-left";
+  const items =
+    align === "center" ? "items-center text-center" : "items-start text-left";
 
   if (state.step === "done") {
     return (
       <div className={`flex flex-col gap-2 ${items}`} aria-live="polite">
         <div className="font-heading text-[20px]">
-          {state.already ? "You’re already on the list. We’ll be in touch." : "You’re on the list."}
+          {state.already
+            ? "You’re already on the list. We’ll be in touch."
+            : "You’re on the list."}
         </div>
         <p className="max-w-sm text-[16px] text-muted">
           We’ll email you the moment it’s ready.
@@ -76,7 +85,10 @@ export default function Waitlist({
 
   return (
     <div className={`flex w-full flex-col gap-3.5 ${items}`}>
-      <form onSubmit={submit} className="flex w-full max-w-lg flex-col gap-2 sm:flex-row">
+      <form
+        onSubmit={submit}
+        className="flex w-full max-w-lg flex-col gap-2 sm:flex-row"
+      >
         <label htmlFor={`waitlist-${where}`} className="sr-only">
           Email address
         </label>
@@ -110,7 +122,7 @@ export default function Waitlist({
         <span>
           {state.step === "error"
             ? state.message
-            : "Coming to iPhone. We’ll email you when it’s out, and that’s it."}
+            : "Coming to iPhone — we’ll email you when it’s out, and that’s it."}
         </span>
         {aside}
       </span>
