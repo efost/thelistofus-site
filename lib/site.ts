@@ -22,10 +22,12 @@ export const APP_STORE_URL = APP_STORE_ID
   : "/#get-the-app";
 
 /** Cloudflare Turnstile site key (public). Without it the beta section says "coming soon". */
-export const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
+export const TURNSTILE_SITE_KEY =
+  process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAAF3JDoHZ9VH1JDdq";
 
 /** Umami Cloud website id (public). Without it there's no analytics script. */
-export const UMAMI_WEBSITE_ID = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || "";
+export const UMAMI_WEBSITE_ID =
+  process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || "8050cdc7-374f-4fc6-b826-548316b08548";
 
 export const IS_ON_APP_STORE = Boolean(APP_STORE_ID);
 
