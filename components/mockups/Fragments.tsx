@@ -147,7 +147,7 @@ export function ReactionCard({ item }: { item: Item }) {
       <div className="mt-5 font-heading text-[18px]">What did you think?</div>
       <div className="mt-2 rounded-lg bg-surface-secondary p-3 text-[16px]">{item.review}</div>
       <div className="mt-3 text-center text-[14px] text-muted">
-        Everyone on this list will see how it went.
+        Everyone on this list will see your review.
       </div>
     </Card>
   );

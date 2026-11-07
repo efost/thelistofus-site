@@ -11,10 +11,9 @@ export default function ListNotFound() {
         <span className="text-[56px]" aria-hidden>
           📍
         </span>
-        <h1 className="mt-4 text-[32px] leading-tight">This list isn&apos;t shared</h1>
+        <h1 className="mt-4 text-[32px] leading-tight">This list isn&apos;t shared anymore</h1>
         <p className="mt-3 text-[17px] text-muted">
-          It may have been made private, or the link is incomplete. Ask whoever sent it to share it
-          again from the app.
+          It may have gone private, or the link got cut off. Ask whoever sent it for a fresh one.
         </p>
         <div className="mt-8 flex flex-col items-center gap-4">
           <GetAppButton label="Make your own list" preLaunchLabel="Make your own list" />

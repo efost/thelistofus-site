@@ -584,7 +584,7 @@ export async function homeImage() {
               color: "#636366",
             }}
           >
-            Places and things to do, shared with the people you&apos;ll do them with.
+            Bucket lists you build together.
           </div>
         </div>
       </div>

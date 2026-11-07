@@ -61,7 +61,7 @@ export default function PrivacyPage() {
 
       <h2>Reviews you share publicly</h2>
       <p>
-        When you check something off, you can choose to share how it went with anyone looking at
+        When you check something off, you can choose to share your review with anyone looking at
         that place. If you do, your first name, rating and review can appear on thelistofus.com
         pages for the same place, including on other people&apos;s lists. It&apos;s off unless you
         turn it on, and turning it off again takes the review down.

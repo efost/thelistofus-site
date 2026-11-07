@@ -123,8 +123,8 @@ export default async function ListPage({ params }: Props) {
           sidebar={
             <JoinCard
               listId={id}
-              title={`Join ${list.name}`}
-              body="Add your own places, check things off and say how they went. Everyone on the list sees it."
+              title={`Get in on ${list.name}`}
+              body="Add your own finds, check places off and leave reviews. Everyone on the list sees it."
             />
           }
         />

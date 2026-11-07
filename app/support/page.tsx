@@ -33,7 +33,7 @@ const FAQ: { q: string; a: React.ReactNode }[] = [
     a: (
       <>
         Yes. Open the place and choose Share from the menu. On a shared list, the link opens a page
-        for that place with its photo, notes and how it went.
+        for that place with its photo, notes and reviews.
       </>
     ),
   },

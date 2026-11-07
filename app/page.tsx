@@ -39,8 +39,8 @@ export default function Home() {
                 All the places you keep meaning to go.
               </h1>
               <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
-                Restaurants, bars, hikes and other experiences, shared with the people you&apos;ll
-                go with.
+                Restaurants, bars, hikes and everything you&apos;ve been meaning to try, shared with
+                the people you&apos;ll go with.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
                 {IS_ON_APP_STORE || !TURNSTILE_SITE_KEY ? (
@@ -53,7 +53,7 @@ export default function Home() {
                   data-umami-event="example-list"
                   className="group inline-flex items-center gap-1.5 font-heading text-[17px] text-link"
                 >
-                  See an example list
+                  See a list in action
                   <span className="transition-transform group-hover:translate-x-0.5">→</span>
                 </Link>
               </div>
@@ -90,7 +90,7 @@ export default function Home() {
         >
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-2 px-5 py-5">
             <span className="mb-1 block w-full text-center font-heading text-[15px] text-muted">
-              Anything you&apos;d put on a list
+              Anything you&apos;ve been meaning to do
             </span>
             {Object.values(CATEGORIES).map((c) => (
               <span key={c.label} className="chip !h-9 !bg-surface !pr-4 !text-[15px]">
@@ -101,8 +101,8 @@ export default function Home() {
         </section>
 
         <Feature
-          title="Add anything, in seconds"
-          body="Search for a place and it arrives with its address, a photo and a pin on the map. A movie, a show or a weekend away goes on just as easily, and you can paste a whole list from Notes."
+          title="Add it the second you hear about it"
+          body="Type a name and the address, photo and map pin fill themselves in. Movies, shows and weekend trips go on just as easily, or paste a whole list straight out of Notes."
           visual={
             <AddPlaceCard
               items={[byId("pells-bakery"), byId("foghorn-creamery"), byId("lucky-hound")]}
@@ -112,12 +112,12 @@ export default function Home() {
         <Feature
           flip
           title="Share it with your people"
-          body="Send a link. Friends join from it, add their own finds and see everything you've saved, and the bell shows what's new since you last looked. You choose who can edit and who can only look."
+          body="Send a link and your friends are in. They add their finds, you add yours, and everyone sees the whole list, with a bell for what's new since you last looked. You decide who can edit and who's just browsing."
           visual={<ShareCard list={list} />}
         />
         <Feature
-          title="Check it off. Say how it went."
-          body="Mark a place done, pick 👎 😐 👍 or ❤️ and leave a line for whoever goes next. Everyone on the list sees it, so the good spots rise to the top."
+          title="Check it off. Leave a review."
+          body="Just got back? Check it off, pick 👎 😐 👍 or ❤️, and leave a review for whoever's next. Everyone sees it, so the best spots rise to the top."
           visual={<ReactionCard item={ember} />}
         />
 
@@ -126,19 +126,19 @@ export default function Home() {
           <div className="mx-auto grid max-w-6xl items-center gap-12 rounded-[32px] bg-surface-secondary px-6 py-12 md:grid-cols-2 md:px-14 md:py-16">
             <div>
               <h2 className="text-[34px] leading-[1.08] tracking-[-0.02em] md:text-[44px]">
-                Links that look good anywhere
+                Links that look good in the group chat
               </h2>
               <p className="mt-5 max-w-md text-[18px] leading-relaxed text-muted">
-                Every shared list and every place on it has its own page. Send one in Messages and
-                it arrives with photos and progress. Friends without the app can still look through
-                it, then join when they&apos;re ready.
+                Every list, and every place on it, has its own page. Drop one in Messages and it
+                shows up as a proper card, photos and all. Friends without the app can browse it
+                right away and join when they&apos;re ready.
               </p>
               <Link
                 href={`/list/${SAMPLE_LIST_ID}`}
                 data-umami-event="example-list"
                 className="btn-pill mt-7 !min-h-12 !bg-surface !px-5 !text-[16px]"
               >
-                Open the example list →
+                Open the example →
               </Link>
             </div>
             <div className="flex justify-center md:justify-end">
@@ -151,7 +151,7 @@ export default function Home() {
         <section id="get-the-app" className="scroll-mt-20 px-5 pb-24 pt-6 text-center">
           <div className="mx-auto max-w-2xl">
             <h2 className="text-[38px] leading-[1.05] tracking-[-0.02em] md:text-[52px]">
-              Start your list
+              {IS_ON_APP_STORE ? "Start your list" : "Be first in line"}
             </h2>
             <p className="mx-auto mt-4 max-w-md text-[18px] text-muted">
               One for date nights, one for the trip, one for the whole group chat.

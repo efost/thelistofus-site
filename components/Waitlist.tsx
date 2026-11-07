@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 import { turnstileToken } from "@/lib/turnstile";
 
-// "Join the waitlist": an email field, then a Cloudflare Turnstile check (usually
+// "Get early access": an email field, then a Cloudflare Turnstile check (usually
 // invisible) when it's sent, then POST /api/waitlist.
 
 type State =
@@ -62,10 +62,10 @@ export default function Waitlist({
     return (
       <div className={`flex flex-col gap-2 ${items}`} aria-live="polite">
         <div className="font-heading text-[20px]">
-          {state.already ? "You're already on the list." : "You're on the list."}
+          {state.already ? "You're already on the list. We'll be in touch." : "You're on the list."}
         </div>
         <p className="max-w-sm text-[16px] text-muted">
-          We&apos;ll email you when The List is ready for iPhone.
+          We&apos;ll email you the moment it&apos;s ready.
         </p>
       </div>
     );
@@ -93,14 +93,14 @@ export default function Waitlist({
           disabled={state.step === "sending"}
           className="btn-primary !min-h-14 shrink-0 !px-7 !text-[17px] disabled:opacity-70"
         >
-          {state.step === "sending" ? "Joining…" : "Join the waitlist"}
+          {state.step === "sending" ? "One sec…" : "Get early access"}
         </button>
       </form>
       <div ref={box} />
       <span className="max-w-sm text-[14px] text-muted" aria-live="polite">
         {state.step === "error"
           ? state.message
-          : "For iPhone. One email when it's ready, nothing else."}
+          : "Coming to iPhone. One email when it's ready, nothing else."}
       </span>
     </div>
   );

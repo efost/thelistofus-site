@@ -126,7 +126,7 @@ function OtherReviews({ reviews }: { reviews: PublicReview[] }) {
         })}
       </ul>
       <p className="text-[14px] text-muted">
-        From people who have this place on their own lists and chose to share how it went.
+        From people who have this place on their own lists and chose to share their reviews.
       </p>
     </Section>
   );
@@ -283,7 +283,7 @@ export default async function ItemPage({ params }: Props) {
               <p className="text-[16px]">
                 Still on the to-do list.{" "}
                 <span className="text-muted">
-                  Gone already? Check it off in the app and say how it went.
+                  Been already? Check it off in the app and leave a review.
                 </span>
               </p>
             </div>
@@ -351,8 +351,7 @@ export default async function ItemPage({ params }: Props) {
             <div className="flex-1">
               <div className="font-heading text-[18px] leading-tight">Want to go too?</div>
               <p className="mt-1 text-[15px] text-muted">
-                Join {list.name} in The List to add your own finds, check places off and say how
-                they went.
+                Join {list.name} to add your own finds, check places off and leave reviews.
               </p>
             </div>
             <div className="flex flex-col items-stretch gap-2 sm:items-end">

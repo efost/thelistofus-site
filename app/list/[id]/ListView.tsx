@@ -210,10 +210,10 @@ export default function ListView({
           ) : (
             <p className="py-10 text-center text-[17px] text-muted">
               {filtering
-                ? "Nothing matches."
+                ? "No matches."
                 : tab === "todo"
-                  ? "Everything on this list is done."
-                  : "Nothing's been checked off yet."}
+                  ? "All done. Time for a new list."
+                  : "Nothing checked off yet. Got any plans this weekend?"}
             </p>
           )}
         </section>

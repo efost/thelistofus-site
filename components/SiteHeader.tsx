@@ -24,7 +24,7 @@ export default function SiteHeader({
               href="/list/example"
               className="hidden font-heading text-[15px] text-muted transition-colors hover:text-ink sm:inline"
             >
-              See an example
+              See it in action
             </Link>
           )}
           {cta && <GetAppButton size="sm" />}
