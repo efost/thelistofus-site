@@ -17,11 +17,14 @@ export default function Waitlist({
   siteKey,
   where,
   align = "center",
+  aside,
 }: {
   siteKey: string;
   /** Which form it came from, kept with the address ("hero", "footer"). */
   where: string;
   align?: "center" | "start";
+  /** Shown after the caption, e.g. a link to the example list. */
+  aside?: React.ReactNode;
 }) {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<State>({ step: "idle" });
@@ -97,10 +100,18 @@ export default function Waitlist({
         </button>
       </form>
       <div ref={box} />
-      <span className="max-w-lg text-[14px] text-muted" aria-live="polite">
-        {state.step === "error"
-          ? state.message
-          : "Coming to iPhone. We'll email you when it's out, and that's it."}
+      <span
+        className={`flex max-w-xl flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-muted ${
+          align === "center" ? "justify-center" : ""
+        }`}
+        aria-live="polite"
+      >
+        <span>
+          {state.step === "error"
+            ? state.message
+            : "Coming to iPhone. We'll email you when it's out, and that's it."}
+        </span>
+        {aside}
       </span>
     </div>
   );

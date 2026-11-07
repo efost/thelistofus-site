@@ -10,12 +10,21 @@ export default function Phone({
   children,
   className = "",
   label,
+  shadow = "float",
 }: {
   width?: number;
   children: React.ReactNode;
   className?: string;
   label?: string;
+  /** float: a drop shadow of its own; soft: a short one; none: the page supplies the ground. */
+  shadow?: "float" | "soft" | "none";
 }) {
+  const drop =
+    shadow === "float"
+      ? "0 40px 80px -30px rgba(20, 20, 60, 0.45), "
+      : shadow === "soft"
+        ? "0 24px 48px -28px rgba(20, 20, 60, 0.4), "
+        : "";
   const bezel = Math.round(width * 0.035);
   const inner = width - bezel * 2;
   const scale = inner / SCREEN_W;
@@ -29,8 +38,7 @@ export default function Phone({
         padding: bezel,
         borderRadius: width * 0.17,
         background: "linear-gradient(145deg, #2b2b2f, #0c0c0e)",
-        boxShadow:
-          "0 40px 80px -30px rgba(20, 20, 60, 0.45), 0 0 0 1px rgba(255,255,255,0.06) inset, 0 0 0 1.5px #3a3a3e",
+        boxShadow: `${drop}0 0 0 1px rgba(255,255,255,0.06) inset, 0 0 0 1.5px #3a3a3e`,
       }}
       role="img"
       aria-label={label}

@@ -26,59 +26,92 @@ export default function Home() {
       <main>
         {/* Hero */}
         <section className="relative overflow-hidden">
+          {/* Soft wash, strongest under the phones so they sit on something. */}
           <div
             className="pointer-events-none absolute inset-0 -z-10"
             style={{
               background:
-                "radial-gradient(50% 60% at 85% 30%, color-mix(in srgb, var(--brand-purple) 13%, transparent), transparent 70%), radial-gradient(45% 55% at 60% 85%, color-mix(in srgb, var(--brand-blue) 12%, transparent), transparent 70%)",
+                "radial-gradient(42% 55% at 78% 62%, color-mix(in srgb, var(--brand-blue) 14%, transparent), transparent 70%), radial-gradient(40% 50% at 92% 18%, color-mix(in srgb, var(--brand-purple) 12%, transparent), transparent 70%)",
             }}
           />
-          <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 pb-16 pt-12 md:pt-20 lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:pb-24">
-            <div className="max-w-xl">
-              <HeroHeadline className="text-[32px] leading-[1.08] tracking-[-0.025em] sm:text-[52px] lg:text-[54px]" />
+          <div className="mx-auto grid max-w-6xl items-start gap-10 px-5 pt-10 md:pt-14 lg:grid-cols-[1.15fr_1fr] lg:gap-4 lg:pt-16">
+            <div className="max-w-xl lg:pt-3">
+              <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] sm:text-[52px] lg:text-[58px]" />
               <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
                 Restaurants, bars, hikes and everything you&apos;ve been meaning to try, shared with
                 the people you&apos;ll go with.
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+              <div className="mt-8">
                 {IS_ON_APP_STORE || !TURNSTILE_SITE_KEY ? (
                   <GetAppButton size="lg" />
                 ) : (
-                  <Waitlist siteKey={TURNSTILE_SITE_KEY} where="hero" align="start" />
+                  <Waitlist
+                    siteKey={TURNSTILE_SITE_KEY}
+                    where="hero"
+                    align="start"
+                    aside={
+                      <Link
+                        href={`/list/${SAMPLE_LIST_ID}`}
+                        data-umami-event="example-list"
+                        className="group inline-flex items-center gap-1 font-heading text-[14px] text-link"
+                      >
+                        See a list in action
+                        <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                      </Link>
+                    }
+                  />
                 )}
-                <Link
-                  href={`/list/${SAMPLE_LIST_ID}`}
-                  data-umami-event="example-list"
-                  className="group inline-flex items-center gap-1.5 font-heading text-[17px] text-link"
-                >
-                  See a list in action
-                  <span className="transition-transform group-hover:translate-x-0.5">→</span>
-                </Link>
               </div>
-              {!IS_ON_APP_STORE && !TURNSTILE_SITE_KEY && (
-                <p className="mt-4 text-[15px] text-muted">
-                  For iPhone. Coming soon to the App Store.
+              {(IS_ON_APP_STORE || !TURNSTILE_SITE_KEY) && (
+                <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[15px] text-muted">
+                  {!IS_ON_APP_STORE && <span>For iPhone. Coming soon to the App Store.</span>}
+                  <Link
+                    href={`/list/${SAMPLE_LIST_ID}`}
+                    data-umami-event="example-list"
+                    className="group inline-flex items-center gap-1 font-heading text-link"
+                  >
+                    See a list in action
+                    <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                  </Link>
                 </p>
               )}
             </div>
 
-            <div className="relative mx-auto h-[600px] w-full max-w-[540px] sm:h-[660px]">
-              <Phone
-                width={290}
-                className="absolute left-[250px] top-12 hidden rotate-[5deg] sm:block"
-                label="An item in The List: Little Ember Café, loved, with a review"
-              >
-                <ItemScreenMock item={ember} listName={list.name} />
-              </Phone>
-              <Phone
-                width={290}
-                className="absolute left-[calc(50%-145px)] top-0 sm:left-[20px] sm:-rotate-[3deg]"
-                label="A shared list in The List, with photos and progress"
-              >
-                <ListScreenMock list={list} />
-              </Phone>
+            {/* The phones share a top line with the headline and run off the bottom of the
+                hero, so the section ends on a clean edge rather than empty space. */}
+            <div className="relative mx-auto h-[520px] w-full max-w-[520px] sm:h-[560px] lg:mt-0 lg:h-[500px]">
+              <div className="absolute left-1/2 top-0 w-[520px] origin-top -translate-x-1/2 scale-[0.78] sm:scale-[0.86] lg:left-0 lg:translate-x-0 lg:scale-[0.76] xl:scale-[0.9]">
+                {/* Ground shadow: one long pool under the cluster instead of a halo on each phone. */}
+                <div
+                  className="absolute left-[40px] top-[560px] h-[90px] w-[460px] rounded-[50%] blur-2xl"
+                  style={{ background: "rgba(20, 20, 60, 0.22)" }}
+                  aria-hidden
+                />
+                <Phone
+                  width={290}
+                  className="absolute left-[235px] top-14 hidden rotate-[6deg] sm:block"
+                  label="An item in The List: Little Ember Café, loved, with a review"
+                  shadow="none"
+                >
+                  <ItemScreenMock item={ember} listName={list.name} />
+                </Phone>
+                <Phone
+                  width={290}
+                  className="absolute left-[115px] top-0 sm:left-[10px] sm:-rotate-[3deg]"
+                  label="A shared list in The List, with photos and progress"
+                  shadow="soft"
+                >
+                  <ListScreenMock list={list} />
+                </Phone>
+              </div>
             </div>
           </div>
+          {/* The phones fade out at the bottom edge instead of stopping dead. */}
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-28"
+            style={{ background: "linear-gradient(to bottom, transparent, var(--surface))" }}
+            aria-hidden
+          />
         </section>
 
         <Feature
