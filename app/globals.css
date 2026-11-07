@@ -24,7 +24,7 @@
      eased fade rather than a straight one, so it has no visible bottom edge. */
   --footer-surface: var(--surface);
   /* How strongly the hero's category scenes show (HeroHeadline). */
-  --scene-opacity: 0.16;
+  --scene-opacity: 0.11;
   --shadow-footer: linear-gradient(
     rgba(16, 24, 64, 0.045),
     rgba(16, 24, 64, 0.028) 6px,
@@ -55,7 +55,7 @@
     --shadow-header: 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 40px -8px rgba(0, 0, 0, 0.9);
     /* On black a shadow has nothing to fall on, so the footer is lifted a touch. */
     --footer-surface: #111113;
-    --scene-opacity: 0.12;
+    --scene-opacity: 0.085;
     --shadow-footer: linear-gradient(
       rgba(0, 0, 0, 0.7),
       rgba(0, 0, 0, 0.42) 6px,
