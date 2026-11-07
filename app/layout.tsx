@@ -22,7 +22,7 @@ const dmSans = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME}: the places you keep meaning to go`,
+    default: `${SITE_NAME}: the places you keep meaning to check out`,
     template: `%s · ${SITE_NAME}`,
   },
   description: TAGLINE,

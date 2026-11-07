@@ -3,29 +3,29 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 // The headline cycles through what goes on a list: "All the 🥾 hikes you keep meaning to
-// take", "All the 🍺 bars you keep meaning to check out"…
+// check out", "All the 🍺 bars you keep meaning to check out"… Only the noun changes, so
+// every entry has to read with "check out".
 //
 // Each swap slides the old word up and out as the new one slides up in. The emoji stays
-// put and pops (a quick scale) as the new word lands; the noun and verb change
-// together. The slot widens or narrows on the same curve, clipped vertically only so the
-// leaving word is never cut off at the side. Only the noun is coloured.
+// put and pops (a quick scale) as the new word lands. The slot widens or narrows on the
+// same curve, clipped vertically only so the leaving word is never cut off at the side.
 //
 // Screen readers get the plain sentence once; the moving parts are decorative. Nothing
 // moves under prefers-reduced-motion, off-screen, or in a hidden tab.
 
-const PHRASES: { emoji: string; thing: string; verb: string; color: string }[] = [
+const PHRASES: { emoji: string; thing: string; color: string }[] = [
   // light-dark(): the light-mode colour, then one that reads on black.
-  { emoji: "📍", thing: "places", verb: "go", color: "light-dark(#d1225b, #ff6b9a)" },
-  { emoji: "🍔", thing: "restaurants", verb: "try", color: "light-dark(#c2410c, #fb923c)" },
-  { emoji: "🥾", thing: "hikes", verb: "take", color: "light-dark(#3f7d20, #86d65a)" },
-  { emoji: "🍺", thing: "bars", verb: "check out", color: "light-dark(#b7791f, #fbbf24)" },
-  { emoji: "🎬", thing: "movies", verb: "watch", color: "light-dark(#6b21a8, #d8b4fe)" },
-  { emoji: "🏖️", thing: "trips", verb: "book", color: "light-dark(#0d9488, #2dd4bf)" },
-  { emoji: "🎨", thing: "museums", verb: "wander", color: "light-dark(#0369a1, #7dd3fc)" },
-  { emoji: "🍷", thing: "wineries", verb: "visit", color: "light-dark(#7f1d4d, #f472b6)" },
-  { emoji: "📺", thing: "shows", verb: "binge", color: "light-dark(#1d4ed8, #93c5fd)" },
-  { emoji: "🎟️", thing: "events", verb: "go to", color: "light-dark(#b91c1c, #fca5a5)" },
-  { emoji: "🎮", thing: "games", verb: "play", color: "light-dark(#4f46e5, #a5b4fc)" },
+  { emoji: "📍", thing: "places", color: "light-dark(#d1225b, #ff6b9a)" },
+  { emoji: "🍔", thing: "restaurants", color: "light-dark(#c2410c, #fb923c)" },
+  { emoji: "🥾", thing: "hikes", color: "light-dark(#3f7d20, #86d65a)" },
+  { emoji: "🍺", thing: "bars", color: "light-dark(#b7791f, #fbbf24)" },
+  { emoji: "🎬", thing: "movies", color: "light-dark(#6b21a8, #d8b4fe)" },
+  { emoji: "🏖️", thing: "beaches", color: "light-dark(#0d9488, #2dd4bf)" },
+  { emoji: "🎨", thing: "museums", color: "light-dark(#0369a1, #7dd3fc)" },
+  { emoji: "🍷", thing: "wineries", color: "light-dark(#7f1d4d, #f472b6)" },
+  { emoji: "📺", thing: "shows", color: "light-dark(#1d4ed8, #93c5fd)" },
+  { emoji: "🎟️", thing: "events", color: "light-dark(#b91c1c, #fca5a5)" },
+  { emoji: "🎮", thing: "games", color: "light-dark(#4f46e5, #a5b4fc)" },
 ];
 
 /** How long each phrase stays. */
@@ -154,11 +154,10 @@ export default function HeroHeadline({ className = "" }: { className?: string })
   }, []);
 
   const things: Word[] = PHRASES.map((p) => ({ emoji: p.emoji, text: p.thing, color: p.color }));
-  const verbs: Word[] = PHRASES.map((p) => ({ text: p.verb }));
 
   return (
     <h1 ref={root} className={className}>
-      <span className="sr-only">All the places you keep meaning to go.</span>
+      <span className="sr-only">All the places you keep meaning to check out.</span>
       {/* Fixed line breaks, so only the words move and the block never re-wraps. */}
       <span aria-hidden className="block">
         All the{" "}
@@ -174,7 +173,7 @@ export default function HeroHeadline({ className = "" }: { className?: string })
         you keep meaning
       </span>
       <span aria-hidden className="block">
-        to {animate ? <Slot words={verbs} index={index} /> : verbs[0].text}.
+        to check out.
       </span>
     </h1>
   );

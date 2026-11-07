@@ -573,7 +573,7 @@ export async function homeImage() {
               color: "#000",
             }}
           >
-            All the places you keep meaning to go.
+            All the places you keep meaning to check out.
           </div>
           <div
             style={{
