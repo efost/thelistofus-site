@@ -49,7 +49,6 @@ export default async function ListPage({ params }: Props) {
   if (!list) notFound();
 
   const percent = progressPercent(list);
-  const people = peopleSentence(list);
   // Photos for the collage: the first places on the list, tried in order.
   const candidates = list.items
     .filter((i) => i.isPlace)
@@ -85,7 +84,6 @@ export default async function ListPage({ params }: Props) {
                 ring="rgba(255,255,255,0.9)"
               />
             )}
-            {people && <span className="font-heading text-[16px]">{people}</span>}
           </span>
           <span
             className="flex items-center gap-2.5 font-heading text-[16px]"
@@ -117,7 +115,7 @@ export default async function ListPage({ params }: Props) {
 
   return (
     <>
-      <SiteHeader />
+      <SiteHeader cta={false} />
       <main className="mx-auto max-w-6xl px-5 pb-16 sm:pt-6">
         <ListView
           list={list}

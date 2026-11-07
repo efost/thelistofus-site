@@ -73,7 +73,7 @@ export default function Waitlist({
 
   return (
     <div className={`flex w-full flex-col gap-3 ${items}`}>
-      <form onSubmit={submit} className="flex w-full max-w-md flex-col gap-2 sm:flex-row">
+      <form onSubmit={submit} className="flex w-full max-w-lg flex-col gap-2 sm:flex-row">
         <label htmlFor={`waitlist-${where}`} className="sr-only">
           Email address
         </label>
@@ -86,7 +86,7 @@ export default function Waitlist({
           placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="min-h-14 flex-1 rounded-full border border-hairline bg-surface px-5 text-[17px] outline-none transition-shadow focus:border-transparent focus:ring-2 focus:ring-[var(--check-blue)]"
+          className="min-h-14 flex-1 rounded-xl border border-hairline bg-surface px-5 text-[17px] outline-none transition-shadow focus:border-transparent focus:ring-2 focus:ring-[var(--check-blue)]"
         />
         <button
           type="submit"

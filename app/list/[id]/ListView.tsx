@@ -147,7 +147,7 @@ export default function ListView({
 
         {/* Search, and List/Map on small screens */}
         <div className="mt-4 flex gap-2">
-          <label className="flex h-12 min-w-0 flex-1 items-center gap-2.5 rounded-full border border-hairline bg-surface px-4 text-muted focus-within:border-check">
+          <label className="flex h-12 min-w-0 flex-1 items-center gap-2.5 rounded-xl border border-hairline bg-surface px-4 text-muted focus-within:border-check">
             <SearchIcon />
             <input
               type="search"

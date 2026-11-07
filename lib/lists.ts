@@ -210,10 +210,13 @@ export function progressPercent(list: Pick<SharedList, "done" | "total">) {
 
 /** "Eric", "Eric and Jenna", "Eric, Jenna and 2 others". */
 export function peopleSentence(list: SharedList): string {
-  const names = list.people.slice(0, 2).map((p) => p.name);
+  const names = list.people.slice(0, 3).map((p) => p.name);
   const others = list.memberCount - names.length;
   if (names.length === 0) return list.memberCount > 1 ? `${list.memberCount} people` : "";
-  if (others <= 0) return names.join(" and ");
-  if (names.length === 1) return `${names[0]} and ${others} other${others === 1 ? "" : "s"}`;
-  return `${names[0]}, ${names[1]} and ${others} other${others === 1 ? "" : "s"}`;
+  if (others <= 0) {
+    return names.length <= 1
+      ? names.join("")
+      : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  }
+  return `${names.join(", ")} and ${others} other${others === 1 ? "" : "s"}`;
 }

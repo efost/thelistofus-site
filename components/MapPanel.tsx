@@ -205,11 +205,13 @@ export default function MapPanel({
   }, [activeId, key]);
 
   return (
-    <div className={`relative isolate overflow-hidden bg-surface-secondary ${className}`}>
+    <div
+      className={`relative isolate overflow-hidden bg-surface-secondary ${failed ? "hidden" : className}`}
+    >
       <div ref={container} className="absolute inset-0" />
-      {(!placed.length || failed) && (
+      {!placed.length && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-surface-secondary text-[15px] text-muted">
-          {failed ? "The map couldn't load." : "Nothing here has a place on the map."}
+          Nothing here has a place on the map.
         </div>
       )}
     </div>

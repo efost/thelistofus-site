@@ -26,7 +26,7 @@ export default function GetAppButton({
   const text = IS_ON_APP_STORE ? (label ?? "Get the app") : (preLaunchLabel ?? "Join the waitlist");
   const sizing =
     size === "sm"
-      ? "!min-h-10 !px-4 !text-[15px] !rounded-full"
+      ? "!min-h-10 !px-4 !text-[15px]"
       : size === "lg"
         ? "!min-h-14 !px-7 !text-[18px]"
         : "";
@@ -38,7 +38,7 @@ export default function GetAppButton({
       className={`btn-primary ${sizing} ${className}`}
       {...(external ? { target: "_blank", rel: "noopener" } : {})}
     >
-      <AppleGlyph size={size === "sm" ? 16 : 19} />
+      {IS_ON_APP_STORE && <AppleGlyph size={size === "sm" ? 16 : 19} />}
       {text}
     </a>
   );

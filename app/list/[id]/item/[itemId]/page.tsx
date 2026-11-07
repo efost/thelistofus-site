@@ -15,7 +15,7 @@ import { categoryLabel, fallbackEmoji, REACTIONS } from "@/lib/categories";
 import { getSharedItem, type Item } from "@/lib/lists";
 import { getOtherReviews, type PublicReview } from "@/lib/reviews";
 import { SAMPLE_LIST_ID } from "@/lib/sample";
-import { APP_STORE_ID, appURL, itemPath, listPath, SITE_URL } from "@/lib/site";
+import { APP_STORE_ID, appURL, IS_ON_APP_STORE, itemPath, listPath, SITE_URL } from "@/lib/site";
 
 export const revalidate = 60;
 
@@ -189,7 +189,7 @@ export default async function ItemPage({ params }: Props) {
 
   return (
     <>
-      <SiteHeader />
+      <SiteHeader cta={false} />
       <main className="mx-auto max-w-3xl px-5 pb-16 pt-4 sm:pt-6">
         <Link
           href={listPath(id)}
@@ -250,18 +250,25 @@ export default async function ItemPage({ params }: Props) {
                   <div className="font-heading text-[19px] leading-tight">
                     {reaction?.label ?? "Done"}
                   </div>
-                  <div className="text-[16px] text-muted">
-                    Checked off
-                    {item.completedAt && (
+                  <div className="flex items-center gap-1.5 text-[16px] text-muted">
+                    <span>
+                      Checked off
+                      {item.completedAt && (
+                        <>
+                          {" "}
+                          <When iso={item.completedAt} style="sentence" />
+                        </>
+                      )}
+                      {item.completedBy && <> by</>}
+                    </span>
+                    {item.completedBy && (
                       <>
-                        {" "}
-                        <When iso={item.completedAt} style="sentence" />
+                        <Avatar person={item.completedBy} size={20} ring="none" />
+                        <span>{item.completedBy.name}</span>
                       </>
                     )}
-                    {item.completedBy && <> by {item.completedBy.name}</>}
                   </div>
                 </div>
-                {item.completedBy && <Avatar person={item.completedBy} size={32} ring="none" />}
               </div>
               {item.review && (
                 <blockquote className="flex gap-3 pt-1">
@@ -350,12 +357,14 @@ export default async function ItemPage({ params }: Props) {
             </div>
             <div className="flex flex-col items-stretch gap-2 sm:items-end">
               <GetAppButton />
-              <a
-                href={appURL(id, item.id)}
-                className="text-center font-heading text-[14px] text-link hover:underline"
-              >
-                Open in the app
-              </a>
+              {IS_ON_APP_STORE && (
+                <a
+                  href={appURL(id, item.id)}
+                  className="text-center font-heading text-[14px] text-link hover:underline"
+                >
+                  Open in the app
+                </a>
+              )}
             </div>
           </div>
 

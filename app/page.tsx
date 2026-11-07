@@ -35,16 +35,12 @@ export default function Home() {
           />
           <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 pb-16 pt-12 md:pt-20 lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:pb-24">
             <div className="max-w-xl">
-              <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-hairline px-3 py-1 font-heading text-[14px] text-muted">
-                <span className="h-2 w-2 rounded-full bg-check" /> For iPhone
-              </p>
               <h1 className="text-[44px] leading-[1.02] tracking-[-0.025em] sm:text-[60px] lg:text-[68px]">
                 All the places you keep meaning to go.
               </h1>
-              <p className="mt-6 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
-                The List keeps the restaurants, bars, hikes, trips and shows you want to try, each
-                with a photo and a pin on the map, and shares them with the people you&apos;ll go
-                with.
+              <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
+                Restaurants, bars, hikes and other experiences, shared with the people you&apos;ll
+                go with.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
                 {IS_ON_APP_STORE || !TURNSTILE_SITE_KEY ? (
@@ -62,7 +58,9 @@ export default function Home() {
                 </Link>
               </div>
               {!IS_ON_APP_STORE && !TURNSTILE_SITE_KEY && (
-                <p className="mt-4 text-[15px] text-muted">Coming soon to the App Store.</p>
+                <p className="mt-4 text-[15px] text-muted">
+                  For iPhone. Coming soon to the App Store.
+                </p>
               )}
             </div>
 
@@ -90,7 +88,10 @@ export default function Home() {
           aria-label="What you can keep on a list"
           className="border-y border-hairline bg-surface-secondary/50"
         >
-          <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-2 px-5 py-6">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-2 px-5 py-5">
+            <span className="mb-1 block w-full text-center font-heading text-[15px] text-muted">
+              Anything you&apos;d put on a list
+            </span>
             {Object.values(CATEGORIES).map((c) => (
               <span key={c.label} className="chip !h-9 !bg-surface !pr-4 !text-[15px]">
                 {c.icon} {c.label}
@@ -121,7 +122,7 @@ export default function Home() {
         />
 
         {/* Shared links */}
-        <section className="px-5 py-20 md:py-28">
+        <section className="px-5 py-10 md:py-16">
           <div className="mx-auto grid max-w-6xl items-center gap-12 rounded-[32px] bg-surface-secondary px-6 py-12 md:grid-cols-2 md:px-14 md:py-16">
             <div>
               <h2 className="text-[34px] leading-[1.08] tracking-[-0.02em] md:text-[44px]">
@@ -147,7 +148,7 @@ export default function Home() {
         </section>
 
         {/* Get the app */}
-        <section id="get-the-app" className="scroll-mt-20 px-5 pb-24 text-center">
+        <section id="get-the-app" className="scroll-mt-20 px-5 pb-24 pt-6 text-center">
           <div className="mx-auto max-w-2xl">
             <h2 className="text-[38px] leading-[1.05] tracking-[-0.02em] md:text-[52px]">
               Start your list
@@ -189,17 +190,24 @@ function Feature({
   flip?: boolean;
 }) {
   return (
-    <section className="px-5 py-14 md:py-20">
+    <section className="px-5 py-8 md:py-10">
       <div
-        className={`mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2 md:gap-16 ${
+        className={`mx-auto grid max-w-6xl items-center gap-8 md:grid-cols-2 md:gap-14 ${
           flip ? "md:[&>*:first-child]:order-2" : ""
         }`}
       >
-        <div className="max-w-md">
+        <div className="max-w-md md:px-6">
           <h2 className="text-[32px] leading-[1.08] tracking-[-0.02em] md:text-[42px]">{title}</h2>
           <p className="mt-4 text-[18px] leading-relaxed text-muted">{body}</p>
         </div>
-        <div className={`flex ${flip ? "md:justify-start" : "md:justify-end"} justify-center`}>
+        {/* The mockup sits on the same wash as the hero, so it doesn't float on white. */}
+        <div
+          className="flex min-w-0 justify-center rounded-[28px] px-4 py-8 md:rounded-[32px] md:px-10 md:py-14"
+          style={{
+            background:
+              "radial-gradient(70% 80% at 80% 15%, color-mix(in srgb, var(--brand-purple) 11%, transparent), transparent 70%), radial-gradient(70% 80% at 15% 90%, color-mix(in srgb, var(--brand-blue) 11%, transparent), transparent 70%), var(--surface-secondary)",
+          }}
+        >
           {visual}
         </div>
       </div>

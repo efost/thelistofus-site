@@ -3,7 +3,14 @@ import { SITE_NAME } from "@/lib/site";
 import AppIcon from "./AppIcon";
 import GetAppButton from "./GetAppButton";
 
-export default function SiteHeader({ showExample = false }: { showExample?: boolean }) {
+/** `cta` is off on pages that carry their own "join" card, so there's one call to action per screen. */
+export default function SiteHeader({
+  showExample = false,
+  cta = true,
+}: {
+  showExample?: boolean;
+  cta?: boolean;
+}) {
   return (
     <header className="sticky top-0 z-40 border-b border-hairline bg-surface/85 backdrop-blur-xl backdrop-saturate-150">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
@@ -20,7 +27,7 @@ export default function SiteHeader({ showExample = false }: { showExample?: bool
               See an example
             </Link>
           )}
-          <GetAppButton size="sm" />
+          {cta && <GetAppButton size="sm" />}
         </nav>
       </div>
     </header>

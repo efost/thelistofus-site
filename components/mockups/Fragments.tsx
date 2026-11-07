@@ -15,7 +15,9 @@ export function Card({
   className?: string;
 }) {
   return (
-    <div className={`rounded-2xl border border-hairline bg-surface shadow-float ${className}`}>
+    <div
+      className={`min-w-0 rounded-2xl border border-hairline bg-surface shadow-float ${className}`}
+    >
       {children}
     </div>
   );

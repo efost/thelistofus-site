@@ -73,14 +73,18 @@ export default function ItemRow({
 
   const body = (
     <>
-      <span className="flex w-11 shrink-0 justify-center">
-        <CheckCircle done={item.done} />
+      <span className="relative shrink-0">
+        <PlacePhoto
+          src={photoURL(item, "thumb")}
+          emoji={fallbackEmoji(item.category)}
+          className={`h-14 w-14 rounded-lg ${item.done ? "opacity-55" : ""}`}
+        />
+        {item.done && (
+          <span className="absolute -bottom-1 -right-1 rounded-full ring-2 ring-surface">
+            <CheckCircle done size={20} />
+          </span>
+        )}
       </span>
-      <PlacePhoto
-        src={photoURL(item, "thumb")}
-        emoji={fallbackEmoji(item.category)}
-        className={`h-12 w-12 shrink-0 rounded-md ${item.done ? "opacity-55" : ""}`}
-      />
       <span
         className={`relative flex min-w-0 flex-1 items-center gap-3 self-stretch py-2.5 ${
           divider
@@ -101,7 +105,7 @@ export default function ItemRow({
     </>
   );
 
-  const rowClass = "group flex items-center gap-3 rounded-xl pr-2 transition-colors";
+  const rowClass = "group flex items-center gap-3 rounded-xl px-1 transition-colors";
   return linked ? (
     <Link
       href={itemPath(item.listId, item.id)}

@@ -137,7 +137,7 @@
     transform: scale(0.98);
   }
 
-  /* Grey pill (sheet buttons, quiet actions). */
+  /* Grey secondary button (sheet buttons, quiet actions). Same radius as .btn-primary. */
   .btn-pill {
     display: inline-flex;
     align-items: center;
@@ -145,7 +145,7 @@
     gap: 8px;
     min-height: 40px;
     padding: 0 16px;
-    border-radius: 999px;
+    border-radius: var(--radius-xl);
     background: var(--surface-secondary);
     color: var(--ink);
     font-family: var(--font-heading);
@@ -157,14 +157,14 @@
     opacity: 0.8;
   }
 
-  /* Secondary actions ("Open in Maps"): outlined capsule in the tint colour. */
+  /* Secondary actions ("Open in Maps"): outlined, in the tint colour. */
   .btn-outline {
     display: inline-flex;
     align-items: center;
     gap: 7px;
     height: 38px;
     padding: 0 15px;
-    border-radius: 999px;
+    border-radius: var(--radius-xl);
     border: 1px solid color-mix(in srgb, var(--link) 40%, transparent);
     color: var(--link);
     font-family: var(--font-heading);
