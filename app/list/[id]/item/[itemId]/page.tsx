@@ -67,6 +67,11 @@ function mapsLinks(item: Item) {
   return { apple: apple.toString(), directions: directions.toString() };
 }
 
+/** A list's name in running text: the heading face, in ink, like the app's titles. */
+function ListName({ children }: { children: React.ReactNode }) {
+  return <span className="font-heading text-ink">{children}</span>;
+}
+
 /** "What others thought": reviews of the same place that people chose to share. */
 function OtherReviews({ reviews }: { reviews: PublicReview[] }) {
   const counts = (Object.keys(REACTIONS) as (keyof typeof REACTIONS)[])
@@ -233,7 +238,7 @@ export default async function ItemPage({ params }: Props) {
               on{" "}
               <Link
                 href={listPath(id)}
-                className="text-ink underline decoration-hairline underline-offset-4 hover:decoration-current"
+                className="font-heading text-ink underline decoration-hairline underline-offset-4 hover:decoration-current"
               >
                 {list.name}
               </Link>
@@ -351,7 +356,8 @@ export default async function ItemPage({ params }: Props) {
             <div className="flex-1">
               <div className="font-heading text-[18px] leading-tight">Want to go too?</div>
               <p className="mt-1 text-[15px] text-muted">
-                Join {list.name} to add your own finds, check places off and leave reviews.
+                Join <ListName>{list.name}</ListName> to add your own finds, check places off and
+                leave reviews.
               </p>
             </div>
             <div className="flex flex-col items-stretch gap-2 sm:items-end">

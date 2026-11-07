@@ -177,7 +177,7 @@ export function MessagesCard({ list, previewSrc }: { list: SharedList; previewSr
         </div>
       </div>
       <div className="mt-3 w-fit max-w-[80%] rounded-[20px] rounded-bl-md bg-surface-secondary px-4 py-2 text-[16px]">
-        Driftwood first, then Little Ember?
+        Low Tide first, then Little Ember?
       </div>
     </div>
   );

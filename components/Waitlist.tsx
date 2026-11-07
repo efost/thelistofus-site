@@ -100,7 +100,7 @@ export default function Waitlist({
       <span className="max-w-sm text-[14px] text-muted" aria-live="polite">
         {state.step === "error"
           ? state.message
-          : "Coming to iPhone. One email when it's ready, nothing else."}
+          : "Coming to iPhone. We'll email you when it's out, and that's it."}
       </span>
     </div>
   );

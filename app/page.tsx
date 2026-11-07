@@ -154,7 +154,7 @@ export default function Home() {
               {IS_ON_APP_STORE ? "Start your list" : "Be first in line"}
             </h2>
             <p className="mx-auto mt-4 max-w-md text-[18px] text-muted">
-              One for date nights, one for the trip, one for the whole group chat.
+              A list for date nights, a list for the trip, a list for the whole group chat.
             </p>
             <div className="mt-8">
               {IS_ON_APP_STORE ? (

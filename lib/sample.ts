@@ -58,8 +58,8 @@ const ITEMS: Raw[] = [
     review: "Morning bun beats the croissant. The line moves fast before nine.",
   },
   {
-    id: "driftwood-rum-club",
-    name: "Driftwood Rum Club",
+    id: "low-tide-rum-club",
+    name: "Low Tide Rum Club",
     category: "Bars",
     address: "Gough St, Hayes Valley",
     city: "San Francisco",

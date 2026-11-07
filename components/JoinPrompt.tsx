@@ -9,7 +9,7 @@ export function JoinCard({
   listId,
   itemId,
 }: {
-  title: string;
+  title: React.ReactNode;
   body: string;
   listId: string;
   itemId?: string;
