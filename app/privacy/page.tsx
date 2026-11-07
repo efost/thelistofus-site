@@ -67,6 +67,14 @@ export default function PrivacyPage() {
         turn it on, and turning it off again takes the review down.
       </p>
 
+      <h2>This website</h2>
+      <p>
+        thelistofus.com doesn&apos;t use cookies or ask you to sign in. It counts visits with Umami,
+        which keeps no personal data and honors Do Not Track. Maps on the site are Apple Maps.
+        Before handing out the TestFlight beta link, it runs a Cloudflare Turnstile check to make
+        sure you&apos;re a person.
+      </p>
+
       <h2>Deleting your data</h2>
       <p>
         You can delete lists and anything on them in the app at any time. To delete your account,

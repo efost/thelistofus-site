@@ -8,13 +8,13 @@ blue-to-purple gradient on primary actions only.
 
 ## Pages
 
-| Path | What it is |
-| --- | --- |
-| `/` | Home page. The phone screens and feature cards are HTML drawn from the example list, not screenshots. |
-| `/list/:id` | A list shared by link: cover collage, people, progress, To do / Done, search, category filter, map. |
-| `/list/:id/item/:itemId` | One item: photo, how it went (reaction + review), notes, location and map links, more from the list. |
-| `/list/example` | A built-in example list (`lib/sample.ts`). Never touches Firestore, so it also works offline for development. |
-| `/support`, `/privacy` | Support FAQ and privacy policy (the App Store asks for both URLs). |
+| Path                     | What it is                                                                                                    |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `/`                      | Home page. The phone screens and feature cards are HTML drawn from the example list, not screenshots.         |
+| `/list/:id`              | A list shared by link: cover collage, people, progress, To do / Done, search, category filter, map.           |
+| `/list/:id/item/:itemId` | One item: photo, how it went (reaction + review), notes, location and map links, more from the list.          |
+| `/list/example`          | A built-in example list (`lib/sample.ts`). Never touches Firestore, so it also works offline for development. |
+| `/support`, `/privacy`   | Support FAQ and privacy policy (the App Store asks for both URLs).                                            |
 
 Every list and item page has a generated link preview (`opengraph-image.tsx`) with its
 photos, progress or reaction, for Messages and anywhere else links unfurl.
@@ -44,10 +44,11 @@ the app's `PublicReview.keys` must build them the same way.
 
 ## Environment
 
-Copy these into `.env` (or `.env.local`):
+On the Droplet these live in `/etc/thelistofus.env` (`deploy/setup-server.sh` asks for any
+that are missing). For development, put them in `.env.local`.
 
 ```env
-# Firebase web config (already set up)
+# Firebase web config, read on the server at run time
 NEXT_PUBLIC_FIREBASE_API_KEY=…
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=…
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=…
@@ -55,46 +56,62 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=…
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=…
 NEXT_PUBLIC_FIREBASE_APP_ID=…
 
-# Place photos (server only). A Google Maps Platform key with the Places API enabled and
-# no app/referrer restriction (restrict it by IP to the server instead). Without it,
-# items show their category emoji, as in the app when there's no photo.
+# Place photos. Restricted to the Places API. Without it, items show their category emoji.
 GOOGLE_PLACES_API_KEY=…
 
-# Once the app is on the App Store: turns "Get the app" into App Store links and turns
-# on the Smart App Banner. Until then those buttons go to the home page's download section.
-NEXT_PUBLIC_APP_STORE_ID=
-# Optional: a public TestFlight link to use until then.
-NEXT_PUBLIC_TESTFLIGHT_URL=
-# Where support and privacy emails go.
-NEXT_PUBLIC_SUPPORT_EMAIL=support@thelistofus.com
+# The TestFlight beta link, handed out only after a Cloudflare Turnstile check
+# (POST /api/testflight, a few tries an hour per address). Never put it in a page.
+TURNSTILE_SECRET_KEY=…
+TESTFLIGHT_URL=https://testflight.apple.com/join/…
+
+# Apple Maps (MapKit JS). A key with MapKit JS enabled; the private key is the .p8's
+# contents, with or without its BEGIN/END lines and line breaks.
+MAPKIT_TEAM_ID=8V5N4P9SRD
+MAPKIT_KEY_ID=…
+MAPKIT_PRIVATE_KEY=…
 ```
 
-`NEXT_PUBLIC_*` values are baked in at build time, so rebuild after changing them.
+Public ids are baked into the pages at build time. Set them as GitHub repository
+variables (Settings → Secrets and variables → Actions → Variables), or as defaults in
+`lib/site.ts`:
+
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY`: shows the "Join the beta" button.
+- `NEXT_PUBLIC_UMAMI_WEBSITE_ID`: Umami Cloud analytics (page views, plus clicks tagged
+  `data-umami-event`).
+- `NEXT_PUBLIC_APP_STORE_ID`: once the app is live, switches "Get the app" to the App Store
+  and turns on the Smart App Banner.
 
 ## Photos and caching
 
 `/api/photo/:listId/:itemId?size=thumb|full` finds an item's place photo the same way
 the app's `PlacePhotoStore` does (Find Place → name check → first photo). It only serves
-items on shared lists, so it isn't an open proxy. Google responses go through `fetch`
-with a 30-day revalidate, so Next's data cache (`.next/cache`) keeps each place to about
-one lookup a month. `/api/cover/:listId` serves a list's chosen cover photo.
+items on shared lists, so it isn't an open proxy. Photos are cached on disk for 30 days
+(no-photo answers for 7), and the photographer's credit is sent in an `X-Photo-Credit`
+header, shown on large photos and link previews as Google asks.
+`/api/cover/:listId` serves a list's chosen cover photo.
+
+The example list (`lib/sample.ts`) uses made-up restaurants and bars and its own photos,
+`public/example/<item id>.jpg` (1600px wide, optional `<id>-thumb.jpg`), never Google's.
 
 List and item pages are cached and re-read from Firestore at most once a minute.
 
 ## Deploy
 
-Pushing to `main` deploys (`.github/workflows/deploy.yml`). The workflow SSHes to the
-Droplet as `thelistofus-deploy`, whose key can only run `deploy <sha>`. On the server,
-`/usr/local/sbin/thelistofus-deploy` builds that commit in
-`/srv/apps/thelistofus-web/releases/<sha>`, points `current` at it, restarts the
-`thelistofus-web` service (port 3000, behind nginx) and rolls back if it doesn't answer.
-The workflow then checks `https://thelistofus.com/api/version` reports the new commit.
+Pushing to `main` deploys (`.github/workflows/deploy.yml`):
 
-Settings live on the server in `/etc/thelistofus.env` (Firebase config, Places key,
-`PORT`), not in GitHub. To re-deploy without a new commit, run the workflow from the
-Actions tab.
+1. GitHub Actions builds the standalone server and posts the build's SHA-256 on the commit
+   as the `deploy/build-sha256` status.
+2. It streams the build over SSH to the Droplet as `thelistofus-deploy`, whose key can only
+   run `release <sha>` (`deploy/deploy-gate`).
+3. `/usr/local/sbin/thelistofus-deploy` checks the commit is on main and the build matches
+   that status, unpacks it into `/srv/apps/thelistofus-web/releases/<sha>`, points `current`
+   at it, restarts the `thelistofus-web` service (port 3000, behind nginx) and rolls back
+   if it doesn't answer.
+4. The workflow checks `https://thelistofus.com/api/version` reports the new commit.
 
-One-time setup (already done once; re-run any time, it's idempotent):
+To re-deploy without a new commit, run the workflow from the Actions tab.
+
+One-time setup (re-run any time to update the deploy scripts or add settings):
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/efost/thelistofus-site/main/deploy/setup-server.sh | sudo bash

@@ -117,88 +117,6 @@ export function ShareCard({ list }: { list: SharedList }) {
   );
 }
 
-/** A stylised map with the list's pins. Drawn, not tiled, so it needs no map service. */
-export function MapCard({ items }: { items: Item[] }) {
-  const placed = items.filter(
-    (i) => i.lat !== null && i.long !== null && i.city === "San Francisco",
-  );
-  const lats = placed.map((i) => i.lat!);
-  const longs = placed.map((i) => i.long!);
-  const [minLat, maxLat] = [Math.min(...lats), Math.max(...lats)];
-  const [minLong, maxLong] = [Math.min(...longs), Math.max(...longs)];
-  const x = (long: number) => 8 + ((long - minLong) / (maxLong - minLong || 1)) * 84;
-  const y = (lat: number) => 10 + (1 - (lat - minLat) / (maxLat - minLat || 1)) * 74;
-  return (
-    <Card className="relative aspect-[4/3] w-full max-w-[440px] overflow-hidden">
-      <svg
-        className="absolute inset-0 h-full w-full"
-        viewBox="0 0 100 75"
-        preserveAspectRatio="none"
-        aria-hidden
-      >
-        <rect width="100" height="75" fill="var(--surface-secondary)" />
-        {/* water and parks */}
-        <path
-          d="M0 0h100v6C80 9 70 4 58 7S30 6 20 3 4 5 0 4z"
-          fill="color-mix(in srgb, var(--check-blue) 18%, var(--surface-secondary))"
-        />
-        <path
-          d="M100 6v69H92c2-14-3-30 1-44s5-18 7-25z"
-          fill="color-mix(in srgb, var(--check-blue) 18%, var(--surface-secondary))"
-        />
-        <rect
-          x="10"
-          y="38"
-          width="30"
-          height="7"
-          rx="2"
-          fill="color-mix(in srgb, #34c759 22%, var(--surface-secondary))"
-        />
-        <rect
-          x="60"
-          y="44"
-          width="8"
-          height="6"
-          rx="1.5"
-          fill="color-mix(in srgb, #34c759 22%, var(--surface-secondary))"
-        />
-        {/* streets */}
-        <g stroke="var(--surface)" strokeWidth="1.1" fill="none">
-          {[14, 26, 38, 50, 62].map((v) => (
-            <line key={`h${v}`} x1="0" y1={v} x2="100" y2={v} />
-          ))}
-          {[18, 34, 50, 66, 82].map((v) => (
-            <line key={`v${v}`} x1={v} y1="0" x2={v} y2="75" />
-          ))}
-          <path d="M28 75 70 20 100 12" strokeWidth="2" />
-        </g>
-      </svg>
-      {placed.map((item) => (
-        <span
-          key={item.id}
-          className={`list-pin absolute ${item.done ? "is-done" : ""}`}
-          style={{
-            left: `${x(item.long!)}%`,
-            top: `${y(item.lat!)}%`,
-            marginLeft: -15,
-            marginTop: -30,
-          }}
-        >
-          <span>{fallbackEmoji(item.category)}</span>
-        </span>
-      ))}
-      <div className="absolute inset-x-3 bottom-3 flex gap-2">
-        <span className="chip !h-9 !border-0 !bg-surface !text-[14px] shadow-card">
-          🍔 Restaurants
-        </span>
-        <span className="chip !h-9 !border-0 !bg-surface !text-[14px] shadow-card">🍺 Bars</span>
-        <span className="chip !h-9 !border-0 !bg-surface !text-[14px] shadow-card">🥾 Hikes</span>
-      </div>
-    </Card>
-  );
-}
-
-/** "How was it?" with the reaction picked and a review written. */
 export function ReactionCard({ item }: { item: Item }) {
   return (
     <Card className="w-full max-w-[400px] p-5">
@@ -233,62 +151,7 @@ export function ReactionCard({ item }: { item: Item }) {
   );
 }
 
-/** The activity sheet: what everyone's been doing. */
-export function ActivityCard({ list }: { list: SharedList }) {
-  const byName = Object.fromEntries(list.people.map((p) => [p.name, p]));
-  const rows = [
-    {
-      who: "Jenna",
-      what: "checked off",
-      item: "Zuni Café",
-      detail: "❤️ Loved it",
-      when: "2h",
-      unread: true,
-    },
-    {
-      who: "Alex",
-      what: "added",
-      item: "Lands End Trail",
-      detail: "🥾 Hikes",
-      when: "Yesterday",
-      unread: true,
-    },
-    { who: "Sam", what: "checked off", item: "Tartine Bakery", detail: "👍 Liked it", when: "Sat" },
-  ];
-  return (
-    <Card className="w-full max-w-[400px] p-5">
-      <div className="flex items-center justify-between">
-        <span className="font-heading text-[18px]">Activity</span>
-        <span className="font-heading text-[14px] text-link">Mark all read</span>
-      </div>
-      <div className="mt-2">
-        {rows.map((r, i) => (
-          <div
-            key={i}
-            className={`flex items-start gap-3 py-3 ${i ? "border-t border-hairline" : ""}`}
-          >
-            {byName[r.who] && <Avatar person={byName[r.who]} size={34} ring="none" />}
-            <div className="min-w-0 flex-1 text-[16px] leading-snug">
-              <span className="font-heading">{r.who}</span> {r.what}{" "}
-              <span className="font-heading">{r.item}</span>
-              <div className="text-[14px] text-muted">
-                {r.detail} · {r.when}
-              </div>
-            </div>
-            {r.unread && (
-              <span
-                className="mt-2 h-2.5 w-2.5 rounded-full"
-                style={{ background: "var(--brand-purple)" }}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-    </Card>
-  );
-}
-
-/** A Messages thread with a list link's rich preview. */
+/** A Messages thread with a shared list's link preview. */
 export function MessagesCard({ list, previewSrc }: { list: SharedList; previewSrc: string }) {
   return (
     <div className="w-full max-w-[420px] rounded-[28px] border border-hairline bg-surface p-4 shadow-float">
@@ -312,7 +175,7 @@ export function MessagesCard({ list, previewSrc }: { list: SharedList; previewSr
         </div>
       </div>
       <div className="mt-3 w-fit max-w-[80%] rounded-[20px] rounded-bl-md bg-surface-secondary px-4 py-2 text-[16px]">
-        Smuggler&apos;s Cove first, then Zuni?
+        Driftwood first, then Little Ember?
       </div>
     </div>
   );

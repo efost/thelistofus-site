@@ -1,9 +1,10 @@
 name: Deploy thelistofus.com
 
-# Every push to main is built and switched to on the Droplet. The deploy key can only
-# run `deploy <sha>` there (see deploy/deploy-gate), which builds that commit, restarts
-# the site and rolls back if it doesn't come up. One-time server setup:
-# deploy/setup-server.sh.
+# Every push to main is built here and switched to on the Droplet (which is too small to
+# build Next.js while serving its other apps). The build's SHA-256 is posted as a commit
+# status, and the Droplet only accepts a build that matches it (deploy/thelistofus-deploy).
+# The deploy key can do nothing but hand over a build (deploy/deploy-gate). One-time
+# server setup: deploy/setup-server.sh.
 
 on:
   push:
@@ -12,6 +13,7 @@ on:
 
 permissions:
   contents: read
+  statuses: write
 
 concurrency:
   group: deploy-thelistofus
@@ -35,6 +37,37 @@ jobs:
             exit 1
           fi
 
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+          # Public settings baked into the pages (optional; lib/site.ts has defaults).
+          NEXT_PUBLIC_APP_STORE_ID: ${{ vars.NEXT_PUBLIC_APP_STORE_ID }}
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.NEXT_PUBLIC_TURNSTILE_SITE_KEY }}
+          NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${{ vars.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+          cp -r public .next/standalone/
+          cp -r .next/static .next/standalone/.next/
+          tar -czf "$RUNNER_TEMP/build.tar.gz" -C .next/standalone .
+          ls -lh "$RUNNER_TEMP/build.tar.gz"
+
+      - name: Post the build's checksum on the commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          digest=$(sha256sum "$RUNNER_TEMP/build.tar.gz" | cut -d' ' -f1)
+          gh api "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" \
+            -f state=success -f context=deploy/build-sha256 -f "description=sha256:${digest}" >/dev/null
+          echo "sha256:${digest}"
+
       - name: Set up SSH
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
@@ -45,10 +78,11 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
 
-      - name: Build and switch on the Droplet
+      - name: Send the build to the Droplet and switch to it
         run: |
           ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
-            -o ServerAliveInterval=30 "thelistofus-deploy@${HOST}" "deploy ${GITHUB_SHA}"
+            -o ServerAliveInterval=30 "thelistofus-deploy@${HOST}" "release ${GITHUB_SHA}" \
+            < "$RUNNER_TEMP/build.tar.gz"
 
       - name: Check thelistofus.com is serving this commit
         run: |

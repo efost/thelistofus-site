@@ -9,12 +9,13 @@
 # (the process on port 3000), then adds:
 #   • a systemd service, thelistofus-web, to run new builds on the same port
 #   • a `thelistofus-deploy` user whose SSH key can only run `deploy <sha>`
-#   • /usr/local/sbin/thelistofus-deploy, which builds a commit and switches to it
-#   • /etc/thelistofus.env, the site's settings (copied from the current .env)
-# The first deploy from GitHub then stops the old process and starts the new service,
-# putting the old one back if the new build doesn't come up.
+#   • /usr/local/sbin/thelistofus-deploy, which unpacks a build from GitHub Actions and
+#     switches to it
+#   • /etc/thelistofus.env, the site's settings (copied from the current .env), asking
+#     for any that are missing
 #
-# Safe to re-run. Pass --new-key to replace the deploy key.
+# Safe to re-run: it updates the deploy scripts and asks only for settings that aren't
+# set yet (Enter skips one). Pass --new-key to replace the deploy key.
 set -euo pipefail
 trap 'echo "✗ Stopped at line $LINENO of setup-server.sh" >&2' ERR
 
@@ -102,10 +103,44 @@ if [[ -n "$legacy_unit" ]]; then
     echo "Copied settings from $f"
   done
 fi
-if ! grep -q '^GOOGLE_PLACES_API_KEY=.' /etc/thelistofus.env; then
-  read -rsp "Google Places API key for place photos (Enter to skip): " key </dev/tty || key=""
-  echo
-  if [[ -n "$key" ]]; then echo "GOOGLE_PLACES_API_KEY=$key" >>/etc/thelistofus.env; fi
+settings_before="$(sha256sum /etc/thelistofus.env)"
+ask_setting() { # KEY "question" [visible]: asks only if KEY isn't set
+  grep -q "^$1=." /etc/thelistofus.env && return 0
+  local value=""
+  if [[ "${3:-}" == visible ]]; then
+    read -rp "$2 (Enter to skip): " value </dev/tty || value=""
+  else
+    read -rsp "$2 (Enter to skip): " value </dev/tty || value=""
+    echo
+  fi
+  value="$(printf '%s' "$value" | tr -d '\r\n')"
+  if [[ -n "$value" ]]; then
+    sed -i "/^$1=/d" /etc/thelistofus.env
+    printf '%s=%s\n' "$1" "$value" >>/etc/thelistofus.env
+  fi
+}
+ask_setting GOOGLE_PLACES_API_KEY "Google Places API key for place photos"
+ask_setting TURNSTILE_SECRET_KEY "Cloudflare Turnstile secret key (for the TestFlight link)"
+ask_setting TESTFLIGHT_URL "TestFlight public link (https://testflight.apple.com/join/...)" visible
+ask_setting MAPKIT_KEY_ID "MapKit JS key ID (10 characters, from the Apple Developer key)" visible
+if grep -q '^MAPKIT_KEY_ID=.' /etc/thelistofus.env; then
+  add_setting "MAPKIT_TEAM_ID=8V5N4P9SRD"
+  if ! grep -q '^MAPKIT_PRIVATE_KEY=.' /etc/thelistofus.env; then
+    echo "Paste the MapKit JS .p8 key (all of it, BEGIN to END), then press Enter."
+    echo "(Or just press Enter to skip.)"
+    p8=""
+    while IFS= read -rs line </dev/tty; do
+      [[ -z "$p8" && -z "$line" ]] && break
+      p8+="$line"
+      [[ "$line" == *"END PRIVATE KEY"* ]] && break
+    done
+    # Kept as one line: the key without its BEGIN/END lines (lib/mapkit.ts rebuilds it).
+    body="$(printf '%s' "$p8" | sed -E 's/-----(BEGIN|END) PRIVATE KEY-----//g' | tr -d ' \r\n')"
+    if [[ -n "$body" ]]; then
+      printf 'MAPKIT_PRIVATE_KEY=%s\n' "$body" >>/etc/thelistofus.env
+      echo "Saved the MapKit key."
+    fi
+  fi
 fi
 grep -q '^NEXT_PUBLIC_FIREBASE_PROJECT_ID=.' /etc/thelistofus.env ||
   echo "⚠ No Firebase settings found. Add the NEXT_PUBLIC_FIREBASE_* lines to /etc/thelistofus.env."
@@ -123,7 +158,7 @@ LEGACY_UNIT=$legacy_unit
 LEGACY_PM2=$legacy_pm2
 EOF
 
-# ── 3. Folders and a copy of the repo ─────────────────────────────────────────────
+# ── 3. Folders and a copy of the repo (to check deploys are commits on main) ───────
 say "Releases: $BASE"
 install -d -o "$app_user" -g "$app_user" "$BASE" "$BASE/releases"
 if [[ ! -d "$BASE/repo.git" ]]; then
@@ -200,4 +235,7 @@ for f in /etc/ssh/ssh_host_ed25519_key.pub /etc/ssh/ssh_host_ecdsa_key.pub; do
   if [[ -f "$f" ]]; then echo "$host_ip $(cut -d' ' -f1,2 "$f")"; fi
 done
 echo
-echo "Then merge website-redesign into main (or re-run the Deploy workflow) to go live."
+if [[ "$settings_before" != "$(sha256sum /etc/thelistofus.env)" ]] && systemctl is-active --quiet "$SERVICE"; then
+  systemctl restart "$SERVICE"
+  echo "Settings changed, so $SERVICE was restarted."
+fi

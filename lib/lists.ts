@@ -2,7 +2,7 @@ import { collection, doc, getDoc, getDocs, Timestamp, type DocumentData } from "
 import { cache } from "react";
 import { avatarHex, prefersDarkText } from "./avatar";
 import { isReaction, type Reaction } from "./categories";
-import { db } from "./firebase";
+import { firestore } from "./firebase";
 import { SAMPLE_LIST_ID, sampleList } from "./sample";
 
 // Everything here is plain JSON (dates as ISO strings) so it can be handed straight
@@ -167,12 +167,12 @@ export const getSharedList = cache(async (listId: string): Promise<SharedList | 
   if (listId === SAMPLE_LIST_ID) return sampleList();
   if (!/^[A-Za-z0-9_-]{1,64}$/.test(listId)) return null;
   try {
-    const snapshot = await getDoc(doc(db, "lists", listId));
+    const snapshot = await getDoc(doc(firestore(), "lists", listId));
     if (!snapshot.exists()) return null;
     const data = snapshot.data();
     if (data.isShared !== true) return null;
 
-    const itemsSnapshot = await getDocs(collection(db, "lists", listId, "items"));
+    const itemsSnapshot = await getDocs(collection(firestore(), "lists", listId, "items"));
     const items = itemsSnapshot.docs.map((d) => toItem(d.id, listId, d.data()));
     return assembleList(listId, data, items);
   } catch (error) {
@@ -186,7 +186,7 @@ export const getSharedList = cache(async (listId: string): Promise<SharedList | 
 export const getCoverReference = cache(async (listId: string): Promise<string | null> => {
   if (listId === SAMPLE_LIST_ID) return null;
   try {
-    const snapshot = await getDoc(doc(db, "lists", listId));
+    const snapshot = await getDoc(doc(firestore(), "lists", listId));
     const data = snapshot.data();
     if (!data || data.isShared !== true) return null;
     return text(data.coverPhotoReference) || null;

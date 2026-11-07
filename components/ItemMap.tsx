@@ -10,5 +10,5 @@ const MapPanel = dynamic(() => import("./MapPanel"), {
 
 /** A small map with one place's pin. */
 export default function ItemMap({ item, className }: { item: Item; className?: string }) {
-  return <MapPanel items={[item]} zoom={15} interactive={false} className={className} />;
+  return <MapPanel items={[item]} zoom interactive={false} className={className} />;
 }

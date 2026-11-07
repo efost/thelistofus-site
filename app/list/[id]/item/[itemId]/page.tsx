@@ -47,24 +47,33 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+/** Apple Maps links: the place itself when the app saved its Apple Maps id, else a search there. */
 function mapsLinks(item: Item) {
   const query = [item.name, item.address, item.city].filter(Boolean).join(", ");
-  const apple = new URL("https://maps.apple.com/");
-  apple.searchParams.set("q", item.name);
-  if (item.lat !== null) apple.searchParams.set("ll", `${item.lat},${item.long}`);
-  else apple.searchParams.set("address", query);
+  const appleId = item.placeId?.trim();
+  const isAppleId = Boolean(appleId) && !/^(ChIJ|GhIJ)/.test(appleId!);
+  let apple: URL;
+  if (isAppleId) {
+    apple = new URL("https://maps.apple.com/place");
+    apple.searchParams.set("place-id", appleId!);
+  } else {
+    apple = new URL("https://maps.apple.com/");
+    apple.searchParams.set("q", item.name);
+    if (item.lat !== null) apple.searchParams.set("ll", `${item.lat},${item.long}`);
+    else apple.searchParams.set("address", query);
+  }
   const directions = new URL("https://maps.apple.com/");
   directions.searchParams.set("daddr", item.lat !== null ? `${item.lat},${item.long}` : query);
-  const google = new URL("https://www.google.com/maps/search/");
-  google.searchParams.set("api", "1");
-  google.searchParams.set("query", query);
-  return { apple: apple.toString(), google: google.toString(), directions: directions.toString() };
+  return { apple: apple.toString(), directions: directions.toString() };
 }
 
 /** "What others thought": reviews of the same place that people chose to share. */
 function OtherReviews({ reviews }: { reviews: PublicReview[] }) {
   const counts = (Object.keys(REACTIONS) as (keyof typeof REACTIONS)[])
-    .map((key) => ({ key, n: reviews.filter((r) => r.reaction === key).length }))
+    .map((key) => ({
+      key,
+      n: reviews.filter((r) => r.reaction === key).length,
+    }))
     .filter((c) => c.n > 0)
     .reverse();
   return (
@@ -135,7 +144,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 const icon = {
   map: "M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14",
   directions: "M12 2 2 12l10 10 10-10L12 2zM9 13v-2a1 1 0 0 1 1-1h5M13 8l2 2-2 2",
-  external: "M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5",
 };
 function Glyph({ d }: { d: string }) {
   return (
@@ -166,6 +174,8 @@ export default async function ItemPage({ params }: Props) {
   const others = id === SAMPLE_LIST_ID ? [] : await getOtherReviews(item);
   const hasLocation = Boolean(item.address || item.city || item.lat !== null);
   const links = hasLocation ? mapsLinks(item) : null;
+  // The example's restaurants are made up, so there's nothing to open in Maps.
+  const showMapsLinks = id !== SAMPLE_LIST_ID;
   const more = list.items
     .filter((i) => i.id !== item.id)
     // Same kind of thing first, then still-to-do places.
@@ -207,6 +217,7 @@ export default async function ItemPage({ params }: Props) {
           emoji={fallbackEmoji(item.category)}
           emojiSize={88}
           eager
+          credit
           className="-mx-5 h-[260px] sm:mx-0 sm:h-[400px] sm:rounded-2xl"
           tint="linear-gradient(135deg, color-mix(in srgb, var(--brand-blue) 16%, transparent), color-mix(in srgb, var(--brand-purple) 16%, transparent))"
         />
@@ -289,17 +300,28 @@ export default async function ItemPage({ params }: Props) {
               {item.lat !== null && (
                 <ItemMap item={item} className="mt-3 h-56 rounded-2xl border border-hairline" />
               )}
-              <div className="flex flex-wrap gap-2 pt-2">
-                <a href={links.apple} className="btn-outline" target="_blank" rel="noopener">
-                  <Glyph d={icon.map} /> Apple Maps
-                </a>
-                <a href={links.google} className="btn-outline" target="_blank" rel="noopener">
-                  <Glyph d={icon.external} /> Google Maps
-                </a>
-                <a href={links.directions} className="btn-outline" target="_blank" rel="noopener">
-                  <Glyph d={icon.directions} /> Directions
-                </a>
-              </div>
+              {showMapsLinks && (
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <a
+                    href={links.apple}
+                    className="btn-outline"
+                    target="_blank"
+                    rel="noopener"
+                    data-umami-event="open-in-maps"
+                  >
+                    <Glyph d={icon.map} /> Open in Maps
+                  </a>
+                  <a
+                    href={links.directions}
+                    className="btn-outline"
+                    target="_blank"
+                    rel="noopener"
+                    data-umami-event="directions"
+                  >
+                    <Glyph d={icon.directions} /> Directions
+                  </a>
+                </div>
+              )}
             </Section>
           )}
 
@@ -378,7 +400,7 @@ export default async function ItemPage({ params }: Props) {
           )}
         </div>
       </main>
-      <SiteFooter photoCredit />
+      <SiteFooter photoCredit={id !== SAMPLE_LIST_ID} />
       <JoinBar listId={id} itemId={item.id} label="Get the app" />
     </>
   );

@@ -2,7 +2,7 @@
 // environment so they can be filled in without a code change.
 
 export const SITE_URL = "https://thelistofus.com";
-export const SITE_NAME = "The List of Us";
+export const SITE_NAME = "The List";
 /** What the app is called on the store and in share messages. */
 export const APP_NAME = "The List";
 
@@ -12,10 +12,20 @@ export const TAGLINE =
 /** Numeric App Store id, e.g. "6450000000". Empty until the app is live. */
 export const APP_STORE_ID = process.env.NEXT_PUBLIC_APP_STORE_ID ?? "";
 
-/** Where "Get the app" goes: the App Store when there's an id, else the home page's download section. */
+/**
+ * Where "Get the app" goes: the App Store when there's an id, else the home page's
+ * download section, which hands out the TestFlight link after a Turnstile check. The
+ * TestFlight link itself is server-only (TESTFLIGHT_URL) and never in a page.
+ */
 export const APP_STORE_URL = APP_STORE_ID
   ? `https://apps.apple.com/app/id${APP_STORE_ID}`
-  : process.env.NEXT_PUBLIC_TESTFLIGHT_URL || "/#get-the-app";
+  : "/#get-the-app";
+
+/** Cloudflare Turnstile site key (public). Without it the beta section says "coming soon". */
+export const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
+
+/** Umami Cloud website id (public). Without it there's no analytics script. */
+export const UMAMI_WEBSITE_ID = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID || "";
 
 export const IS_ON_APP_STORE = Boolean(APP_STORE_ID);
 

@@ -29,6 +29,7 @@ export default function GetAppButton({
   return (
     <a
       href={APP_STORE_URL}
+      data-umami-event="get-the-app"
       className={`btn-primary ${sizing} ${className}`}
       {...(external ? { target: "_blank", rel: "noopener" } : {})}
     >

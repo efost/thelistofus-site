@@ -271,18 +271,29 @@
   }
 }
 
-/* Leaflet map: our own pins and quieter controls. */
-.leaflet-container {
-  font-family: var(--font-body);
-  background: var(--surface-secondary);
+/* Apple map (MapKit JS): our own pins and callouts. */
+.list-callout {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+  text-decoration: none;
+  max-width: 240px;
 }
-@media (prefers-color-scheme: dark) {
-  .list-map-tiles {
-    filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.6);
-  }
+.list-callout strong {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.2;
 }
-.leaflet-control-attribution {
-  font-size: 10px;
+.list-callout span {
+  color: var(--muted);
+  font-size: 13px;
 }
 .list-pin {
   width: 30px;

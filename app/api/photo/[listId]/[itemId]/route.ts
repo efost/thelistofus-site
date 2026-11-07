@@ -1,5 +1,5 @@
 import { getSharedItem } from "@/lib/lists";
-import { placePhoto, type PhotoSize } from "@/lib/photos";
+import { creditHeader, placePhoto, type PhotoSize } from "@/lib/photos";
 
 // GET /api/photo/:listId/:itemId?size=thumb|full
 // The place photo for an item on a shared list. Only serves items people can already
@@ -23,6 +23,7 @@ export async function GET(
   return new Response(photo.bytes, {
     headers: {
       "Content-Type": photo.type,
+      ...creditHeader(photo),
       "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
     },
   });

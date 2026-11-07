@@ -4,6 +4,7 @@ import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { Item } from "./lists";
+import { SAMPLE_LIST_ID } from "./sample";
 
 // Place photos, found the same way the app's PlacePhotoStore does: Find Place from the
 // item's name and address, check the result's name resembles the item's, then the
@@ -23,9 +24,40 @@ const MISS_TTL = 1000 * 60 * 60 * 24 * 7;
 export type PhotoSize = "thumb" | "full";
 const WIDTH: Record<PhotoSize, number> = { thumb: 240, full: 1600 };
 
+/** Who took a photo, as Google asks to be shown next to it. */
+export interface PhotoCredit {
+  /** The photographer, from the photo's html_attributions. */
+  author?: string;
+  /** Their Google Maps contributor page. */
+  url?: string;
+}
+
 export interface Photo {
   bytes: ArrayBuffer;
   type: string;
+  /** Set for Google photos (an empty credit still means "from Google"). */
+  credit: PhotoCredit | null;
+}
+
+/** The credit as a response header (URL-encoded JSON), read by PlacePhoto and CoverCollage. */
+export function creditHeader(photo: Photo): Record<string, string> {
+  return photo.credit ? { "X-Photo-Credit": encodeURIComponent(JSON.stringify(photo.credit)) } : {};
+}
+
+/** "Jane Doe" and her contributor link, from `<a href="…">Jane Doe</a>`. */
+export function parseAttribution(html: string | undefined): PhotoCredit {
+  if (!html) return {};
+  const url = html.match(/href="([^"]+)"/)?.[1];
+  const author = html
+    .replace(/<[^>]*>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .trim();
+  return {
+    ...(author ? { author } : {}),
+    ...(url && /^https:\/\//.test(url) ? { url } : {}),
+  };
 }
 
 /** Only items that look like real places get looked up (as in the app). */
@@ -38,12 +70,36 @@ export function photoQuery(item: Pick<Item, "name" | "address" | "city" | "isPla
 class NoPhoto extends Error {}
 
 export async function placePhoto(item: Item, size: PhotoSize): Promise<Photo | null> {
+  if (item.listId === SAMPLE_LIST_ID) return examplePhoto(item.id, size);
   const query = photoQuery(item);
   if (!KEY || !query) return null;
-  return cached(`place:${query}:${size}`, async () => {
-    const reference = await photoReferenceFor(query, item.name);
-    return photoByReference(reference, size);
+  return cached(`place2:${query}:${size}`, async () => {
+    const { reference, credit } = await photoReferenceFor(query, item.name);
+    return { ...(await photoByReference(reference, size)), credit };
   });
+}
+
+/**
+ * The example list's own photos: public/example/<id>.jpg (1600px wide), with an
+ * optional <id>-thumb.jpg for rows. Missing files just leave the emoji tile.
+ */
+async function examplePhoto(id: string, size: PhotoSize): Promise<Photo | null> {
+  if (!/^[a-z0-9-]+$/.test(id)) return null;
+  const dir = join(process.cwd(), "public", "example");
+  const names = size === "thumb" ? [`${id}-thumb.jpg`, `${id}.jpg`] : [`${id}.jpg`];
+  for (const name of names) {
+    try {
+      const bytes = await readFile(join(dir, name));
+      return {
+        bytes: new Uint8Array(bytes).buffer,
+        type: "image/jpeg",
+        credit: null,
+      };
+    } catch {
+      // try the next one
+    }
+  }
+  return null;
 }
 
 /** A list's chosen cover: either a photo URL or a Google photo reference. */
@@ -52,7 +108,12 @@ export async function coverPhoto(reference: string, size: PhotoSize): Promise<Ph
     return cached(`url:${reference}`, () => download(reference));
   }
   if (!KEY) return null;
-  return cached(`ref:${reference}:${size}`, () => photoByReference(reference, size));
+  // The app saves only the reference, so there's no photographer to name; it's still
+  // credited to Google.
+  return cached(`ref2:${reference}:${size}`, async () => ({
+    ...(await photoByReference(reference, size)),
+    credit: {},
+  }));
 }
 
 // MARK: Disk cache
@@ -73,10 +134,15 @@ async function cached(key: string, fetchPhoto: () => Promise<Photo>): Promise<Ph
   if (await fresh(`${file}.none`, MISS_TTL)) return null;
   if (await fresh(file, PHOTO_TTL)) {
     try {
-      const [bytes, type] = await Promise.all([readFile(file), readFile(`${file}.type`, "utf8")]);
+      const [bytes, type, credit] = await Promise.all([
+        readFile(file),
+        readFile(`${file}.type`, "utf8"),
+        readFile(`${file}.credit`, "utf8").catch(() => ""),
+      ]);
       return {
         bytes: new Uint8Array(bytes).buffer,
         type,
+        credit: credit ? (JSON.parse(credit) as PhotoCredit) : null,
       };
     } catch {
       // fall through and fetch again
@@ -91,6 +157,7 @@ async function cached(key: string, fetchPhoto: () => Promise<Photo>): Promise<Ph
       await mkdir(CACHE_DIR, { recursive: true });
       await writeFile(file, Buffer.from(photo.bytes));
       await writeFile(`${file}.type`, photo.type);
+      if (photo.credit) await writeFile(`${file}.credit`, JSON.stringify(photo.credit));
       return photo;
     } catch (error) {
       if (error instanceof NoPhoto) {
@@ -139,7 +206,10 @@ async function placesJSON<T extends { status: string; error_message?: string }>(
   }
 }
 
-async function photoReferenceFor(query: string, name: string): Promise<string> {
+async function photoReferenceFor(
+  query: string,
+  name: string,
+): Promise<{ reference: string; credit: PhotoCredit }> {
   const find = new URL("https://maps.googleapis.com/maps/api/place/findplacefromtext/json");
   find.search = new URLSearchParams({
     input: query,
@@ -168,7 +238,9 @@ async function photoReferenceFor(query: string, name: string): Promise<string> {
     key: KEY!,
   }).toString();
   const place = await placesJSON<{
-    result?: { photos?: { photo_reference: string }[] };
+    result?: {
+      photos?: { photo_reference: string; html_attributions?: string[] }[];
+    };
     status: string;
     error_message?: string;
   }>(details);
@@ -176,12 +248,15 @@ async function photoReferenceFor(query: string, name: string): Promise<string> {
     throw new NoPhoto("no place");
   if (place.status !== "OK")
     throw new Error(`Place details: ${place.status} ${place.error_message ?? ""}`);
-  const reference = place.result?.photos?.[0]?.photo_reference;
-  if (!reference) throw new NoPhoto("no photos");
-  return reference;
+  const photo = place.result?.photos?.[0];
+  if (!photo?.photo_reference) throw new NoPhoto("no photos");
+  return {
+    reference: photo.photo_reference,
+    credit: parseAttribution(photo.html_attributions?.[0]),
+  };
 }
 
-function photoByReference(reference: string, size: PhotoSize): Promise<Photo> {
+function photoByReference(reference: string, size: PhotoSize): Promise<Omit<Photo, "credit">> {
   const url = new URL("https://maps.googleapis.com/maps/api/place/photo");
   url.search = new URLSearchParams({
     maxwidth: String(WIDTH[size]),
@@ -198,7 +273,7 @@ async function download(url: string): Promise<Photo> {
   if (!response.ok || !type.startsWith("image/")) {
     throw new Error(`Photo download: HTTP ${response.status} ${type}`);
   }
-  return { bytes: await response.arrayBuffer(), type };
+  return { bytes: await response.arrayBuffer(), type, credit: null };
 }
 
 // MARK: Name matching (port of PlaceNameMatch in PlacePhotoStore.swift)

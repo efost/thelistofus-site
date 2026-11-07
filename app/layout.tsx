@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { APP_STORE_ID, SITE_NAME, SITE_URL, TAGLINE } from "@/lib/site";
+import Script from "next/script";
+import { APP_STORE_ID, SITE_NAME, SITE_URL, TAGLINE, UMAMI_WEBSITE_ID } from "@/lib/site";
 import "./globals.css";
 
 // The app's two faces (same files as the iOS app's Fonts folder).
@@ -46,7 +47,19 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${bricolage.variable} ${dmSans.variable}`}>
-      <body className="min-h-dvh bg-surface text-ink">{children}</body>
+      <body className="min-h-dvh bg-surface text-ink">
+        {children}
+        {/* Umami Cloud: cookie-free page views, plus the data-umami-event clicks. */}
+        {UMAMI_WEBSITE_ID && (
+          <Script
+            src="https://cloud.umami.is/script.js"
+            data-website-id={UMAMI_WEBSITE_ID}
+            data-domains={new URL(SITE_URL).hostname}
+            data-do-not-track="true"
+            strategy="afterInteractive"
+          />
+        )}
+      </body>
     </html>
   );
 }

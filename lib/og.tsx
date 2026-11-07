@@ -4,7 +4,7 @@ import { ImageResponse } from "next/og";
 import { fallbackEmoji, REACTIONS } from "./categories";
 import type { Item, SharedList } from "./lists";
 import { getCoverReference, peopleSentence, progressPercent } from "./lists";
-import { coverPhoto, photoToDataURL, placePhoto } from "./photos";
+import { coverPhoto, photoToDataURL, placePhoto, type Photo } from "./photos";
 
 // Link previews (Messages, Slack, social) for lists and items: 1200×630 PNGs drawn
 // with the app's fonts. Photos are fetched server-side and inlined.
@@ -18,8 +18,18 @@ async function fonts() {
     readFile(join(dir, "TLDMSans-Regular.ttf")),
   ]);
   return [
-    { name: "Bricolage", data: heading, weight: 700 as const, style: "normal" as const },
-    { name: "DM Sans", data: body, weight: 400 as const, style: "normal" as const },
+    {
+      name: "Bricolage",
+      data: heading,
+      weight: 700 as const,
+      style: "normal" as const,
+    },
+    {
+      name: "DM Sans",
+      data: body,
+      weight: 400 as const,
+      style: "normal" as const,
+    },
   ];
 }
 
@@ -38,9 +48,15 @@ const strip = (text: string) =>
 
 async function render(draw: Draw) {
   const options = { ...OG_SIZE, fonts: await fonts() };
-  const headers = { "Content-Type": "image/png", "Cache-Control": "public, max-age=300" };
+  const headers = {
+    "Content-Type": "image/png",
+    "Cache-Control": "public, max-age=300",
+  };
   try {
-    const png = await new ImageResponse(draw(keep), { ...options, emoji: "twemoji" }).arrayBuffer();
+    const png = await new ImageResponse(draw(keep), {
+      ...options,
+      emoji: "twemoji",
+    }).arrayBuffer();
     return new Response(png, { headers });
   } catch (error) {
     console.warn(
@@ -63,7 +79,13 @@ function Brand({ icon, dark = false }: { icon: string; dark?: boolean }) {
         style={{ borderRadius: 10, background: "#fff" }}
         alt=""
       />
-      <span style={{ fontFamily: "Bricolage", fontSize: 26, color: dark ? "#fff" : "#000" }}>
+      <span
+        style={{
+          fontFamily: "Bricolage",
+          fontSize: 26,
+          color: dark ? "#fff" : "#000",
+        }}
+      >
         The List
       </span>
     </div>
@@ -95,19 +117,51 @@ function ProgressBar({ percent, light }: { percent: number; light?: boolean }) {
 }
 
 /** Up to three photos: the list's cover, else its first places that have one. */
-async function listPhotos(list: SharedList): Promise<string[]> {
+async function listPhotos(list: SharedList): Promise<Photo[]> {
   if (list.hasCoverPhoto) {
     const ref = await getCoverReference(list.id);
     const cover = ref && (await coverPhoto(ref, "full"));
-    if (cover) return [photoToDataURL(cover)];
+    if (cover) return [cover];
   }
-  const found: string[] = [];
+  const found: Photo[] = [];
   const places = list.items.filter((i) => i.isPlace).slice(0, 9);
   for (let i = 0; i < places.length && found.length < 3; i += 3) {
     const batch = await Promise.all(places.slice(i, i + 3).map((p) => placePhoto(p, "full")));
-    for (const photo of batch) if (photo && found.length < 3) found.push(photoToDataURL(photo));
+    for (const photo of batch) if (photo && found.length < 3) found.push(photo);
   }
   return found;
+}
+
+/** Google's credit for its photos, in the top-right corner. */
+function Credit({ photos }: { photos: Photo[] }) {
+  const google = photos.filter((p) => p.credit);
+  if (!google.length) return null;
+  const authors = google.flatMap((p) => (p.credit?.author ? [p.credit.author] : []));
+  const text = authors.length
+    ? `${authors.length > 1 ? "Photos" : "Photo"}: ${authors.join(", ")} · Google Maps`
+    : "Photo: Google Maps";
+  return (
+    <div
+      style={{
+        display: "flex",
+        position: "absolute",
+        right: 40,
+        top: 40,
+        maxWidth: 560,
+        padding: "8px 16px",
+        borderRadius: 999,
+        background: "rgba(0,0,0,0.45)",
+        color: "rgba(255,255,255,0.9)",
+        fontFamily: "DM Sans",
+        fontSize: 20,
+        overflow: "hidden",
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
+      }}
+    >
+      {text}
+    </div>
+  );
 }
 
 function Collage({ photos }: { photos: string[] }) {
@@ -125,17 +179,48 @@ function Collage({ photos }: { photos: string[] }) {
   const { width: W, height: H } = OG_SIZE;
   if (photos.length === 1)
     return (
-      <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>{img(photos[0], W, H)}</div>
+      <div
+        style={{
+          display: "flex",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        {img(photos[0], W, H)}
+      </div>
     );
   if (photos.length === 2)
     return (
-      <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", gap: 4 }}>
+      <div
+        style={{
+          display: "flex",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          gap: 4,
+        }}
+      >
         {img(photos[0], W / 2 - 2, H)}
         {img(photos[1], W / 2 - 2, H)}
       </div>
     );
   return (
-    <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", gap: 4 }}>
+    <div
+      style={{
+        display: "flex",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        gap: 4,
+      }}
+    >
       {img(photos[0], 700, H)}
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         {img(photos[1], W - 704, H / 2 - 2)}
@@ -169,16 +254,35 @@ export async function listImage(list: SharedList) {
       }}
     >
       {photos.length ? (
-        <Collage photos={photos} />
+        <Collage photos={photos.map(photoToDataURL)} />
       ) : (
-        <div style={{ display: "flex", position: "absolute", right: 70, top: 56, fontSize: 200 }}>
+        <div
+          style={{
+            display: "flex",
+            position: "absolute",
+            right: 70,
+            top: 56,
+            fontSize: 200,
+          }}
+        >
           {e(list.emoji || "📍")}
         </div>
       )}
-      <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: SHADE }} />
+      <div
+        style={{
+          display: "flex",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: SHADE,
+        }}
+      />
       <div style={{ display: "flex", position: "absolute", left: 64, top: 52 }}>
         <Brand icon={icon} dark />
       </div>
+      <Credit photos={photos} />
       <div
         style={{
           display: "flex",
@@ -246,14 +350,33 @@ export async function itemImage(list: SharedList, item: Item) {
           alt=""
         />
       ) : (
-        <div style={{ display: "flex", position: "absolute", right: 80, top: 60, fontSize: 210 }}>
+        <div
+          style={{
+            display: "flex",
+            position: "absolute",
+            right: 80,
+            top: 60,
+            fontSize: 210,
+          }}
+        >
           {e(fallbackEmoji(item.category))}
         </div>
       )}
-      <div style={{ display: "flex", position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: SHADE }} />
+      <div
+        style={{
+          display: "flex",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: SHADE,
+        }}
+      />
       <div style={{ display: "flex", position: "absolute", left: 64, top: 52 }}>
         <Brand icon={icon} dark />
       </div>
+      <Credit photos={photo ? [photo] : []} />
       <div
         style={{
           display: "flex",
@@ -300,7 +423,14 @@ export async function itemImage(list: SharedList, item: Item) {
           {e(item.name)}
         </div>
         {meta && (
-          <div style={{ marginTop: 20, fontFamily: "DM Sans", fontSize: 34, opacity: 0.9 }}>
+          <div
+            style={{
+              marginTop: 20,
+              fontFamily: "DM Sans",
+              fontSize: 34,
+              opacity: 0.9,
+            }}
+          >
             {e(meta)}
           </div>
         )}
@@ -409,7 +539,12 @@ export async function homeImage() {
                 }}
               />
               <div
-                style={{ width: r.w * 0.75, height: 20, borderRadius: 10, background: "#fff" }}
+                style={{
+                  width: r.w * 0.75,
+                  height: 20,
+                  borderRadius: 10,
+                  background: "#fff",
+                }}
               />
             </div>
           ))}
@@ -432,13 +567,13 @@ export async function homeImage() {
           <div
             style={{
               fontFamily: "Bricolage",
-              fontSize: 80,
-              lineHeight: 0.98,
-              letterSpacing: -2.5,
+              fontSize: 66,
+              lineHeight: 1.02,
+              letterSpacing: -2,
               color: "#000",
             }}
           >
-            The List of Us
+            All the places you keep meaning to go.
           </div>
           <div
             style={{

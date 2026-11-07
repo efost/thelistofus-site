@@ -1,7 +1,7 @@
 import { collection, getDocs, limit, query, Timestamp, where } from "firebase/firestore";
 import { cache } from "react";
 import { isReaction, type Reaction } from "./categories";
-import { db } from "./firebase";
+import { firestore } from "./firebase";
 import type { Item, Person } from "./lists";
 import { person } from "./lists";
 
@@ -52,7 +52,11 @@ export const getOtherReviews = cache(async (item: Item): Promise<PublicReview[]>
   if (!keys.length) return [];
   try {
     const snapshot = await getDocs(
-      query(collection(db, "reviews"), where("keys", "array-contains-any", keys), limit(30)),
+      query(
+        collection(firestore(), "reviews"),
+        where("keys", "array-contains-any", keys),
+        limit(30),
+      ),
     );
     return snapshot.docs
       .filter((d) => d.id !== `${item.listId}_${item.id}`)

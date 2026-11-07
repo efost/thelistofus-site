@@ -1,9 +1,8 @@
 import Link from "next/link";
+import BetaInvite from "@/components/BetaInvite";
 import GetAppButton from "@/components/GetAppButton";
 import {
-  ActivityCard,
   AddPlaceCard,
-  MapCard,
   MessagesCard,
   ReactionCard,
   ShareCard,
@@ -14,12 +13,12 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { CATEGORIES } from "@/lib/categories";
 import { SAMPLE_LIST_ID, sampleList } from "@/lib/sample";
-import { IS_ON_APP_STORE } from "@/lib/site";
+import { IS_ON_APP_STORE, TURNSTILE_SITE_KEY } from "@/lib/site";
 
 export default function Home() {
   const list = sampleList();
   const byId = (id: string) => list.items.find((i) => i.id === id)!;
-  const zuni = byId("zuni-cafe");
+  const ember = byId("little-ember");
 
   return (
     <>
@@ -51,6 +50,7 @@ export default function Home() {
                 <GetAppButton size="lg" />
                 <Link
                   href={`/list/${SAMPLE_LIST_ID}`}
+                  data-umami-event="example-list"
                   className="group inline-flex items-center gap-1.5 font-heading text-[17px] text-link"
                 >
                   See an example list
@@ -58,7 +58,11 @@ export default function Home() {
                 </Link>
               </div>
               {!IS_ON_APP_STORE && (
-                <p className="mt-4 text-[15px] text-muted">Coming soon to the App Store.</p>
+                <p className="mt-4 text-[15px] text-muted">
+                  {TURNSTILE_SITE_KEY
+                    ? "In beta on TestFlight. Coming soon to the App Store."
+                    : "Coming soon to the App Store."}
+                </p>
               )}
             </div>
 
@@ -66,9 +70,9 @@ export default function Home() {
               <Phone
                 width={290}
                 className="absolute left-[250px] top-12 hidden rotate-[5deg] sm:block"
-                label="An item in The List: Zuni Café, loved, with a review"
+                label="An item in The List: Little Ember Café, loved, with a review"
               >
-                <ItemScreenMock item={zuni} listName={list.name} />
+                <ItemScreenMock item={ember} listName={list.name} />
               </Phone>
               <Phone
                 width={290}
@@ -100,31 +104,20 @@ export default function Home() {
           body="Search for a place and it arrives with its address, a photo and a pin on the map. A movie, a show or a weekend away goes on just as easily, and you can paste a whole list from Notes."
           visual={
             <AddPlaceCard
-              items={[byId("tartine-bakery"), byId("bi-rite-creamery"), byId("trick-dog")]}
+              items={[byId("pells-bakery"), byId("foghorn-creamery"), byId("lucky-hound")]}
             />
           }
         />
         <Feature
           flip
           title="Share it with your people"
-          body="Send a link. Friends join from it, add their own finds and see everything you've saved. You choose who can edit and who can only look."
+          body="Send a link. Friends join from it, add their own finds and see everything you've saved, and the bell shows what's new since you last looked. You choose who can edit and who can only look."
           visual={<ShareCard list={list} />}
         />
         <Feature
-          title="See what's near"
-          body="Switch to the map to see everything on the list around you, with the distance on every row. The next free evening already has a plan."
-          visual={<MapCard items={list.items} />}
-        />
-        <Feature
-          flip
           title="Check it off. Say how it went."
           body="Mark a place done, pick 👎 😐 👍 or ❤️ and leave a line for whoever goes next. Everyone on the list sees it, so the good spots rise to the top."
-          visual={<ReactionCard item={zuni} />}
-        />
-        <Feature
-          title="Catch up on what's new"
-          body="The bell shows what everyone has added and checked off since you last looked, with a dot when there's something new."
-          visual={<ActivityCard list={list} />}
+          visual={<ReactionCard item={ember} />}
         />
 
         {/* Shared links */}
@@ -141,6 +134,7 @@ export default function Home() {
               </p>
               <Link
                 href={`/list/${SAMPLE_LIST_ID}`}
+                data-umami-event="example-list"
                 className="btn-pill mt-7 !min-h-12 !bg-surface !px-5 !text-[16px]"
               >
                 Open the example list →
@@ -161,16 +155,24 @@ export default function Home() {
             <p className="mx-auto mt-4 max-w-md text-[18px] text-muted">
               One for date nights, one for the trip, one for the whole group chat.
             </p>
-            <div className="mt-8 flex flex-col items-center gap-3">
-              <GetAppButton size="lg" />
-              <span className="text-[15px] text-muted">
-                {IS_ON_APP_STORE ? "For iPhone." : "Coming soon to the App Store, for iPhone."}
-              </span>
+            <div className="mt-8">
+              {IS_ON_APP_STORE ? (
+                <div className="flex flex-col items-center gap-3">
+                  <GetAppButton size="lg" />
+                  <span className="text-[15px] text-muted">For iPhone.</span>
+                </div>
+              ) : TURNSTILE_SITE_KEY ? (
+                <BetaInvite siteKey={TURNSTILE_SITE_KEY} />
+              ) : (
+                <span className="text-[15px] text-muted">
+                  Coming soon to the App Store, for iPhone.
+                </span>
+              )}
             </div>
           </div>
         </section>
       </main>
-      <SiteFooter photoCredit />
+      <SiteFooter />
     </>
   );
 }

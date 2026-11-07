@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PhotoCredit, { loadPhoto, type LoadedPhoto } from "./PhotoCredit";
 
 export interface CoverCandidate {
   src: string;
@@ -9,7 +10,7 @@ export interface CoverCandidate {
 // The list cover, like the app's: the chosen cover photo, or a collage of the first
 // item photos that exist (1 = full, 2 = halves, 3 = one big and two stacked).
 // Many items (a movie, a trip) have no photo, so candidates are tried in order and
-// only the ones that load are used.
+// only the ones that load are used. Google photos are credited in the top corner.
 export default function CoverCollage({
   cover,
   candidates,
@@ -25,41 +26,42 @@ export default function CoverCollage({
   children?: React.ReactNode;
   gap?: number;
 }) {
-  const [photos, setPhotos] = useState<string[] | null>(null);
+  const [photos, setPhotos] = useState<LoadedPhoto[] | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    const load = (src: string) =>
-      new Promise<string | null>((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(src);
-        img.onerror = () => resolve(null);
-        img.src = src;
-      });
+    const controller = new AbortController();
+    const all: LoadedPhoto[] = [];
+    const load = async (src: string) => {
+      const photo = await loadPhoto(src, controller.signal);
+      if (photo) all.push(photo);
+      return photo;
+    };
+    const show = (list: LoadedPhoto[]) => {
+      if (!controller.signal.aborted) setPhotos([...list]);
+    };
 
     (async () => {
       if (cover) {
-        const ok = await load(cover);
-        if (ok) {
-          if (!cancelled) setPhotos([ok]);
-          return;
-        }
+        const photo = await load(cover);
+        if (photo) return show([photo]);
       }
-      const found: string[] = [];
+      const found: LoadedPhoto[] = [];
       // A few at a time, stopping once there are three.
       for (let i = 0; i < candidates.length && found.length < 3; i += 3) {
         const batch = await Promise.all(candidates.slice(i, i + 3).map((c) => load(c.src)));
-        for (const src of batch) if (src && found.length < 3) found.push(src);
-        if (!cancelled && found.length) setPhotos([...found]);
+        for (const photo of batch) if (photo && found.length < 3) found.push(photo);
+        if (found.length) show(found);
       }
-      if (!cancelled) setPhotos([...found]);
+      show(found);
     })();
     return () => {
-      cancelled = true;
+      controller.abort();
+      for (const photo of all) URL.revokeObjectURL(photo.url);
     };
   }, [cover, candidates]);
 
   const n = photos?.length ?? 0;
+  const credits = (photos ?? []).flatMap((p) => (p.credit ? [p.credit] : []));
   return (
     <div className={`relative overflow-hidden bg-[#141418] ${className}`}>
       {/* No photos (or still looking): the list's emoji on a dark brand wash. */}
@@ -87,11 +89,11 @@ export default function CoverCollage({
             gridTemplateRows: n === 3 ? "1fr 1fr" : "1fr",
           }}
         >
-          {photos!.map((src, i) => (
+          {photos!.map(({ url }, i) => (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              key={src}
-              src={src}
+              key={url}
+              src={url}
               alt=""
               className="h-full w-full object-cover"
               style={n === 3 && i === 0 ? { gridRow: "span 2" } : undefined}
@@ -103,6 +105,9 @@ export default function CoverCollage({
       {/* Bottom shade so white text reads over any photo. */}
       <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
       <div className="relative h-full">{children}</div>
+      {credits.length > 0 && (
+        <PhotoCredit credits={credits} className="absolute right-3 top-3 z-10" />
+      )}
       <style>{`@keyframes fadein { from { opacity: 0 } to { opacity: 1 } }`}</style>
     </div>
   );

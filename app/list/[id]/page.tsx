@@ -131,7 +131,7 @@ export default async function ListPage({ params }: Props) {
           }
         />
       </main>
-      <SiteFooter photoCredit />
+      <SiteFooter photoCredit={id !== SAMPLE_LIST_ID} />
       <JoinBar listId={id} label="Get the app to join" />
     </>
   );

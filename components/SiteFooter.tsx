@@ -32,7 +32,7 @@ export default function SiteFooter({ photoCredit = false }: { photoCredit?: bool
         <span>
           © {new Date().getFullYear()} {SITE_NAME}. iPhone only, for now.
         </span>
-        {photoCredit && <span>Place photos and details from Google Maps.</span>}
+        {photoCredit && <span>Place photos from Google Maps. Maps from Apple.</span>}
       </div>
     </footer>
   );
