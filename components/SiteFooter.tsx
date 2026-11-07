@@ -11,13 +11,18 @@ export default function SiteFooter({
   joinBar?: boolean;
 }) {
   return (
-    // The same wash as the hero, so the page opens and closes on it. Sized in pixels rather
-    // than percentages, so the glows keep their shape on a short footer.
+    // The hero's wash, unchanged: drawn at the hero's full height (860px, its height on a
+    // desktop) and shown through the footer as a slice from just past the middle, where
+    // the purple fades into the blue, rather than squeezed to the footer's height.
     <footer
       className={joinBar ? "pb-24 lg:pb-0" : undefined}
       style={{
-        background:
-          "radial-gradient(min(560px, 70vw) 420px at 88% 10%, color-mix(in srgb, var(--brand-purple) 20%, transparent), transparent 70%), radial-gradient(min(520px, 65vw) 400px at 64% 110%, color-mix(in srgb, var(--brand-blue) 20%, transparent), transparent 70%), var(--surface-secondary)",
+        backgroundImage:
+          "radial-gradient(40% 70% at 88% 18%, color-mix(in srgb, var(--brand-purple) 20%, transparent), transparent 70%), radial-gradient(38% 70% at 68% 96%, color-mix(in srgb, var(--brand-blue) 20%, transparent), transparent 70%)",
+        backgroundColor: "var(--surface-secondary)",
+        backgroundSize: "100% 860px",
+        backgroundPosition: "center -470px",
+        backgroundRepeat: "no-repeat",
       }}
     >
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 sm:flex-row sm:items-center sm:justify-between">
