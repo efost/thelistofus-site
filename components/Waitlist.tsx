@@ -102,7 +102,7 @@ export default function Waitlist({
       {/* Turnstile renders here when needed; hidden while empty so it adds no gap. */}
       <div ref={box} className="empty:hidden" />
       <span
-        className={`flex max-w-xl flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-muted ${
+        className={`flex max-w-xl flex-wrap items-center gap-x-2 gap-y-1 text-[14px] text-muted ${
           align === "center" ? "justify-center" : ""
         }`}
         aria-live="polite"
