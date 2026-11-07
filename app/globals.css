@@ -348,8 +348,9 @@
 /* A header laid over the hero wash: nothing of its own until the page scrolls. */
 .site-header[data-overlay]:not([data-scrolled]) {
   background: transparent;
-  backdrop-filter: none;
+  /* Prefixed first: the other way round, the build drops the unprefixed one. */
   -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 /* The header's shadow appears once the page scrolls under it (HeaderShade). */
 .site-header {

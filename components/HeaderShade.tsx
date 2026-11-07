@@ -11,7 +11,12 @@ export default function HeaderShade() {
   useEffect(() => {
     const header = document.querySelector<HTMLElement>("header.site-header");
     if (!header) return;
-    const update = () => header.toggleAttribute("data-scrolled", window.scrollY > 8);
+    // A header that starts a little way down the page (SiteHeader's overlay, on a
+    // desktop) only counts as scrolled once it has reached the top and stuck.
+    const update = () => {
+      const start = parseFloat(getComputedStyle(header).marginTop) || 0;
+      header.toggleAttribute("data-scrolled", window.scrollY > start + 8);
+    };
     update();
     window.addEventListener("scroll", update, { passive: true });
 

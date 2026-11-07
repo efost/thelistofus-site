@@ -7,8 +7,9 @@ import HeaderShade from "./HeaderShade";
 /**
  * `cta` is off on pages that carry their own "join" card, so there's one call to action per
  * screen. `overlay` lays the header over the page's hero wash with no background of its
- * own until the page scrolls. On every page the header picks up its shadow once the page
- * scrolls under it.
+ * own until the page scrolls. On a desktop it also starts a little way down the page and
+ * scrolls up into place before it sticks. On every page the header picks up its shadow
+ * once the page scrolls under it.
  */
 export default function SiteHeader({
   showExample = false,
@@ -21,7 +22,7 @@ export default function SiteHeader({
 }) {
   return (
     <header
-      className="site-header sticky top-0 z-40 bg-surface/85 backdrop-blur-xl backdrop-saturate-150"
+      className={`site-header sticky top-0 z-40 bg-surface/85 backdrop-blur-xl backdrop-saturate-150 ${overlay ? "lg:mt-5" : ""}`}
       // On the home page the hero's signup starts on screen, so the header's button
       // starts hidden on phones (HeaderShade shows it once the hero's scrolls away).
       {...(overlay ? { "data-overlay": "", "data-hero-cta-visible": "" } : {})}
