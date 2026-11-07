@@ -584,7 +584,7 @@ export async function homeImage() {
               color: "#636366",
             }}
           >
-            Bucket lists you build together.
+            Everything you keep meaning to try, in one shared list.
           </div>
         </div>
       </div>

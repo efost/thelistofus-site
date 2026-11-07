@@ -4,7 +4,7 @@ import { track } from "@/lib/analytics";
 import { turnstileToken } from "@/lib/turnstile";
 import { useRef, useState } from "react";
 
-// "Get early access": an email field, then a Cloudflare Turnstile check (usually
+// "Join the waitlist": an email field, then a Cloudflare Turnstile check (usually
 // invisible) when it's sent, then POST /api/waitlist.
 
 type State =
@@ -108,7 +108,7 @@ export default function Waitlist({
           disabled={state.step === "sending"}
           className="btn-primary !min-h-14 shrink-0 !px-7 !text-[17px] disabled:opacity-70"
         >
-          {state.step === "sending" ? "One sec…" : "Get early access"}
+          {state.step === "sending" ? "One sec…" : "Join the waitlist"}
         </button>
       </form>
       {/* Turnstile renders here when needed; hidden while empty so it adds no gap. */}
@@ -122,7 +122,7 @@ export default function Waitlist({
         <span>
           {state.step === "error"
             ? state.message
-            : "Coming to iPhone — we’ll email you when it’s out, and that’s it."}
+            : "For iPhone. One email when it launches. That’s it."}
         </span>
         {aside}
       </span>

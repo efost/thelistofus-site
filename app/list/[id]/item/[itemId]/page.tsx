@@ -356,8 +356,8 @@ export default async function ItemPage({ params }: Props) {
             <div className="flex-1">
               <div className="font-heading text-[18px] leading-tight">Want to go too?</div>
               <p className="mt-1 text-[15px] text-muted">
-                Join <ListName>{list.name}</ListName> to add your own finds, check places off and
-                leave reviews.
+                Join <ListName>{list.name}</ListName> to add your own finds, and check this one
+                off when you go.
               </p>
             </div>
             <div className="flex flex-col items-stretch gap-2 sm:items-end">

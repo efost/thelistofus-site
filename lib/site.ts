@@ -7,7 +7,7 @@ export const SITE_NAME = "The List";
 export const APP_NAME = "The List";
 
 export const TAGLINE =
-  "Bucket lists you build together.";
+  "Everything you keep meaning to try, in one shared list.";
 
 /** Numeric App Store id, e.g. "6450000000". Empty until the app is live. */
 export const APP_STORE_ID = process.env.NEXT_PUBLIC_APP_STORE_ID ?? "";

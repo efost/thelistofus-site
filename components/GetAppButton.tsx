@@ -10,7 +10,7 @@ function AppleGlyph({ size = 18 }: { size?: number }) {
 
 /**
  * The primary "get the app" action: the App Store, or until the app is there, the home
- * page's waitlist (labelled "Get early access" unless `preLaunchLabel` says otherwise).
+ * page's waitlist (labelled "Join the waitlist" unless `preLaunchLabel` says otherwise).
  */
 export default function GetAppButton({
   label,
@@ -23,7 +23,7 @@ export default function GetAppButton({
   size?: "sm" | "md" | "lg";
   className?: string;
 }) {
-  const text = IS_ON_APP_STORE ? (label ?? "Get the app") : (preLaunchLabel ?? "Get early access");
+  const text = IS_ON_APP_STORE ? (label ?? "Get the app") : (preLaunchLabel ?? "Join the waitlist");
   const sizing =
     size === "sm"
       ? "!min-h-10 !px-4 !text-[15px]"

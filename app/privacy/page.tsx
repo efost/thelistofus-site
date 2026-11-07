@@ -34,8 +34,8 @@ export default function PrivacyPage() {
         </li>
       </ul>
       <p>
-        This is stored with Google Firebase. Place photos and details are looked up with Apple Maps
-        and Google Maps using the name and address of the place.
+        This is stored with Google Firebase. Place photos come from Google Maps — looked up using
+        the name and address of the place — and maps and directions open in Apple Maps.
       </p>
 
       <h2>Your location</h2>

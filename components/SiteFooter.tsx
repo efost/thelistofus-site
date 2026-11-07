@@ -35,7 +35,7 @@ export default function SiteFooter({
       </div>
       {photoCredit && (
         <div className="mx-auto -mt-4 max-w-6xl px-5 pb-10 text-[13px] text-muted">
-          Place photos from Google Maps. Maps from Apple.
+          Place photos come from Google Maps. Maps from Apple.
         </div>
       )}
     </footer>

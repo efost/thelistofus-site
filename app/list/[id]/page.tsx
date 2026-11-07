@@ -6,7 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { getSharedList, peopleSentence, progressPercent } from "@/lib/lists";
 import { SAMPLE_LIST_ID } from "@/lib/sample";
-import { APP_STORE_ID, SITE_URL, listPath } from "@/lib/site";
+import { APP_STORE_ID, IS_ON_APP_STORE, SITE_URL, listPath } from "@/lib/site";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ListView from "./ListView";
@@ -128,11 +128,19 @@ export default async function ListPage({ params }: Props) {
             <JoinCard
               listId={id}
               title={
-                <>
-                  <span>{list.name}</span>
-                </>
+                IS_ON_APP_STORE ? (
+                  <>
+                    Join <span>“{list.name}”</span>
+                  </>
+                ) : (
+                  "This list lives in The List"
+                )
               }
-              body="Add your own finds, check places off and leave reviews. Everyone on the list sees it."
+              body={
+                IS_ON_APP_STORE
+                  ? "Add your own finds, check places off, and tell the group how it was."
+                  : "The app isn’t out yet. Join the waitlist and we’ll email you at launch."
+              }
             />
           }
         />

@@ -24,7 +24,7 @@ export function JoinCard({
         </div>
       </div>
       <p className="mt-3 text-[15px] leading-relaxed text-muted">{body}</p>
-      <GetAppButton className="mt-4 w-full" />
+      <GetAppButton label="Get the app to join" className="mt-4 w-full" />
       {IS_ON_APP_STORE && (
         <a
           href={appURL(listId, itemId)}

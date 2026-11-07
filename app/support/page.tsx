@@ -41,9 +41,8 @@ const FAQ: { q: string; a: React.ReactNode }[] = [
     q: "Where do the photos come from?",
     a: (
       <>
-        Places you add are matched with Apple Maps and Google Maps, and the first photo of the place
-        is used. Movies, shows and other things without a place get their category’s icon
-        instead.
+        Place photos come from Google Maps, and maps and directions open in Apple Maps. Movies,
+        shows and other things without a place get their category’s icon instead.
       </>
     ),
   },
@@ -52,7 +51,7 @@ const FAQ: { q: string; a: React.ReactNode }[] = [
     a: (
       <>
         Open the list, tap share and turn off the link. People already on the list stay on it until
-        you remove them; the web page for the list stops working straight away.
+        you remove them; the web page for the list stops working.
       </>
     ),
   },

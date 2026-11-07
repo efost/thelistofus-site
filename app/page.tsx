@@ -38,8 +38,8 @@ export default function Home() {
             <div className="max-w-xl">
               <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] sm:text-[52px] lg:text-[46px] xl:text-[55px]" />
               <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
-                Restaurants, bars, hikes and everything you’ve been meaning to try, shared with
-                the people you’ll go with.
+                Restaurants, hikes, movies and trips — kept with the people you’ll go with, not
+                lost in the chat.
               </p>
               <div className="mt-8" data-hero-cta>
                 {IS_ON_APP_STORE || !TURNSTILE_SITE_KEY ? (
@@ -104,7 +104,7 @@ export default function Home() {
 
         <Feature
           title="Add it the second you hear about it"
-          body="Type a name and the address, photo and map pin fill themselves in. Movies, shows and weekend trips go on just as easily, or paste a whole list straight out of Notes."
+          body="Type a name — the address, photo and map pin fill in. Movies, shows and trips are just as quick, and you can paste a whole list straight from Notes."
           visual={
             <AddPlaceCard
               items={[byId("pells-bakery"), byId("foghorn-creamery"), byId("lucky-hound")]}
@@ -114,12 +114,12 @@ export default function Home() {
         <Feature
           flip
           title="Share it with your people"
-          body="Send a link and your friends are in. They add their finds, you add yours, and everyone sees the whole list, with a bell for what’s new since you last looked. You decide who can edit and who’s just browsing."
+          body="Send a link. Anyone can look; friends with the app can join and add their own. You pick who edits and who just browses."
           visual={<ShareCard list={list} />}
         />
         <Feature
           title="Check it off. Leave a review."
-          body="Just got back? Check it off, pick 👎 😐 👍 or ❤️, and leave a review for whoever’s next. Everyone sees it, so the best spots rise to the top."
+          body="Just got back? Check it off, tap 👎 😐 👍 or ❤️, and leave a line for whoever’s next."
           visual={<ReactionCard item={ember} />}
         />
 
@@ -129,12 +129,12 @@ export default function Home() {
             <div className="grid items-center gap-12 rounded-[32px] bg-surface-secondary px-6 py-12 md:grid-cols-2 md:px-14 md:py-16 md:[&>*:first-child]:order-2">
               <div>
                 <h2 className="text-[34px] leading-[1.08] tracking-[-0.02em] md:text-[44px]">
-                  Links that look good in the group chat
+                  Share it in the group chat
                 </h2>
                 <p className="mt-5 max-w-md text-[18px] leading-relaxed text-muted">
-                  Every list, and every place on it, has its own page. Drop one in Messages and it
-                  shows up as a proper card, photos and all. Friends without the app can browse it
-                  right away and join when they’re ready.
+                  Every list, and every place on it, gets its own page. Drop one in Messages and it
+                  lands as a proper card, photos and all, that anyone can open and browse right
+                  away.
                 </p>
                 <Link
                   href={`/list/${SAMPLE_LIST_ID}`}
@@ -155,7 +155,7 @@ export default function Home() {
         <section id="get-the-app" className="scroll-mt-20 px-5 pb-24 pt-6 text-center">
           <div className="mx-auto max-w-2xl">
             <h2 className="text-[38px] leading-[1.05] tracking-[-0.02em] md:text-[52px]">
-              {IS_ON_APP_STORE ? "Start your list" : "Be first in line"}
+              {IS_ON_APP_STORE ? "Start your list" : "Be first to start your list"}
             </h2>
             <p className="mx-auto mt-4 max-w-md text-[18px] text-muted">
               A list for date nights, a list for the trip, a list for the whole group chat.
