@@ -1,5 +1,6 @@
 import Link from "next/link";
 import GetAppButton from "@/components/GetAppButton";
+import HeroHeadline from "@/components/HeroHeadline";
 import {
   AddPlaceCard,
   MessagesCard,
@@ -11,7 +12,6 @@ import { ItemScreenMock, ListScreenMock } from "@/components/mockups/Screens";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 import Waitlist from "@/components/Waitlist";
-import { CATEGORIES } from "@/lib/categories";
 import { SAMPLE_LIST_ID, sampleList } from "@/lib/sample";
 import { IS_ON_APP_STORE, TURNSTILE_SITE_KEY } from "@/lib/site";
 
@@ -35,9 +35,7 @@ export default function Home() {
           />
           <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 pb-16 pt-12 md:pt-20 lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:pb-24">
             <div className="max-w-xl">
-              <h1 className="text-[44px] leading-[1.02] tracking-[-0.025em] sm:text-[60px] lg:text-[68px]">
-                All the places you keep meaning to go.
-              </h1>
+              <HeroHeadline className="text-[32px] leading-[1.08] tracking-[-0.025em] sm:text-[52px] lg:text-[54px]" />
               <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
                 Restaurants, bars, hikes and everything you&apos;ve been meaning to try, shared with
                 the people you&apos;ll go with.
@@ -80,23 +78,6 @@ export default function Home() {
                 <ListScreenMock list={list} />
               </Phone>
             </div>
-          </div>
-        </section>
-
-        {/* What goes on a list */}
-        <section
-          aria-label="What you can keep on a list"
-          className="border-y border-hairline bg-surface-secondary/50"
-        >
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-2 px-5 py-5">
-            <span className="mb-1 block w-full text-center font-heading text-[15px] text-muted">
-              Anything you&apos;ve been meaning to do
-            </span>
-            {Object.values(CATEGORIES).map((c) => (
-              <span key={c.label} className="chip !h-9 !bg-surface !pr-4 !text-[15px]">
-                {c.icon} {c.label}
-              </span>
-            ))}
           </div>
         </section>
 
