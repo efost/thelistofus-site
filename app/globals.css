@@ -18,6 +18,10 @@
   --done-gray: #aeaeb2;
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.09);
   --shadow-float: 0 18px 50px -12px rgba(16, 24, 64, 0.22), 0 4px 14px rgba(0, 0, 0, 0.06);
+  /* Under the header once the page scrolls, and the same thing flipped over the footer:
+     a big, faint blur in place of a hairline. */
+  --shadow-header: 0 1px 3px rgba(16, 24, 64, 0.04), 0 12px 40px -8px rgba(16, 24, 64, 0.12);
+  --shadow-footer: 0 -1px 3px rgba(16, 24, 64, 0.04), 0 -12px 40px -8px rgba(16, 24, 64, 0.12);
   --fill-gradient: linear-gradient(180deg, #094aab, #9e09ab);
   --progress-gradient: linear-gradient(90deg, #094aab, #9e09ab);
   color-scheme: light;
@@ -38,6 +42,8 @@
     --done-gray: #636366;
     --shadow-card: 0 2px 8px rgba(255, 255, 255, 0.08);
     --shadow-float: 0 18px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    --shadow-header: 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 40px -8px rgba(0, 0, 0, 0.9);
+    --shadow-footer: 0 -1px 0 rgba(255, 255, 255, 0.06), 0 -12px 40px -8px rgba(0, 0, 0, 0.9);
     color-scheme: dark;
   }
 }
@@ -323,14 +329,20 @@
 /* A header laid over the hero wash: nothing of its own until the page scrolls. */
 .site-header[data-overlay]:not([data-scrolled]) {
   background: transparent;
-  border-color: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
+/* The header's shadow appears once the page scrolls under it (HeaderShade). */
 .site-header {
   transition:
     background-color 200ms ease,
-    border-color 200ms ease;
+    box-shadow 200ms ease;
+}
+.site-header[data-scrolled] {
+  box-shadow: var(--shadow-header);
+}
+.site-footer {
+  box-shadow: var(--shadow-footer);
 }
 
 /* Hero headline word swaps (components/HeroHeadline.tsx). The old word slides up and

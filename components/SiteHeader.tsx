@@ -7,7 +7,8 @@ import HeaderShade from "./HeaderShade";
 /**
  * `cta` is off on pages that carry their own "join" card, so there's one call to action per
  * screen. `overlay` lays the header over the page's hero wash with no background of its
- * own until the page scrolls.
+ * own until the page scrolls. On every page the header picks up its shadow once the page
+ * scrolls under it.
  */
 export default function SiteHeader({
   showExample = false,
@@ -20,10 +21,10 @@ export default function SiteHeader({
 }) {
   return (
     <header
-      className="site-header sticky top-0 z-40 border-b border-hairline bg-surface/85 backdrop-blur-xl backdrop-saturate-150"
+      className="site-header sticky top-0 z-40 bg-surface/85 backdrop-blur-xl backdrop-saturate-150"
       {...(overlay ? { "data-overlay": "" } : {})}
     >
-      {overlay && <HeaderShade />}
+      <HeaderShade />
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
         <Link href="/" className="flex items-center gap-2.5" aria-label={`${SITE_NAME} home`}>
           <AppIcon size={30} />
