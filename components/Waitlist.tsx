@@ -75,7 +75,7 @@ export default function Waitlist({
   }
 
   return (
-    <div className={`flex w-full flex-col gap-3 ${items}`}>
+    <div className={`flex w-full flex-col gap-3.5 ${items}`}>
       <form onSubmit={submit} className="flex w-full max-w-lg flex-col gap-2 sm:flex-row">
         <label htmlFor={`waitlist-${where}`} className="sr-only">
           Email address
@@ -99,7 +99,8 @@ export default function Waitlist({
           {state.step === "sending" ? "One sec…" : "Get early access"}
         </button>
       </form>
-      <div ref={box} />
+      {/* Turnstile renders here when needed; hidden while empty so it adds no gap. */}
+      <div ref={box} className="empty:hidden" />
       <span
         className={`flex max-w-xl flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-muted ${
           align === "center" ? "justify-center" : ""
