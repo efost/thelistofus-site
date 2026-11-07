@@ -3,10 +3,16 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 // The headline cycles through what goes on a list: "All the 🥾 hikes you keep meaning to
-// take", "All the 🍺 bars you keep meaning to check out"… Each swap slides the old word
-// up and out while the new one rises in (the verb a beat after the noun), and the gap
-// widens or narrows to fit. Each pair shares a colour. Screen readers get the plain
-// sentence once; the moving parts are decorative.
+// take", "All the 🍺 bars you keep meaning to check out"…
+//
+// Each swap is a roller: the old word slides up and out, the new one slides up and in
+// behind it, the same distance, so they never overlap. The emoji stays put and pops
+// (a quick scale) as the new word lands; the verb rolls a beat after the noun. The slot
+// widens or narrows on the same curve as the arriving word, clipped vertically only so
+// the leaving word is never cut off at the side. Only the noun is coloured.
+//
+// Screen readers get the plain sentence once; the moving parts are decorative. Nothing
+// moves under prefers-reduced-motion, off-screen, or in a hidden tab.
 
 const PHRASES: { emoji: string; thing: string; verb: string; color: string }[] = [
   // light-dark(): the light-mode colour, then one that reads on black.
@@ -23,30 +29,25 @@ const PHRASES: { emoji: string; thing: string; verb: string; color: string }[] =
   { emoji: "🎮", thing: "games", verb: "play", color: "light-dark(#4f46e5, #a5b4fc)" },
 ];
 
+/** How long each phrase stays. */
 const HOLD = 2600;
-const SWAP = 480;
+/** Before the first swap, so the real headline registers. */
+const FIRST = 4000;
 /** The verb changes this long after the noun. */
 const STAGGER = 160;
+/** Longest of the exit/entrance animations (globals.css), for cleaning up the old word. */
+const SWAP = 520;
 
-/** A word slot: the current word, animated in; the previous one, animated out. */
-function Slot({
-  words,
-  colors,
-  index,
-  className = "",
-}: {
-  words: string[];
-  colors: string[];
-  index: number;
-  className?: string;
-}) {
-  const box = useRef<HTMLSpanElement>(null);
+type Word = { emoji?: string; text: string; color?: string };
+
+/** A word slot: the current word rolling in, the previous one rolling out. */
+function Slot({ words, index }: { words: Word[]; index: number }) {
   const measure = useRef<HTMLSpanElement>(null);
   const [width, setWidth] = useState<number | null>(null);
   const [previous, setPrevious] = useState<number | null>(null);
   const shown = useRef(index);
 
-  // Size the slot to the incoming word so the sentence reflows smoothly.
+  // Size the slot to the incoming word; the width transition does the rest.
   useLayoutEffect(() => {
     if (measure.current) setWidth(measure.current.getBoundingClientRect().width);
   }, [index]);
@@ -58,7 +59,7 @@ function Slot({
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Keep the outgoing word around for the length of the animation.
+  // Keep the outgoing word around for the length of its animation.
   useEffect(() => {
     if (shown.current === index) return;
     setPrevious(shown.current);
@@ -67,38 +68,43 @@ function Slot({
     return () => clearTimeout(t);
   }, [index]);
 
+  const render = (i: number, phase?: "in" | "out") => {
+    const w = words[i];
+    return (
+      <>
+        {w.emoji && (
+          <span className={`inline-block ${phase ? `hero-emoji hero-emoji-${phase}` : ""}`}>
+            {w.emoji}
+          </span>
+        )}
+        <span className={`inline-block ${phase ? `hero-word hero-word-${phase}` : ""}`}>
+          {w.text}
+        </span>
+      </>
+    );
+  };
+  const moving = (i: number, phase: "in" | "out") => (
+    <span
+      key={`${phase}-${i}`}
+      className="hero-pair absolute left-0 top-0 whitespace-nowrap"
+      style={{ color: words[i].color }}
+      aria-hidden
+    >
+      {render(i, phase)}
+    </span>
+  );
+
   return (
     <span
-      ref={box}
-      className={`relative inline-block overflow-hidden align-bottom ${className}`}
-      style={{
-        width: width ?? undefined,
-        transition: `width ${SWAP}ms cubic-bezier(0.2, 0.8, 0.2, 1)`,
-        paddingBottom: "0.08em",
-        marginBottom: "-0.08em",
-      }}
+      className="hero-slot relative inline-block align-bottom"
+      style={{ width: width ?? undefined }}
     >
-      {/* Measured, invisible copy of the current word. */}
-      <span ref={measure} className="invisible inline-block whitespace-nowrap">
-        {words[index]}
+      {/* Invisible copy of the current word, with the same markup, for measuring. */}
+      <span ref={measure} className="hero-pair invisible inline-block whitespace-nowrap">
+        {render(index)}
       </span>
-      <span
-        key={index}
-        className="hero-word hero-word-in absolute left-0 top-0 whitespace-nowrap"
-        style={{ color: colors[index] }}
-      >
-        {words[index]}
-      </span>
-      {previous !== null && (
-        <span
-          key={`out-${previous}`}
-          className="hero-word hero-word-out absolute left-0 top-0 whitespace-nowrap"
-          style={{ color: colors[previous] }}
-          aria-hidden
-        >
-          {words[previous]}
-        </span>
-      )}
+      {moving(index, "in")}
+      {previous !== null && moving(previous, "out")}
     </span>
   );
 }
@@ -107,60 +113,76 @@ export default function HeroHeadline({ className = "" }: { className?: string })
   const [index, setIndex] = useState(0);
   const [verbIndex, setVerbIndex] = useState(0);
   const [animate, setAnimate] = useState(false);
+  const root = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     setAnimate(true);
     let i = 0;
-    let timer: ReturnType<typeof setTimeout>;
-    let later: ReturnType<typeof setTimeout>;
+    let first = true;
+    let paused = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let later: ReturnType<typeof setTimeout> | undefined;
     const tick = () => {
+      if (paused) return;
       i = (i + 1) % PHRASES.length;
       setIndex(i);
       const next = i;
       later = setTimeout(() => setVerbIndex(next), STAGGER);
       timer = setTimeout(tick, HOLD);
     };
-    timer = setTimeout(tick, HOLD + 800);
-    const onVisibility = () => {
+    const schedule = () => {
       clearTimeout(timer);
-      if (!document.hidden) timer = setTimeout(tick, HOLD);
+      timer = setTimeout(tick, first ? FIRST : HOLD);
+      first = false;
     };
+    // Only animate while the headline is on screen and the tab is visible.
+    const update = (onScreen: boolean) => {
+      const shouldPause = !onScreen || document.hidden;
+      if (shouldPause === paused) return;
+      paused = shouldPause;
+      if (paused) clearTimeout(timer);
+      else schedule();
+    };
+    let onScreen = true;
+    const observer = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      update(onScreen);
+    });
+    if (root.current) observer.observe(root.current);
+    const onVisibility = () => update(onScreen);
     document.addEventListener("visibilitychange", onVisibility);
+    schedule();
     return () => {
       clearTimeout(timer);
       clearTimeout(later);
+      observer.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
-  const things = PHRASES.map((p) => `${p.emoji} ${p.thing}`);
-  const verbs = PHRASES.map((p) => p.verb);
-  const colors = PHRASES.map((p) => p.color);
+  const things: Word[] = PHRASES.map((p) => ({ emoji: p.emoji, text: p.thing, color: p.color }));
+  const verbs: Word[] = PHRASES.map((p) => ({ text: p.verb }));
 
   return (
-    <h1 className={className}>
+    <h1 ref={root} className={className}>
       <span className="sr-only">All the places you keep meaning to go.</span>
       {/* Fixed line breaks, so only the words move and the block never re-wraps. */}
       <span aria-hidden className="block">
         All the{" "}
         {animate ? (
-          <Slot words={things} colors={colors} index={index} />
+          <Slot words={things} index={index} />
         ) : (
-          <span style={{ color: colors[0] }}>{things[0]}</span>
+          <span style={{ color: things[0].color }}>
+            {things[0].emoji} {things[0].text}
+          </span>
         )}
       </span>
       <span aria-hidden className="block">
         you keep meaning
       </span>
       <span aria-hidden className="block">
-        to{" "}
-        {animate ? (
-          <Slot words={verbs} colors={colors} index={verbIndex} />
-        ) : (
-          <span style={{ color: colors[0] }}>{verbs[0]}</span>
-        )}
-        .
+        to {animate ? <Slot words={verbs} index={verbIndex} /> : verbs[0].text}.
       </span>
     </h1>
   );
