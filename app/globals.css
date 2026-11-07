@@ -322,8 +322,8 @@
 
 /* Hero headline word swaps (components/HeroHeadline.tsx). */
 .hero-word {
-  animation-duration: 520ms;
-  animation-timing-function: cubic-bezier(0.3, 0.7, 0.2, 1);
+  animation-duration: 480ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
   animation-fill-mode: both;
 }
 .hero-word-in {
@@ -335,25 +335,21 @@
 @keyframes hero-word-in {
   from {
     opacity: 0;
-    transform: translateY(0.55em);
-    filter: blur(3px);
+    transform: translateY(1em);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0);
   }
 }
 @keyframes hero-word-out {
   from {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0);
   }
   to {
     opacity: 0;
-    transform: translateY(-0.55em);
-    filter: blur(3px);
+    transform: translateY(-1em);
   }
 }
 

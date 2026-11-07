@@ -97,7 +97,7 @@ export default function Waitlist({
         </button>
       </form>
       <div ref={box} />
-      <span className="max-w-sm text-[14px] text-muted" aria-live="polite">
+      <span className="max-w-lg text-[14px] text-muted" aria-live="polite">
         {state.step === "error"
           ? state.message
           : "Coming to iPhone. We'll email you when it's out, and that's it."}
