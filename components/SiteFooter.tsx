@@ -14,7 +14,8 @@ export default function SiteFooter({
     <footer
       className={`site-footer relative ${joinBar ? "pb-24 lg:pb-0" : ""}`}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-10">
+      {/* The same height as the header. */}
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
         <div className="max-w-sm">
           <Link href="/" className="flex items-center gap-2.5">
             <AppIcon size={28} />
@@ -34,7 +35,7 @@ export default function SiteFooter({
         </nav>
       </div>
       {photoCredit && (
-        <div className="mx-auto -mt-4 max-w-6xl px-5 pb-10 text-[13px] text-muted">
+        <div className="mx-auto -mt-2 max-w-6xl px-5 pb-5 text-[13px] text-muted">
           Place photos come from Google Maps. Maps from Apple.
         </div>
       )}

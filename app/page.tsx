@@ -1,4 +1,3 @@
-import Link from "next/link";
 import GetAppButton from "@/components/GetAppButton";
 import HeroHeadline from "@/components/HeroHeadline";
 import {
@@ -14,6 +13,7 @@ import SiteHeader from "@/components/SiteHeader";
 import Waitlist from "@/components/Waitlist";
 import { SAMPLE_LIST_ID, sampleList } from "@/lib/sample";
 import { IS_ON_APP_STORE, TURNSTILE_SITE_KEY } from "@/lib/site";
+import Link from "next/link";
 
 export default function Home() {
   const list = sampleList();
@@ -40,8 +40,9 @@ export default function Home() {
             <div className="max-w-xl">
               <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] sm:text-[52px] lg:text-[46px] xl:text-[55px]" />
               <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
-                From restaurants and bars to shops and hikes and anything else that you’re
-                excited to do — saved and shareable, not lost in the group chat.
+                From restaurants and bars to shops and hikes — and anything else
+                that you’re excited to do. In one place and collaborative, not
+                lost in group chats.
               </p>
               <div className="mt-8" data-hero-cta>
                 {IS_ON_APP_STORE || !TURNSTILE_SITE_KEY ? (
@@ -58,7 +59,9 @@ export default function Home() {
                         className="group inline-flex items-center gap-1 font-heading text-[14px] text-link"
                       >
                         See a list in action
-                        <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                        <span className="transition-transform group-hover:translate-x-0.5">
+                          →
+                        </span>
                       </Link>
                     }
                   />
@@ -66,14 +69,18 @@ export default function Home() {
               </div>
               {(IS_ON_APP_STORE || !TURNSTILE_SITE_KEY) && (
                 <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[15px] text-muted">
-                  {!IS_ON_APP_STORE && <span>For iPhone. Coming soon to the App Store.</span>}
+                  {!IS_ON_APP_STORE && (
+                    <span>For iPhone. Coming soon to the App Store.</span>
+                  )}
                   <Link
                     href={`/list/${SAMPLE_LIST_ID}`}
                     data-umami-event="example-list"
                     className="group inline-flex items-center gap-1 font-heading text-link"
                   >
                     See a list in action
-                    <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                    <span className="transition-transform group-hover:translate-x-0.5">
+                      →
+                    </span>
                   </Link>
                 </p>
               )}
@@ -109,7 +116,11 @@ export default function Home() {
           body="Type a name — the address, photo and map pin fill in. Movies, shows and trips are just as quick, and you can paste a whole list straight from Notes."
           visual={
             <AddPlaceCard
-              items={[byId("pells-bakery"), byId("foghorn-creamery"), byId("lucky-hound")]}
+              items={[
+                byId("pells-bakery"),
+                byId("foghorn-creamery"),
+                byId("lucky-hound"),
+              ]}
             />
           }
         />
@@ -134,9 +145,9 @@ export default function Home() {
                   Share it in the group chat
                 </h2>
                 <p className="mt-5 max-w-md text-[18px] leading-relaxed text-muted">
-                  Every list, and every place on it, gets its own page. Drop one in Messages and it
-                  lands as a proper card, photos and all, that anyone can open and browse right
-                  away.
+                  Every list, and every place on it, gets its own page. Drop one
+                  in Messages and it lands as a proper card, photos and all,
+                  that anyone can open and browse right away.
                 </p>
                 <Link
                   href={`/list/${SAMPLE_LIST_ID}`}
@@ -147,20 +158,29 @@ export default function Home() {
                 </Link>
               </div>
               <div className="flex justify-center md:justify-start">
-                <MessagesCard list={list} previewSrc={`/list/${SAMPLE_LIST_ID}/opengraph-image`} />
+                <MessagesCard
+                  list={list}
+                  previewSrc={`/list/${SAMPLE_LIST_ID}/opengraph-image`}
+                />
               </div>
             </div>
           </div>
         </section>
 
         {/* Get the app */}
-        <section id="get-the-app" className="scroll-mt-20 px-5 pb-24 pt-6 text-center">
+        <section
+          id="get-the-app"
+          className="scroll-mt-20 px-5 pb-24 pt-6 text-center"
+        >
           <div className="mx-auto max-w-2xl">
             <h2 className="text-[38px] leading-[1.05] tracking-[-0.02em] md:text-[52px]">
-              {IS_ON_APP_STORE ? "Start your list" : "Be first to start your list"}
+              {IS_ON_APP_STORE
+                ? "Start your list"
+                : "Be first to start your list"}
             </h2>
             <p className="mx-auto mt-4 max-w-md text-[18px] text-muted">
-              A list for date nights, a list for the trip, a list for the whole group chat.
+              A list for date nights, a list for the trip, a list for the whole
+              group chat.
             </p>
             <div className="mt-8">
               {IS_ON_APP_STORE ? (
@@ -203,7 +223,9 @@ function Feature({
         }`}
       >
         <div className={`max-w-md ${flip ? "md:pl-6" : "md:pr-6"}`}>
-          <h2 className="text-[32px] leading-[1.08] tracking-[-0.02em] md:text-[42px]">{title}</h2>
+          <h2 className="text-[32px] leading-[1.08] tracking-[-0.02em] md:text-[42px]">
+            {title}
+          </h2>
           <p className="mt-4 text-[18px] leading-relaxed text-muted">{body}</p>
         </div>
         {/* The mockup sits on the same wash as the hero, so it doesn't float on white. From
@@ -217,7 +239,8 @@ function Feature({
               : "md:mr-[calc(var(--bleed)*-1)] md:rounded-r-none md:pl-10 md:pr-[calc(var(--bleed)+2.5rem)]"
           }`}
           style={{
-            ["--bleed" as string]: "calc(max(0px, (100vw - 72rem) / 2) + 1.25rem)",
+            ["--bleed" as string]:
+              "calc(max(0px, (100vw - 72rem) / 2) + 1.25rem)",
             background:
               "radial-gradient(70% 80% at 80% 15%, color-mix(in srgb, var(--brand-purple) 11%, transparent), transparent 70%), radial-gradient(70% 80% at 15% 90%, color-mix(in srgb, var(--brand-blue) 11%, transparent), transparent 70%), var(--surface-secondary)",
           }}
