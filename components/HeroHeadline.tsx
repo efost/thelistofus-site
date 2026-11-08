@@ -8,7 +8,7 @@ import { createPortal } from "react-dom";
 // an emoji, and from there each swap rolls the emoji and the noun together: "…all the
 // 🥾 hikes you keep…", "…all the 🍺 bars you keep…". "Things" doesn't come back. Only the
 // noun changes, so every entry has to read with "check out", and fit on its line ("all
-// the …") at the sizes set in app/page.tsx (the longest is "experiences").
+// the …") at the sizes set in app/page.tsx (the longest is "restaurants").
 //
 // The emoji and the noun each have a slot that widens or narrows to fit (clipped
 // vertically only, so a leaving word is never cut off at the side); the old word slides
@@ -32,7 +32,7 @@ const PHRASES: { emoji: string; thing: string; color?: string }[] = [
   { emoji: "🥾", thing: "hikes", color: "light-dark(#3f7d20, #86d65a)" },
   { emoji: "🎬", thing: "movies", color: "light-dark(#6b21a8, #d8b4fe)" },
   { emoji: "📺", thing: "TV shows", color: "light-dark(#1d4ed8, #93c5fd)" },
-  { emoji: "🎟\uFE0F", thing: "experiences", color: "light-dark(#b91c1c, #fca5a5)" },
+  { emoji: "🎟\uFE0F", thing: "concerts", color: "light-dark(#b91c1c, #fca5a5)" },
   { emoji: "🍷", thing: "wineries", color: "light-dark(#7f1d4d, #f472b6)" },
   { emoji: "👜", thing: "shops", color: "light-dark(#be185d, #f9a8d4)" },
   { emoji: "🎮", thing: "games", color: "light-dark(#4f46e5, #a5b4fc)" },
