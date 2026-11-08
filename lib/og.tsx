@@ -564,16 +564,22 @@ export async function homeImage() {
       >
         <Brand icon={icon} />
         <div style={{ display: "flex", flexDirection: "column" }}>
+          {/* The hero's line breaks, so it wraps the same way. */}
           <div
             style={{
+              display: "flex",
+              flexDirection: "column",
               fontFamily: "Bricolage",
-              fontSize: 66,
-              lineHeight: 1.02,
-              letterSpacing: -2,
+              fontSize: 60,
+              lineHeight: 1.04,
+              letterSpacing: -1.8,
               color: "#000",
             }}
           >
-            All the things you keep meaning to check out.
+            <span>A shared place for</span>
+            <span>all the things</span>
+            <span>you keep meaning</span>
+            <span>to check out.</span>
           </div>
           <div
             style={{
