@@ -3,12 +3,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-// The headline cycles through what goes on a list. It opens on a plain "All the things
-// you keep meaning to check out." Then the noun slides aside to make room for an emoji,
-// and from there each swap rolls the emoji and the noun together: "All the 🥾 hikes…",
-// "All the 🍺 bars…". "Things" doesn't come back. Only the noun changes, so every entry
-// has to read with "check out", and fit on the first line at the sizes set in
-// app/page.tsx (the longest is "experiences").
+// The headline cycles through what goes on a list. It opens on a plain "A place for all
+// the things you keep meaning to check out." Then the noun slides aside to make room for
+// an emoji, and from there each swap rolls the emoji and the noun together: "…all the
+// 🥾 hikes you keep…", "…all the 🍺 bars you keep…". "Things" doesn't come back. Only the
+// noun changes, so every entry has to read with "check out", and fit on its line ("all
+// the …") at the sizes set in app/page.tsx (the longest is "experiences").
 //
 // The emoji and the noun each have a slot that widens or narrows to fit (clipped
 // vertically only, so a leaving word is never cut off at the side); the old word slides
@@ -245,10 +245,16 @@ export default function HeroHeadline({ className = "" }: { className?: string })
   return (
     <h1 ref={root} className={className}>
       {animate && <Backdrop index={index} />}
-      <span className="sr-only">All the things you keep meaning to check out.</span>
-      {/* Fixed line breaks, so only the words move and the block never re-wraps. */}
+      <span className="sr-only">
+        A place for all the things you keep meaning to check out.
+      </span>
+      {/* Fixed line breaks, so only the words move and the block never re-wraps: a short
+          line at each end, and the noun on the longest line. */}
       <span aria-hidden className="block">
-        All the{" "}
+        A place for
+      </span>
+      <span aria-hidden className="block">
+        all the{" "}
         {animate ? (
           <>
             <Slot words={emojis} index={index} sizeIndex={opening ? 1 : index} />

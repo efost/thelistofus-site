@@ -38,7 +38,7 @@ export default function Home() {
           <div id="hero-backdrop" aria-hidden className="hero-backdrop" />
           <div className="relative mx-auto grid w-full max-w-6xl flex-1 items-center gap-10 px-5 pb-0 pt-8 sm:pt-12 lg:grid-cols-[1fr_1fr] lg:gap-4 lg:pb-[5.5rem] lg:pt-0 xl:grid-cols-[1.1fr_1fr]">
             <div className="max-w-xl">
-              <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] sm:text-[52px] lg:text-[46px] xl:text-[55px]" />
+              <HeroHeadline className="text-[32px] leading-[1.06] tracking-[-0.035em] max-[374px]:text-[28px] sm:text-[52px] lg:text-[46px] xl:text-[55px]" />
               <p className="mt-5 max-w-lg text-[19px] leading-relaxed text-muted sm:text-[20px]">
                 From restaurants and bars to shops and hikes — and anything else
                 that you’re excited to do. In one place and collaborative, not
