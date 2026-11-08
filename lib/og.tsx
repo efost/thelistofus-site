@@ -33,7 +33,7 @@ async function fonts() {
   ];
 }
 
-async function iconDataURL() {
+export async function iconDataURL() {
   const data = await readFile(join(process.cwd(), "public", "app-icon-512.png"));
   return `data:image/png;base64,${data.toString("base64")}`;
 }
@@ -46,7 +46,7 @@ const keep = (text: string) => text;
 const strip = (text: string) =>
   text.replace(/[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}\u{FE0F}\u{200D}]/gu, "").trim();
 
-async function render(draw: Draw) {
+export async function render(draw: Draw) {
   const options = { ...OG_SIZE, fonts: await fonts() };
   const headers = {
     "Content-Type": "image/png",
@@ -68,7 +68,7 @@ async function render(draw: Draw) {
   }
 }
 
-function Brand({ icon, dark = false }: { icon: string; dark?: boolean }) {
+export function Brand({ icon, dark = false }: { icon: string; dark?: boolean }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
